@@ -45,6 +45,8 @@ jobs:
       - name: Verify site artifacts
         run: |
           test -f site/index.html
+          test -f site/docs.html
+          test -f site/site.css
           test -f site/main.js
           test -f site/assets/unswipe.js
           test -f site/assets/plugins/autoplay.js
