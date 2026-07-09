@@ -168,13 +168,13 @@ npm run preview:site   # build demo site and serve at http://localhost:4173
 
 The demo deploys automatically to GitHub Pages on every push to `main` via [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml).
 
-To build the static site locally:
+**One-time setup** (required before the first deploy):
 
-```bash
-npm run build:site   # outputs to site/
-```
+1. Open [Repository Settings → Pages](https://github.com/blabassi/unswipe/settings/pages)
+2. Under **Build and deployment**, set **Source** to **GitHub Actions**
+3. Re-run the failed workflow or push a new commit to `main`
 
-Enable **GitHub Pages** in the repository settings with source **GitHub Actions** if it is not already configured.
+Live URL: **https://blabassi.github.io/unswipe/**
 
 ## License
 
