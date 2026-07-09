@@ -13,6 +13,7 @@
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◫</text></svg>"
     />
     <link rel="stylesheet" href="./site.css" />
+    <link rel="stylesheet" href="./docs.css" />
   </head>
   <body>
     <header class="site-header">
@@ -68,27 +69,36 @@
       <section id="quick-start">
         <h2>Quick start</h2>
         <p>Slides default to direct children of the root element.</p>
-        <div class="example">
-          <p class="example-label">HTML</p>
-          <pre><code>&lt;div id="carousel"&gt;
+        <div class="playground">
+          <div class="playground__preview">
+            <div id="ex-quick" class="docs-carousel">
+              <div class="docs-slide">Slide 1</div>
+              <div class="docs-slide">Slide 2</div>
+              <div class="docs-slide">Slide 3</div>
+            </div>
+            <p id="ex-quick-status" class="playground__status">
+              Active slide: 1
+            </p>
+          </div>
+          <div class="playground__code">
+            <p class="example-label">HTML</p>
+            <pre><code>&lt;div id="carousel"&gt;
   &lt;div&gt;Slide 1&lt;/div&gt;
   &lt;div&gt;Slide 2&lt;/div&gt;
   &lt;div&gt;Slide 3&lt;/div&gt;
 &lt;/div&gt;</code></pre>
-        </div>
-        <div class="example">
-          <p class="example-label">JavaScript</p>
-          <pre><code>import { Unswipe } from 'unswipe';
+            <p class="example-label">JavaScript</p>
+            <pre><code>import { Unswipe } from 'unswipe';
 
-const slider = new Unswipe(document.getElementById('carousel'), {
-  align: 'start',
-  label: 'Featured products',
-  threshold: 0.5,
-});
+const slider = new Unswipe(
+  document.getElementById('carousel'),
+  { align: 'start', label: 'Featured products', threshold: 0.5 },
+);
 
-slider.on('select', ({ index, slide }) =&gt; {
-  console.log('Active slide:', index, slide);
+slider.on('select', ({ index }) =&gt; {
+  console.log('Active slide:', index);
 });</code></pre>
+          </div>
         </div>
       </section>
 
@@ -312,14 +322,30 @@ slider.on('select', ({ index, slide }) =&gt; {
             </tbody>
           </table>
         </div>
-        <div class="example">
-          <p class="example-label">Subscribe and unsubscribe</p>
-          <pre><code>const off = slider.on('select', ({ index }) =&gt; {
-  console.log(index);
+        <div class="playground">
+          <div class="playground__preview">
+            <div id="ex-events" class="docs-carousel">
+              <div class="docs-slide">One</div>
+              <div class="docs-slide">Two</div>
+              <div class="docs-slide">Three</div>
+            </div>
+            <div id="ex-events-log" class="event-log" aria-live="polite">
+              <div>Swipe a slide to see events…</div>
+            </div>
+          </div>
+          <div class="playground__code">
+            <p class="example-label">Subscribe and unsubscribe</p>
+            <pre><code>const off = slider.on('select', ({ index, slide }) =&gt; {
+  console.log('select', index, slide.textContent);
+});
+
+slider.on('update', () =&gt; {
+  console.log('slides re-scanned');
 });
 
 // later
 off();</code></pre>
+          </div>
         </div>
       </section>
 
@@ -377,8 +403,18 @@ off();</code></pre>
           Plugins ship as separate entry points so they never bloat the core
           bundle. Import only what you need.
         </p>
-        <div class="example">
-          <pre><code>import { Unswipe } from 'unswipe';
+        <div class="playground">
+          <div class="playground__preview">
+            <div id="ex-plugins" class="docs-carousel">
+              <div class="docs-slide">Alpha</div>
+              <div class="docs-slide">Beta</div>
+              <div class="docs-slide">Gamma</div>
+              <div class="docs-slide">Delta</div>
+            </div>
+          </div>
+          <div class="playground__code">
+            <p class="example-label">JavaScript</p>
+            <pre><code>import { Unswipe } from 'unswipe';
 import { autoplay } from 'unswipe/plugins/autoplay';
 import { navigation } from 'unswipe/plugins/navigation';
 import { pagination } from 'unswipe/plugins/pagination';
@@ -388,6 +424,7 @@ const slider = new Unswipe(root, options, [
   pagination(),
   autoplay({ delay: 5000 }),
 ]);</code></pre>
+          </div>
         </div>
 
         <h3>autoplay</h3>
@@ -551,11 +588,26 @@ export function logger(): SliderPlugin {
           carousel re-collects slides, re-attaches the Intersection Observer,
           and emits <code>'update'</code> for plugins like pagination.
         </p>
-        <div class="example">
-          <pre><code>const slide = document.createElement('div');
-slide.textContent = 'New slide';
-carousel.appendChild(slide);
+        <div class="playground">
+          <div class="playground__preview">
+            <div id="ex-mutate" class="docs-carousel">
+              <div class="docs-slide">Slide 1</div>
+              <div class="docs-slide">Slide 2</div>
+              <div class="docs-slide">Slide 3</div>
+            </div>
+            <div class="playground__controls">
+              <button id="ex-mutate-add" type="button">Add slide</button>
+              <button id="ex-mutate-remove" type="button">Remove last</button>
+            </div>
+          </div>
+          <div class="playground__code">
+            <p class="example-label">JavaScript</p>
+            <pre><code id="ex-mutate-code">const slide = document.createElement('div');
+slide.className = 'docs-slide';
+slide.textContent = 'Slide 4';
+root.appendChild(slide);
 slider.update();</code></pre>
+          </div>
         </div>
       </section>
 
@@ -586,43 +638,99 @@ slider.update();</code></pre>
 
       <section id="examples">
         <h2>Examples</h2>
+        <p>Each example pairs live UI with the code that powers it.</p>
 
-        <h3>Center-aligned slides</h3>
-        <div class="example">
-          <pre><code>const slider = new Unswipe(root, { align: 'center', label: 'Gallery' });</code></pre>
+        <h3>Scroll alignment</h3>
+        <div class="playground">
+          <div class="playground__preview">
+            <div id="ex-align" class="docs-carousel">
+              <div class="docs-slide">A</div>
+              <div class="docs-slide">B</div>
+              <div class="docs-slide">C</div>
+              <div class="docs-slide">D</div>
+            </div>
+            <div class="playground__controls">
+              <button type="button" data-align="start" aria-pressed="true">
+                start
+              </button>
+              <button type="button" data-align="center" aria-pressed="false">
+                center
+              </button>
+              <button type="button" data-align="end" aria-pressed="false">
+                end
+              </button>
+            </div>
+          </div>
+          <div class="playground__code">
+            <pre><code id="ex-align-code">const slider = new Unswipe(root, {
+  align: 'start',
+  label: 'Alignment demo',
+});</code></pre>
+          </div>
+        </div>
+
+        <h3>Programmatic API</h3>
+        <div class="playground">
+          <div class="playground__preview">
+            <div id="ex-api" class="docs-carousel">
+              <div class="docs-slide">First</div>
+              <div class="docs-slide">Second</div>
+              <div class="docs-slide">Third</div>
+              <div class="docs-slide">Fourth</div>
+            </div>
+            <div class="playground__controls">
+              <button id="ex-api-prev" type="button">prev()</button>
+              <button id="ex-api-next" type="button">next()</button>
+              <button id="ex-api-jump" type="button">scrollToIndex(2)</button>
+            </div>
+            <p id="ex-api-status" class="playground__status">
+              slider.index === 0
+            </p>
+          </div>
+          <div class="playground__code">
+            <pre><code>slider.prev();
+slider.next();
+slider.scrollToIndex(2, 'smooth');</code></pre>
+          </div>
         </div>
 
         <h3>Custom slide selector</h3>
-        <div class="example">
-          <pre><code>&lt;div id="carousel"&gt;
-  &lt;div class="track"&gt;
-    &lt;article class="slide"&gt;…&lt;/article&gt;
-    &lt;article class="slide"&gt;…&lt;/article&gt;
-  &lt;/div&gt;
-&lt;/div&gt;
-
-const slider = new Unswipe(document.getElementById('carousel'), {
-  slide: '.slide',
+        <div class="playground">
+          <div class="playground__preview">
+            <div id="ex-selector" class="docs-carousel">
+              <article class="docs-slide article-slide">Article A</article>
+              <article class="docs-slide article-slide">Article B</article>
+              <article class="docs-slide article-slide">Article C</article>
+            </div>
+          </div>
+          <div class="playground__code">
+            <pre><code>new Unswipe(root, {
+  slide: '.article-slide',
   label: 'Articles',
 });</code></pre>
+          </div>
         </div>
 
         <h3>Vertical carousel</h3>
-        <div class="example">
-          <pre><code>const slider = new Unswipe(root, {
+        <div class="playground">
+          <div class="playground__preview">
+            <div id="ex-vertical" class="docs-carousel docs-carousel--y">
+              <div class="docs-slide">2024</div>
+              <div class="docs-slide">2025</div>
+              <div class="docs-slide">2026</div>
+            </div>
+          </div>
+          <div class="playground__code">
+            <pre><code>new Unswipe(root, {
   axis: 'y',
   align: 'start',
   label: 'Timeline',
 });</code></pre>
-        </div>
-
-        <h3>Instant programmatic scroll</h3>
-        <div class="example">
-          <pre><code>slider.scrollToIndex(2, 'instant');</code></pre>
+          </div>
         </div>
 
         <h3>React (client component)</h3>
-        <div class="example">
+        <div class="code-only">
           <pre><code>import { useEffect, useRef } from 'react';
 import { Unswipe } from 'unswipe';
 
@@ -639,7 +747,7 @@ export function Carousel({ children }) {
         </div>
 
         <h3>CDN / no bundler</h3>
-        <div class="example">
+        <div class="code-only">
           <pre><code>&lt;script type="module"&gt;
   import { Unswipe } from './assets/unswipe.js';
 
@@ -656,5 +764,6 @@ export function Carousel({ children }) {
         <a href="https://github.com/blabassi/unswipe">GitHub</a>
       </footer>
     </main>
+    <script type="module" src="./docs.js"></script>
   </body>
 </html>

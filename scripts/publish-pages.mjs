@@ -9,7 +9,14 @@ const site = join(root, 'site');
 
 execSync('npm run build:site', { cwd: root, stdio: 'inherit' });
 
-const files = ['index.html', 'docs.html', 'site.css', 'main.js'];
+const files = [
+  'index.html',
+  'docs.html',
+  'site.css',
+  'docs.css',
+  'main.js',
+  'docs.js',
+];
 
 for (const file of files) {
   cpSync(join(site, file), join(root, file));
