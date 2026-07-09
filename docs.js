@@ -89,11 +89,12 @@ function logEvent(id, message) {
 {
   const root = document.getElementById('ex-plugins');
   if (root) {
-    new Unswipe(
+    const slider = new Unswipe(
       root,
       { align: 'start', label: 'Plugin demo', threshold: 0.6 },
       [navigation(), pagination(), autoplay({ delay: 4500 })],
     );
+    void slider;
   }
 }
 
@@ -143,11 +144,12 @@ slider.update();`,
 {
   const root = document.getElementById('ex-vertical');
   if (root) {
-    new Unswipe(root, {
+    const slider = new Unswipe(root, {
       axis: 'y',
       align: 'start',
       label: 'Timeline',
     });
+    void slider;
   }
 }
 
@@ -155,10 +157,11 @@ slider.update();`,
 {
   const root = document.getElementById('ex-selector');
   if (root) {
-    new Unswipe(root, {
+    const slider = new Unswipe(root, {
       slide: '.article-slide',
       label: 'Articles',
     });
+    void slider;
   }
 }
 

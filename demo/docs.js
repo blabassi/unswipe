@@ -144,11 +144,12 @@ slider.update();`,
 {
   const root = document.getElementById('ex-vertical');
   if (root) {
-    new Unswipe(root, {
+    const slider = new Unswipe(root, {
       axis: 'y',
       align: 'start',
       label: 'Timeline',
     });
+    void slider;
   }
 }
 
@@ -156,10 +157,11 @@ slider.update();`,
 {
   const root = document.getElementById('ex-selector');
   if (root) {
-    new Unswipe(root, {
+    const slider = new Unswipe(root, {
       slide: '.article-slide',
       label: 'Articles',
     });
+    void slider;
   }
 }
 
