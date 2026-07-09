@@ -37,6 +37,8 @@
     "build:plugins": "esbuild src/plugins/autoplay.ts --bundle --minify --format=esm --outfile=dist/plugins/autoplay.js && esbuild src/plugins/autoplay.ts --bundle --minify --format=cjs --outfile=dist/plugins/autoplay.cjs && esbuild src/plugins/navigation.ts --bundle --minify --format=esm --outfile=dist/plugins/navigation.js && esbuild src/plugins/navigation.ts --bundle --minify --format=cjs --outfile=dist/plugins/navigation.cjs && esbuild src/plugins/pagination.ts --bundle --minify --format=esm --outfile=dist/plugins/pagination.js && esbuild src/plugins/pagination.ts --bundle --minify --format=cjs --outfile=dist/plugins/pagination.cjs",
     "build:types": "tsc --emitDeclarationOnly",
     "size": "node scripts/size.mjs",
+    "build:site": "node scripts/build-site.mjs",
+    "preview:site": "npm run build:site && npx --yes serve site -p 4173",
     "dev": "esbuild src/index.ts --bundle --format=esm --outfile=dist/unswipe.js --watch",
     "typecheck": "tsc --noEmit"
   },

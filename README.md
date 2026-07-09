@@ -2,6 +2,8 @@
 
 A high-performance, zero-dependency carousel library for the modern web. Unswipe delegates physics, layout, and snapping to native browser APIs — **CSS Scroll Snap** for hardware-accelerated kinetic scrolling and **Intersection Observer** for dynamic accessibility — keeping the core bundle under **2 KB** minified.
 
+**[Live demo](https://blabassi.github.io/unswipe/)**
+
 ## Why Unswipe?
 
 | Concern | Approach |
@@ -140,9 +142,20 @@ slider.update(); // re-observes slides, preserves tracking
 npm install
 npm run build      # build + size check
 npm run typecheck
+npm run preview:site   # build demo site and serve at http://localhost:4173
 ```
 
-Open `demo/index.html` via a local server after building.
+### GitHub Pages
+
+The demo deploys automatically to GitHub Pages on every push to `main` via [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml).
+
+To build the static site locally:
+
+```bash
+npm run build:site   # outputs to site/
+```
+
+Enable **GitHub Pages** in the repository settings with source **GitHub Actions** if it is not already configured.
 
 ## License
 

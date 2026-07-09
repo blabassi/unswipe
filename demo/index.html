@@ -3,40 +3,83 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Unswipe demo — a microscopic, zero-dependency carousel powered by CSS Scroll Snap and Intersection Observer."
+    />
     <title>Unswipe Demo</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◫</text></svg>" />
     <style>
-      * {
+      *,
+      *::before,
+      *::after {
         box-sizing: border-box;
       }
 
       body {
         margin: 0;
-        font-family: system-ui, sans-serif;
-        background: #0f1115;
+        font-family: system-ui, -apple-system, sans-serif;
+        background: #0b0d12;
         color: #e8eaed;
-        min-height: 100vh;
-        display: grid;
-        place-items: center;
-        padding: 2rem;
+        line-height: 1.5;
       }
 
-      .demo {
-        width: min(100%, 42rem);
+      .page {
+        width: min(100%, 44rem);
+        margin: 0 auto;
+        padding: 2.5rem 1.25rem 3rem;
+      }
+
+      .eyebrow {
+        margin: 0 0 0.5rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #8b5cf6;
       }
 
       h1 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        margin: 0 0 1rem;
+        margin: 0 0 0.75rem;
+        font-size: clamp(1.5rem, 4vw, 2rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+      }
+
+      .lede {
+        margin: 0 0 1.5rem;
+        color: #9aa0a6;
+        max-width: 38ch;
+      }
+
+      .badges {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-bottom: 1.75rem;
+      }
+
+      .badge {
+        padding: 0.25rem 0.65rem;
+        border: 1px solid #2a2f3a;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        color: #c4c7cc;
+        background: #141820;
+      }
+
+      .panel {
+        padding: 1rem;
+        border-radius: 1rem;
+        background: #141820;
+        border: 1px solid #222833;
       }
 
       #carousel {
         display: flex;
         gap: 1rem;
-        padding: 1rem;
-        border-radius: 1rem;
-        background: #1a1d24;
-        scroll-padding: 1rem;
+        padding: 0.25rem;
+        scroll-padding: 0.25rem;
         scrollbar-width: none;
       }
 
@@ -46,27 +89,52 @@
 
       .slide {
         min-width: 70%;
-        padding: 3rem 2rem;
+        padding: 3rem 1.5rem;
         border-radius: 0.75rem;
-        font-size: 1.5rem;
+        font-size: clamp(1.1rem, 3vw, 1.5rem);
         font-weight: 700;
         text-align: center;
+        color: #fff;
       }
 
-      .slide:nth-child(1) {
+      .slide:nth-child(4n + 1) {
         background: linear-gradient(135deg, #6366f1, #8b5cf6);
       }
-      .slide:nth-child(2) {
+      .slide:nth-child(4n + 2) {
         background: linear-gradient(135deg, #ec4899, #f43f5e);
         min-width: 50%;
       }
-      .slide:nth-child(3) {
+      .slide:nth-child(4n + 3) {
         background: linear-gradient(135deg, #14b8a6, #22d3ee);
         min-width: 85%;
       }
-      .slide:nth-child(4) {
+      .slide:nth-child(4n) {
         background: linear-gradient(135deg, #f59e0b, #ef4444);
         min-width: 60%;
+      }
+
+      .controls {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .controls button {
+        flex: 1 1 auto;
+        min-width: 7rem;
+        padding: 0.65rem 0.9rem;
+        border: 1px solid #2a2f3a;
+        border-radius: 0.5rem;
+        background: #1a1f2b;
+        color: inherit;
+        font: inherit;
+        font-size: 0.875rem;
+        cursor: pointer;
+      }
+
+      .controls button:hover {
+        background: #222833;
       }
 
       .unswipe-nav__container {
@@ -81,7 +149,7 @@
         padding: 0.75rem;
         border: none;
         border-radius: 0.5rem;
-        background: #2a2f3a;
+        background: #1a1f2b;
         color: inherit;
         font-size: 1.25rem;
         cursor: pointer;
@@ -119,42 +187,121 @@
       }
 
       #status {
-        margin-top: 1rem;
+        margin: 1rem 0 0;
         font-size: 0.875rem;
         color: #9aa0a6;
+      }
+
+      .features {
+        display: grid;
+        gap: 0.75rem;
+        margin-top: 2rem;
+      }
+
+      .feature {
+        padding: 1rem;
+        border-radius: 0.75rem;
+        background: #10141c;
+        border: 1px solid #1e2430;
+      }
+
+      .feature h2 {
+        margin: 0 0 0.35rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+      }
+
+      .feature p {
+        margin: 0;
+        font-size: 0.85rem;
+        color: #9aa0a6;
+      }
+
+      footer {
+        margin-top: 2.5rem;
+        padding-top: 1.25rem;
+        border-top: 1px solid #1e2430;
+        font-size: 0.875rem;
+        color: #9aa0a6;
+      }
+
+      footer a {
+        color: #a78bfa;
+      }
+
+      .visually-hidden {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
       }
     </style>
   </head>
   <body>
-    <div class="demo">
-      <h1>Unswipe — native scroll-snap carousel</h1>
-      <div id="carousel" aria-label="Featured items">
-        <div class="slide">Variable width slide A</div>
-        <div class="slide">Slide B</div>
-        <div class="slide">Wider slide C</div>
-        <div class="slide">Slide D</div>
+    <main class="page">
+      <p class="eyebrow">Live demo</p>
+      <h1>Unswipe</h1>
+      <p class="lede">
+        Swipe or drag the track below. Slides are variable width — layout and
+        snapping are handled entirely by native CSS Scroll Snap.
+      </p>
+
+      <div class="badges">
+        <span class="badge">&lt; 2 KB core</span>
+        <span class="badge">Zero dependencies</span>
+        <span class="badge">CSS Scroll Snap</span>
+        <span class="badge">Intersection Observer a11y</span>
       </div>
-      <p id="status">Active slide: 1</p>
-    </div>
 
-    <script type="module">
-      import { Unswipe } from '../dist/unswipe.js';
-      import { autoplay } from '../dist/plugins/autoplay.js';
-      import { navigation } from '../dist/plugins/navigation.js';
-      import { pagination } from '../dist/plugins/pagination.js';
+      <section class="panel" aria-labelledby="demo-heading">
+        <h2 id="demo-heading" class="visually-hidden">Carousel demo</h2>
+        <div id="carousel" aria-label="Featured items">
+          <div class="slide">Variable width slide A</div>
+          <div class="slide">Slide B</div>
+          <div class="slide">Wider slide C</div>
+          <div class="slide">Slide D</div>
+        </div>
+        <p id="status">Active slide: 1 of 4</p>
+        <div class="controls">
+          <button id="add-slide" type="button">Add slide</button>
+          <button id="remove-slide" type="button">Remove last slide</button>
+        </div>
+      </section>
 
-      const status = document.getElementById('status');
-      const carousel = document.getElementById('carousel');
+      <section class="features" aria-label="Highlights">
+        <article class="feature">
+          <h2>Hardware-accelerated gestures</h2>
+          <p>
+            Touch and mouse dragging ride the browser compositor — no custom
+            physics loop or layout thrashing.
+          </p>
+        </article>
+        <article class="feature">
+          <h2>Dynamic mutation support</h2>
+          <p>
+            Use the buttons above to add or remove slides; the carousel calls
+            <code>.update()</code> to re-observe the DOM without re-init.
+          </p>
+        </article>
+        <article class="feature">
+          <h2>Plugin architecture</h2>
+          <p>
+            This demo loads optional autoplay, arrow navigation, and pagination
+            plugins — each shipped as a separate bundle.
+          </p>
+        </article>
+      </section>
 
-      const slider = new Unswipe(
-        carousel,
-        { align: 'start', label: 'Featured items', threshold: 0.6 },
-        [navigation(), pagination(), autoplay({ delay: 4000 })],
-      );
+      <footer>
+        <a href="https://github.com/blabassi/unswipe">View source on GitHub</a>
+      </footer>
+    </main>
 
-      slider.on('select', ({ index }) => {
-        status.textContent = `Active slide: ${index + 1}`;
-      });
-    </script>
+    <script type="module" src="./main.js"></script>
   </body>
 </html>
