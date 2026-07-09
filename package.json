@@ -40,7 +40,8 @@
     "build:site": "node scripts/build-site.mjs",
     "preview:site": "npm run build:site && npx --yes serve site -p 4173",
     "dev": "esbuild src/index.ts --bundle --format=esm --outfile=dist/unswipe.js --watch",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "ci": "npm run typecheck && npm run build && npm run build:site"
   },
   "keywords": [
     "carousel",

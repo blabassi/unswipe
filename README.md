@@ -1,5 +1,8 @@
 # Unswipe
 
+[![CI](https://github.com/blabassi/unswipe/actions/workflows/ci.yml/badge.svg)](https://github.com/blabassi/unswipe/actions/workflows/ci.yml)
+[![Pages](https://github.com/blabassi/unswipe/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/blabassi/unswipe/actions/workflows/deploy-pages.yml)
+
 A high-performance, zero-dependency carousel library for the modern web. Unswipe delegates physics, layout, and snapping to native browser APIs — **CSS Scroll Snap** for hardware-accelerated kinetic scrolling and **Intersection Observer** for dynamic accessibility — keeping the core bundle under **2 KB** minified.
 
 **[Live demo](https://blabassi.github.io/unswipe/)**
@@ -140,10 +143,18 @@ slider.update(); // re-observes slides, preserves tracking
 
 ```bash
 npm install
-npm run build      # build + size check
+npm run ci           # typecheck + build + size check + site build
+npm run build        # build + size check only
 npm run typecheck
 npm run preview:site   # build demo site and serve at http://localhost:4173
 ```
+
+### CI/CD
+
+| Workflow | Trigger | Purpose |
+| --- | --- | --- |
+| [`ci.yml`](.github/workflows/ci.yml) | Push & PR to `main` | Typecheck, build, bundle size budget, demo site assembly |
+| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main` | Deploy demo to GitHub Pages |
 
 ### GitHub Pages
 
