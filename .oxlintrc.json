@@ -9,7 +9,7 @@
     "builtin": true,
     "browser": true
   },
-  "ignorePatterns": ["dist/**", "site/**", "node_modules/**"],
+  "ignorePatterns": ["dist/**", "site/**", "assets/**", "node_modules/**"],
   "rules": {
     "eslint/no-underscore-dangle": ["warn", { "allow": ["__u"] }]
   }

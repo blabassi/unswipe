@@ -166,15 +166,18 @@ npm run preview:site   # build demo site and serve at http://localhost:4173
 
 ### GitHub Pages
 
-The demo deploys automatically to GitHub Pages on every push to `main` via [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml).
+The demo and docs deploy automatically on every push to `main` that changes source files. The workflow builds the site and commits static files (`index.html`, `docs.html`, `assets/`) to the repository root, which GitHub Pages serves directly.
 
-**One-time setup** (required before the first deploy):
+| URL                                          | Page              |
+| -------------------------------------------- | ----------------- |
+| https://blabassi.github.io/unswipe/          | Live demo         |
+| https://blabassi.github.io/unswipe/docs.html | API documentation |
 
-1. Open [Repository Settings → Pages](https://github.com/blabassi/unswipe/settings/pages)
-2. Under **Build and deployment**, set **Source** to **GitHub Actions**
-3. Re-run the failed workflow or push a new commit to `main`
+To publish locally:
 
-Live URL: **https://blabassi.github.io/unswipe/** · Docs: **https://blabassi.github.io/unswipe/docs.html**
+```bash
+npm run publish:pages
+```
 
 ## License
 

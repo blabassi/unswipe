@@ -1,0 +1,660 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="Unswipe API reference — options, methods, events, plugins, and examples."
+    />
+    <title>Documentation — Unswipe</title>
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◫</text></svg>"
+    />
+    <link rel="stylesheet" href="./site.css" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-logo" href="./">Unswipe</a>
+        <nav class="site-nav" aria-label="Site">
+          <a href="./">Demo</a>
+          <a href="./docs.html" aria-current="page">Docs</a>
+          <a href="https://github.com/blabassi/unswipe">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="page">
+      <p class="eyebrow">API reference</p>
+      <h1>Documentation</h1>
+      <p class="lede">
+        Unswipe is a zero-dependency carousel that delegates physics to CSS
+        Scroll Snap and accessibility to Intersection Observer. Core bundle:
+        &lt; 2 KB minified.
+      </p>
+
+      <nav class="toc" aria-label="Table of contents">
+        <h2>Contents</h2>
+        <ul>
+          <li><a href="#install">Install</a></li>
+          <li><a href="#quick-start">Quick start</a></li>
+          <li><a href="#constructor">Constructor</a></li>
+          <li><a href="#options">Options</a></li>
+          <li><a href="#instance">Instance API</a></li>
+          <li><a href="#events">Events</a></li>
+          <li><a href="#types">Types</a></li>
+          <li><a href="#plugins">Plugins</a></li>
+          <li><a href="#custom-plugin">Custom plugin</a></li>
+          <li><a href="#mutations">Dynamic mutations</a></li>
+          <li><a href="#accessibility">Accessibility</a></li>
+          <li><a href="#examples">Examples</a></li>
+        </ul>
+      </nav>
+
+      <section id="install">
+        <h2>Install</h2>
+        <div class="example">
+          <p class="example-label">npm</p>
+          <pre><code>npm install unswipe</code></pre>
+        </div>
+        <p>
+          Or copy <code>dist/unswipe.js</code> from the repository and load it
+          as an ES module.
+        </p>
+      </section>
+
+      <section id="quick-start">
+        <h2>Quick start</h2>
+        <p>Slides default to direct children of the root element.</p>
+        <div class="example">
+          <p class="example-label">HTML</p>
+          <pre><code>&lt;div id="carousel"&gt;
+  &lt;div&gt;Slide 1&lt;/div&gt;
+  &lt;div&gt;Slide 2&lt;/div&gt;
+  &lt;div&gt;Slide 3&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+        </div>
+        <div class="example">
+          <p class="example-label">JavaScript</p>
+          <pre><code>import { Unswipe } from 'unswipe';
+
+const slider = new Unswipe(document.getElementById('carousel'), {
+  align: 'start',
+  label: 'Featured products',
+  threshold: 0.5,
+});
+
+slider.on('select', ({ index, slide }) =&gt; {
+  console.log('Active slide:', index, slide);
+});</code></pre>
+        </div>
+      </section>
+
+      <section id="constructor">
+        <h2>Constructor</h2>
+        <div class="example">
+          <pre><code>new Unswipe(root, options?, plugins?)</code></pre>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Parameter</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>root</code></td>
+                <td><code>HTMLElement</code></td>
+                <td>
+                  Carousel container. Receives scroll-snap styles and ARIA
+                  roles.
+                </td>
+              </tr>
+              <tr>
+                <td><code>options</code></td>
+                <td><code>SliderOptions</code></td>
+                <td>
+                  Optional configuration. See <a href="#options">Options</a>.
+                </td>
+              </tr>
+              <tr>
+                <td><code>plugins</code></td>
+                <td><code>SliderPlugin[]</code></td>
+                <td>
+                  Optional plugins initialized after the carousel is ready.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <p>Returns a <code>Slider</code> instance.</p>
+      </section>
+
+      <section id="options">
+        <h2>Options</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Option</th>
+                <th>Type</th>
+                <th>Default</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>slide</code></td>
+                <td><code>string</code></td>
+                <td>—</td>
+                <td>
+                  CSS selector for slides relative to <code>root</code>.
+                  Defaults to direct children.
+                </td>
+              </tr>
+              <tr>
+                <td><code>align</code></td>
+                <td><code>'start' | 'center' | 'end'</code></td>
+                <td><code>'start'</code></td>
+                <td>Scroll-snap alignment anchor for each slide.</td>
+              </tr>
+              <tr>
+                <td><code>axis</code></td>
+                <td><code>'x' | 'y'</code></td>
+                <td><code>'x'</code></td>
+                <td>
+                  Scroll axis. Horizontal uses
+                  <code>scroll-snap-type: x mandatory</code>.
+                </td>
+              </tr>
+              <tr>
+                <td><code>label</code></td>
+                <td><code>string</code></td>
+                <td>—</td>
+                <td>
+                  Accessible name applied as <code>aria-label</code> on the
+                  carousel root.
+                </td>
+              </tr>
+              <tr>
+                <td><code>threshold</code></td>
+                <td><code>number</code></td>
+                <td><code>0.5</code></td>
+                <td>
+                  Intersection ratio (0–1) required for a slide to be considered
+                  active.
+                </td>
+              </tr>
+              <tr>
+                <td><code>behavior</code></td>
+                <td><code>ScrollBehavior</code></td>
+                <td><code>'smooth'</code></td>
+                <td>
+                  Default scroll behavior for <code>next()</code>,
+                  <code>prev()</code>, and <code>scrollToIndex()</code>.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="instance">
+        <h2>Instance API</h2>
+
+        <h3>Properties</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>root</code></td>
+                <td><code>HTMLElement</code></td>
+                <td>The carousel container element.</td>
+              </tr>
+              <tr>
+                <td><code>slides</code></td>
+                <td><code>readonly HTMLElement[]</code></td>
+                <td>
+                  Current slide elements, re-collected on <code>update()</code>.
+                </td>
+              </tr>
+              <tr>
+                <td><code>index</code></td>
+                <td><code>number</code></td>
+                <td>Zero-based index of the active slide.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>Methods</h3>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Method</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>next()</code></td>
+                <td>Scroll to the next slide. No-op on the last slide.</td>
+              </tr>
+              <tr>
+                <td><code>prev()</code></td>
+                <td>Scroll to the previous slide. No-op on the first slide.</td>
+              </tr>
+              <tr>
+                <td><code>scrollToIndex(index, behavior?)</code></td>
+                <td>
+                  Scroll to a slide by index. Optional
+                  <code>behavior</code> overrides the default.
+                </td>
+              </tr>
+              <tr>
+                <td><code>update()</code></td>
+                <td>
+                  Re-scan the DOM for slides, re-attach observers, and emit
+                  <code>'update'</code>.
+                </td>
+              </tr>
+              <tr>
+                <td><code>destroy()</code></td>
+                <td>
+                  Disconnect observers, destroy plugins, and clear event
+                  listeners.
+                </td>
+              </tr>
+              <tr>
+                <td><code>on(event, handler)</code></td>
+                <td>Subscribe to an event. Returns an unsubscribe function.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="events">
+        <h2>Events</h2>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Event</th>
+                <th>Payload</th>
+                <th>When</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>'select'</code></td>
+                <td><code>{ index: number; slide: HTMLElement }</code></td>
+                <td>Active slide changes after scrolling or swiping.</td>
+              </tr>
+              <tr>
+                <td><code>'update'</code></td>
+                <td><em>none</em></td>
+                <td><code>update()</code> finishes re-scanning slides.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="example">
+          <p class="example-label">Subscribe and unsubscribe</p>
+          <pre><code>const off = slider.on('select', ({ index }) =&gt; {
+  console.log(index);
+});
+
+// later
+off();</code></pre>
+        </div>
+      </section>
+
+      <section id="types">
+        <h2>Types</h2>
+        <p>Exported from <code>unswipe</code>:</p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Type</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>Slider</code></td>
+                <td>Public instance interface.</td>
+              </tr>
+              <tr>
+                <td><code>SliderOptions</code></td>
+                <td>Constructor options object.</td>
+              </tr>
+              <tr>
+                <td><code>SliderPlugin</code></td>
+                <td>
+                  Plugin contract (<code>name</code>, <code>init</code>,
+                  <code>destroy?</code>).
+                </td>
+              </tr>
+              <tr>
+                <td><code>SliderEvent</code></td>
+                <td><code>'select' | 'update'</code></td>
+              </tr>
+              <tr>
+                <td><code>SelectDetail</code></td>
+                <td><code>{ index: number; slide: HTMLElement }</code></td>
+              </tr>
+              <tr>
+                <td><code>SnapAlign</code></td>
+                <td><code>'start' | 'center' | 'end'</code></td>
+              </tr>
+              <tr>
+                <td><code>SliderAxis</code></td>
+                <td><code>'x' | 'y'</code></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="plugins">
+        <h2>Plugins</h2>
+        <p>
+          Plugins ship as separate entry points so they never bloat the core
+          bundle. Import only what you need.
+        </p>
+        <div class="example">
+          <pre><code>import { Unswipe } from 'unswipe';
+import { autoplay } from 'unswipe/plugins/autoplay';
+import { navigation } from 'unswipe/plugins/navigation';
+import { pagination } from 'unswipe/plugins/pagination';
+
+const slider = new Unswipe(root, options, [
+  navigation(),
+  pagination(),
+  autoplay({ delay: 5000 }),
+]);</code></pre>
+        </div>
+
+        <h3>autoplay</h3>
+        <p>Entry: <code>unswipe/plugins/autoplay</code></p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Option</th>
+                <th>Type</th>
+                <th>Default</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>delay</code></td>
+                <td><code>number</code></td>
+                <td><code>3000</code></td>
+                <td>Interval between slides in milliseconds.</td>
+              </tr>
+              <tr>
+                <td><code>pauseOnHover</code></td>
+                <td><code>boolean</code></td>
+                <td><code>true</code></td>
+                <td>
+                  Pause while pointer is over the carousel or it has focus.
+                </td>
+              </tr>
+              <tr>
+                <td><code>loop</code></td>
+                <td><code>boolean</code></td>
+                <td><code>true</code></td>
+                <td>Return to the first slide after the last.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>navigation</h3>
+        <p>Entry: <code>unswipe/plugins/navigation</code></p>
+        <p>
+          Creates previous/next buttons and wires them to
+          <code>prev()</code> and <code>next()</code>.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Option</th>
+                <th>Type</th>
+                <th>Default</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>container</code></td>
+                <td><code>HTMLElement</code></td>
+                <td>auto-created</td>
+                <td>
+                  Wrapper for the buttons. Inserted after the carousel root if
+                  omitted.
+                </td>
+              </tr>
+              <tr>
+                <td><code>prevLabel</code></td>
+                <td><code>string</code></td>
+                <td><code>'Previous slide'</code></td>
+                <td><code>aria-label</code> for the previous button.</td>
+              </tr>
+              <tr>
+                <td><code>nextLabel</code></td>
+                <td><code>string</code></td>
+                <td><code>'Next slide'</code></td>
+                <td><code>aria-label</code> for the next button.</td>
+              </tr>
+              <tr>
+                <td><code>className</code></td>
+                <td><code>string</code></td>
+                <td><code>'unswipe-nav'</code></td>
+                <td>Base CSS class for buttons and container.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <h3>pagination</h3>
+        <p>Entry: <code>unswipe/plugins/pagination</code></p>
+        <p>
+          Creates one dot per slide, synced via <code>select</code> and rebuilt
+          on <code>update</code>.
+        </p>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Option</th>
+                <th>Type</th>
+                <th>Default</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>container</code></td>
+                <td><code>HTMLElement</code></td>
+                <td>auto-created</td>
+                <td>Wrapper for the dot list.</td>
+              </tr>
+              <tr>
+                <td><code>className</code></td>
+                <td><code>string</code></td>
+                <td><code>'unswipe-pagination'</code></td>
+                <td>Base CSS class for the tablist and dots.</td>
+              </tr>
+              <tr>
+                <td><code>label</code></td>
+                <td><code>string</code></td>
+                <td><code>'Carousel pagination'</code></td>
+                <td><code>aria-label</code> for the tablist.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="custom-plugin">
+        <h2>Custom plugin</h2>
+        <p>Implement the <code>SliderPlugin</code> interface:</p>
+        <div class="example">
+          <pre><code>import type { SliderPlugin } from 'unswipe';
+
+export function logger(): SliderPlugin {
+  let off: (() => void) | undefined;
+
+  return {
+    name: 'logger',
+    init(slider) {
+      off = slider.on('select', ({ index }) =&gt; {
+        console.log('[unswipe] slide', index);
+      });
+    },
+    destroy() {
+      off?.();
+    },
+  };
+}</code></pre>
+        </div>
+        <div class="callout">
+          <strong>Tip:</strong> Store the unsubscribe function returned by
+          <code>slider.on()</code> in <code>init</code> and call it from
+          <code>destroy</code>.
+        </div>
+      </section>
+
+      <section id="mutations">
+        <h2>Dynamic mutations</h2>
+        <p>
+          Add or remove slides in the DOM, then call <code>update()</code>. The
+          carousel re-collects slides, re-attaches the Intersection Observer,
+          and emits <code>'update'</code> for plugins like pagination.
+        </p>
+        <div class="example">
+          <pre><code>const slide = document.createElement('div');
+slide.textContent = 'New slide';
+carousel.appendChild(slide);
+slider.update();</code></pre>
+        </div>
+      </section>
+
+      <section id="accessibility">
+        <h2>Accessibility</h2>
+        <p>Unswipe applies and maintains the following automatically:</p>
+        <ul>
+          <li><code>role="carousel"</code> on the root</li>
+          <li>
+            <code>aria-label</code> on the root when <code>label</code> is set
+          </li>
+          <li><code>aria-roledescription="slide"</code> on each slide</li>
+          <li>
+            <code>aria-hidden="true"</code> and <code>tabindex="-1"</code> on
+            off-screen slides
+          </li>
+          <li>
+            Removal of <code>aria-hidden</code> and <code>tabindex</code> on the
+            active slide
+          </li>
+        </ul>
+        <div class="callout">
+          <strong>Best practice:</strong> Always pass a descriptive
+          <code>label</code> option so screen-reader users understand the
+          carousel's purpose.
+        </div>
+      </section>
+
+      <section id="examples">
+        <h2>Examples</h2>
+
+        <h3>Center-aligned slides</h3>
+        <div class="example">
+          <pre><code>const slider = new Unswipe(root, { align: 'center', label: 'Gallery' });</code></pre>
+        </div>
+
+        <h3>Custom slide selector</h3>
+        <div class="example">
+          <pre><code>&lt;div id="carousel"&gt;
+  &lt;div class="track"&gt;
+    &lt;article class="slide"&gt;…&lt;/article&gt;
+    &lt;article class="slide"&gt;…&lt;/article&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+const slider = new Unswipe(document.getElementById('carousel'), {
+  slide: '.slide',
+  label: 'Articles',
+});</code></pre>
+        </div>
+
+        <h3>Vertical carousel</h3>
+        <div class="example">
+          <pre><code>const slider = new Unswipe(root, {
+  axis: 'y',
+  align: 'start',
+  label: 'Timeline',
+});</code></pre>
+        </div>
+
+        <h3>Instant programmatic scroll</h3>
+        <div class="example">
+          <pre><code>slider.scrollToIndex(2, 'instant');</code></pre>
+        </div>
+
+        <h3>React (client component)</h3>
+        <div class="example">
+          <pre><code>import { useEffect, useRef } from 'react';
+import { Unswipe } from 'unswipe';
+
+export function Carousel({ children }) {
+  const ref = useRef(null);
+
+  useEffect(() =&gt; {
+    const slider = new Unswipe(ref.current, { label: 'Products' });
+    return () =&gt; slider.destroy();
+  }, []);
+
+  return &lt;div ref={ref}&gt;{children}&lt;/div&gt;;
+}</code></pre>
+        </div>
+
+        <h3>CDN / no bundler</h3>
+        <div class="example">
+          <pre><code>&lt;script type="module"&gt;
+  import { Unswipe } from './assets/unswipe.js';
+
+  new Unswipe(document.getElementById('carousel'), {
+    label: 'Featured',
+  });
+&lt;/script&gt;</code></pre>
+        </div>
+      </section>
+
+      <footer>
+        <a href="./">← Back to demo</a>
+        ·
+        <a href="https://github.com/blabassi/unswipe">GitHub</a>
+      </footer>
+    </main>
+  </body>
+</html>
