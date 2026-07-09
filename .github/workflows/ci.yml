@@ -53,3 +53,10 @@ jobs:
           test -f site/assets/plugins/navigation.js
           test -f site/assets/plugins/pagination.js
           test -f site/.nojekyll
+
+      - name: Responsive layout audit
+        run: |
+          npx --yes serve site -p 4173 &
+          sleep 2
+          npx --yes playwright@1.49.0 install chromium
+          npm run audit:responsive
