@@ -46,6 +46,8 @@ jobs:
         run: |
           test -f site/index.html
           test -f site/docs.html
+          test -f site/docs.js
+          test -f site/docs.css
           test -f site/site.css
           test -f site/main.js
           test -f site/assets/unswipe.js
