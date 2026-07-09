@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Unswipe Demo</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        font-family: system-ui, sans-serif;
+        background: #0f1115;
+        color: #e8eaed;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+        padding: 2rem;
+      }
+
+      .demo {
+        width: min(100%, 42rem);
+      }
+
+      h1 {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin: 0 0 1rem;
+      }
+
+      #carousel {
+        display: flex;
+        gap: 1rem;
+        padding: 1rem;
+        border-radius: 1rem;
+        background: #1a1d24;
+        scroll-padding: 1rem;
+        scrollbar-width: none;
+      }
+
+      #carousel::-webkit-scrollbar {
+        display: none;
+      }
+
+      .slide {
+        min-width: 70%;
+        padding: 3rem 2rem;
+        border-radius: 0.75rem;
+        font-size: 1.5rem;
+        font-weight: 700;
+        text-align: center;
+      }
+
+      .slide:nth-child(1) {
+        background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      }
+      .slide:nth-child(2) {
+        background: linear-gradient(135deg, #ec4899, #f43f5e);
+        min-width: 50%;
+      }
+      .slide:nth-child(3) {
+        background: linear-gradient(135deg, #14b8a6, #22d3ee);
+        min-width: 85%;
+      }
+      .slide:nth-child(4) {
+        background: linear-gradient(135deg, #f59e0b, #ef4444);
+        min-width: 60%;
+      }
+
+      .unswipe-nav__container {
+        display: flex;
+        gap: 0.5rem;
+        margin-top: 1rem;
+      }
+
+      .unswipe-nav__prev,
+      .unswipe-nav__next {
+        flex: 1;
+        padding: 0.75rem;
+        border: none;
+        border-radius: 0.5rem;
+        background: #2a2f3a;
+        color: inherit;
+        font-size: 1.25rem;
+        cursor: pointer;
+      }
+
+      .unswipe-nav__prev:disabled,
+      .unswipe-nav__next:disabled {
+        opacity: 0.35;
+        cursor: not-allowed;
+      }
+
+      .unswipe-pagination__container {
+        margin-top: 0.75rem;
+      }
+
+      .unswipe-pagination {
+        display: flex;
+        justify-content: center;
+        gap: 0.5rem;
+      }
+
+      .unswipe-pagination__dot {
+        width: 0.6rem;
+        height: 0.6rem;
+        border: none;
+        border-radius: 50%;
+        background: #3d4452;
+        cursor: pointer;
+        padding: 0;
+      }
+
+      .unswipe-pagination__dot[aria-selected='true'] {
+        background: #8b5cf6;
+        transform: scale(1.25);
+      }
+
+      #status {
+        margin-top: 1rem;
+        font-size: 0.875rem;
+        color: #9aa0a6;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="demo">
+      <h1>Unswipe — native scroll-snap carousel</h1>
+      <div id="carousel" aria-label="Featured items">
+        <div class="slide">Variable width slide A</div>
+        <div class="slide">Slide B</div>
+        <div class="slide">Wider slide C</div>
+        <div class="slide">Slide D</div>
+      </div>
+      <p id="status">Active slide: 1</p>
+    </div>
+
+    <script type="module">
+      import { Unswipe } from '../dist/unswipe.js';
+      import { autoplay } from '../dist/plugins/autoplay.js';
+      import { navigation } from '../dist/plugins/navigation.js';
+      import { pagination } from '../dist/plugins/pagination.js';
+
+      const status = document.getElementById('status');
+      const carousel = document.getElementById('carousel');
+
+      const slider = new Unswipe(
+        carousel,
+        { align: 'start', label: 'Featured items', threshold: 0.6 },
+        [navigation(), pagination(), autoplay({ delay: 4000 })],
+      );
+
+      slider.on('select', ({ index }) => {
+        status.textContent = `Active slide: ${index + 1}`;
+      });
+    </script>
+  </body>
+</html>
