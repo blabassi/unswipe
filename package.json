@@ -1,0 +1,64 @@
+{
+  "name": "unswipe",
+  "version": "1.0.0",
+  "description": "Microscopic, zero-dependency carousel powered by CSS Scroll Snap and Intersection Observer",
+  "keywords": [
+    "accessibility",
+    "carousel",
+    "scroll-snap",
+    "slider",
+    "zero-dependencies"
+  ],
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
+  "type": "module",
+  "main": "./dist/unswipe.cjs",
+  "module": "./dist/unswipe.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/unswipe.js",
+      "require": "./dist/unswipe.cjs"
+    },
+    "./plugins/autoplay": {
+      "types": "./dist/plugins/autoplay.d.ts",
+      "import": "./dist/plugins/autoplay.js",
+      "require": "./dist/plugins/autoplay.cjs"
+    },
+    "./plugins/navigation": {
+      "types": "./dist/plugins/navigation.d.ts",
+      "import": "./dist/plugins/navigation.js",
+      "require": "./dist/plugins/navigation.cjs"
+    },
+    "./plugins/pagination": {
+      "types": "./dist/plugins/pagination.d.ts",
+      "import": "./dist/plugins/pagination.js",
+      "require": "./dist/plugins/pagination.cjs"
+    }
+  },
+  "scripts": {
+    "build": "npm run build:core && npm run build:plugins && npm run build:types && npm run size",
+    "build:core": "esbuild src/index.ts --bundle --minify --format=esm --outfile=dist/unswipe.js && esbuild src/index.ts --bundle --minify --format=cjs --outfile=dist/unswipe.cjs",
+    "build:plugins": "esbuild src/plugins/autoplay.ts --bundle --minify --format=esm --outfile=dist/plugins/autoplay.js && esbuild src/plugins/autoplay.ts --bundle --minify --format=cjs --outfile=dist/plugins/autoplay.cjs && esbuild src/plugins/navigation.ts --bundle --minify --format=esm --outfile=dist/plugins/navigation.js && esbuild src/plugins/navigation.ts --bundle --minify --format=cjs --outfile=dist/plugins/navigation.cjs && esbuild src/plugins/pagination.ts --bundle --minify --format=esm --outfile=dist/plugins/pagination.js && esbuild src/plugins/pagination.ts --bundle --minify --format=cjs --outfile=dist/plugins/pagination.cjs",
+    "build:types": "tsc --emitDeclarationOnly",
+    "size": "node scripts/size.mjs",
+    "build:site": "node scripts/build-site.mjs",
+    "preview:site": "npm run build:site && npx --yes serve site -p 4173",
+    "dev": "esbuild src/index.ts --bundle --format=esm --outfile=dist/unswipe.js --watch",
+    "typecheck": "tsc --noEmit",
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "ci": "npm run format:check && npm run lint && npm run typecheck && npm run build && npm run build:site"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.0",
+    "oxfmt": "^0.58.0",
+    "oxlint": "^1.73.0",
+    "typescript": "^5.8.0"
+  }
+}

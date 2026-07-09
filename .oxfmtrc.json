@@ -1,0 +1,11 @@
+{
+  "$schema": "./node_modules/oxfmt/configuration_schema.json",
+  "printWidth": 80,
+  "singleQuote": true,
+  "ignorePatterns": [
+    "dist/**",
+    "site/**",
+    "node_modules/**",
+    "package-lock.json"
+  ]
+}
