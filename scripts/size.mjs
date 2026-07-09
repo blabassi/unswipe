@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { readFileSync, statSync } from 'node:fs';
+import { readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 
 const core = 'dist/unswipe.js';
@@ -13,7 +13,9 @@ console.log(`Core bundle: ${min} bytes minified, ${gz} bytes gzipped`);
 console.log(`Target: < ${limit} bytes minified`);
 
 if (min >= limit) {
-  console.error(`FAIL: core exceeds ${limit} byte budget by ${min - limit} bytes`);
+  console.error(
+    `FAIL: core exceeds ${limit} byte budget by ${min - limit} bytes`,
+  );
   process.exit(1);
 }
 

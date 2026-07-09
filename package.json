@@ -2,6 +2,17 @@
   "name": "unswipe",
   "version": "1.0.0",
   "description": "Microscopic, zero-dependency carousel powered by CSS Scroll Snap and Intersection Observer",
+  "keywords": [
+    "accessibility",
+    "carousel",
+    "scroll-snap",
+    "slider",
+    "zero-dependencies"
+  ],
+  "license": "MIT",
+  "files": [
+    "dist"
+  ],
   "type": "module",
   "main": "./dist/unswipe.cjs",
   "module": "./dist/unswipe.js",
@@ -28,9 +39,6 @@
       "require": "./dist/plugins/pagination.cjs"
     }
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "build": "npm run build:core && npm run build:plugins && npm run build:types && npm run size",
     "build:core": "esbuild src/index.ts --bundle --minify --format=esm --outfile=dist/unswipe.js && esbuild src/index.ts --bundle --minify --format=cjs --outfile=dist/unswipe.cjs",
@@ -41,18 +49,16 @@
     "preview:site": "npm run build:site && npx --yes serve site -p 4173",
     "dev": "esbuild src/index.ts --bundle --format=esm --outfile=dist/unswipe.js --watch",
     "typecheck": "tsc --noEmit",
-    "ci": "npm run typecheck && npm run build && npm run build:site"
+    "lint": "oxlint .",
+    "lint:fix": "oxlint . --fix",
+    "format": "oxfmt .",
+    "format:check": "oxfmt --check .",
+    "ci": "npm run format:check && npm run lint && npm run typecheck && npm run build && npm run build:site"
   },
-  "keywords": [
-    "carousel",
-    "slider",
-    "scroll-snap",
-    "accessibility",
-    "zero-dependencies"
-  ],
-  "license": "MIT",
   "devDependencies": {
     "esbuild": "^0.25.0",
+    "oxfmt": "^0.58.0",
+    "oxlint": "^1.73.0",
     "typescript": "^5.8.0"
   }
 }

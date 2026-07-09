@@ -9,13 +9,13 @@ A high-performance, zero-dependency carousel library for the modern web. Unswipe
 
 ## Why Unswipe?
 
-| Concern | Approach |
-| --- | --- |
-| Bundle size | Core &lt; 2 KB minified, no runtime dependencies |
-| Physics | Native compositor scrolling — no `requestAnimationFrame` loops |
-| Layout | Variable-width, asymmetrical slides via flexbox + scroll-snap |
-| Accessibility | Automatic `role`, `aria-hidden`, `tabindex` via IO |
-| Extensibility | Tree-shakeable plugins for autoplay, nav, pagination |
+| Concern       | Approach                                                       |
+| ------------- | -------------------------------------------------------------- |
+| Bundle size   | Core &lt; 2 KB minified, no runtime dependencies               |
+| Physics       | Native compositor scrolling — no `requestAnimationFrame` loops |
+| Layout        | Variable-width, asymmetrical slides via flexbox + scroll-snap  |
+| Accessibility | Automatic `role`, `aria-hidden`, `tabindex` via IO             |
+| Extensibility | Tree-shakeable plugins for autoplay, nav, pagination           |
 
 ## Install
 
@@ -38,11 +38,11 @@ Or use a CDN / copy `dist/unswipe.js` directly.
   import { Unswipe } from 'unswipe';
 
   const slider = new Unswipe(document.getElementById('carousel'), {
-    align: 'start',       // 'start' | 'center' | 'end'
-    axis: 'x',            // 'x' | 'y'
-    label: 'Featured',    // aria-label
-    threshold: 0.5,       // IO visibility threshold
-    behavior: 'smooth',   // programmatic scroll behavior
+    align: 'start', // 'start' | 'center' | 'end'
+    axis: 'x', // 'x' | 'y'
+    label: 'Featured', // aria-label
+    threshold: 0.5, // IO visibility threshold
+    behavior: 'smooth', // programmatic scroll behavior
   });
 
   slider.on('select', ({ index, slide }) => {
@@ -61,27 +61,31 @@ Returns a `Slider` instance.
 
 ### Control methods
 
-| Method | Description |
-| --- | --- |
-| `next()` | Scroll to the next slide |
-| `prev()` | Scroll to the previous slide |
-| `scrollToIndex(index, behavior?)` | Scroll to a specific slide |
-| `update()` | Re-scan DOM after slides are added or removed |
-| `destroy()` | Disconnect observers, tear down plugins, clear listeners |
+| Method                            | Description                                              |
+| --------------------------------- | -------------------------------------------------------- |
+| `next()`                          | Scroll to the next slide                                 |
+| `prev()`                          | Scroll to the previous slide                             |
+| `scrollToIndex(index, behavior?)` | Scroll to a specific slide                               |
+| `update()`                        | Re-scan DOM after slides are added or removed            |
+| `destroy()`                       | Disconnect observers, tear down plugins, clear listeners |
 
 ### Properties
 
-| Property | Type | Description |
-| --- | --- | --- |
-| `root` | `HTMLElement` | Carousel container |
+| Property | Type            | Description            |
+| -------- | --------------- | ---------------------- |
+| `root`   | `HTMLElement`   | Carousel container     |
 | `slides` | `HTMLElement[]` | Current slide elements |
-| `index` | `number` | Active slide index |
+| `index`  | `number`        | Active slide index     |
 
 ### Events
 
 ```ts
-slider.on('select', ({ index, slide }) => { /* ... */ });
-slider.on('update', () => { /* DOM mutated */ });
+slider.on('select', ({ index, slide }) => {
+  /* ... */
+});
+slider.on('update', () => {
+  /* DOM mutated */
+});
 ```
 
 All handlers return an unsubscribe function.
@@ -143,7 +147,11 @@ slider.update(); // re-observes slides, preserves tracking
 
 ```bash
 npm install
-npm run ci           # typecheck + build + size check + site build
+npm run ci           # format + lint + typecheck + build + site
+npm run lint         # oxlint
+npm run lint:fix     # oxlint --fix
+npm run format       # oxfmt
+npm run format:check # oxfmt --check
 npm run build        # build + size check only
 npm run typecheck
 npm run preview:site   # build demo site and serve at http://localhost:4173
@@ -151,10 +159,10 @@ npm run preview:site   # build demo site and serve at http://localhost:4173
 
 ### CI/CD
 
-| Workflow | Trigger | Purpose |
-| --- | --- | --- |
-| [`ci.yml`](.github/workflows/ci.yml) | Push & PR to `main` | Typecheck, build, bundle size budget, demo site assembly |
-| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main` | Deploy demo to GitHub Pages |
+| Workflow                                                 | Trigger             | Purpose                                                                        |
+| -------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------ |
+| [`ci.yml`](.github/workflows/ci.yml)                     | Push & PR to `main` | Format check, oxlint, typecheck, build, bundle size budget, demo site assembly |
+| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main`      | Deploy demo to GitHub Pages                                                    |
 
 ### GitHub Pages
 
