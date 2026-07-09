@@ -46,7 +46,6 @@
     "build:types": "tsc --emitDeclarationOnly",
     "size": "node scripts/size.mjs",
     "build:site": "node scripts/build-site.mjs",
-    "publish:pages": "node scripts/publish-pages.mjs",
     "preview:site": "npm run build:site && npx --yes serve site -p 4173",
     "audit:responsive": "node scripts/audit-responsive.mjs",
     "dev": "esbuild src/index.ts --bundle --format=esm --outfile=dist/unswipe.js --watch",
@@ -61,6 +60,7 @@
     "esbuild": "^0.25.0",
     "oxfmt": "^0.58.0",
     "oxlint": "^1.73.0",
+    "playwright": "1.49.0",
     "typescript": "^5.8.0"
   }
 }

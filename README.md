@@ -159,24 +159,26 @@ npm run preview:site   # build demo site and serve at http://localhost:4173
 
 ### CI/CD
 
-| Workflow                                                 | Trigger             | Purpose                                                                        |
-| -------------------------------------------------------- | ------------------- | ------------------------------------------------------------------------------ |
-| [`ci.yml`](.github/workflows/ci.yml)                     | Push & PR to `main` | Format check, oxlint, typecheck, build, bundle size budget, demo site assembly |
-| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main`      | Deploy demo to GitHub Pages                                                    |
+| Workflow                                                 | Trigger             | Purpose                                                                      |
+| -------------------------------------------------------- | ------------------- | ---------------------------------------------------------------------------- |
+| [`ci.yml`](.github/workflows/ci.yml)                     | Push & PR to `main` | Format check, oxlint, typecheck, build, bundle size budget, responsive audit |
+| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main`      | Build site artifact and deploy to GitHub Pages                               |
 
 ### GitHub Pages
 
-The demo and docs deploy automatically on every push to `main` that changes source files. The workflow builds the site and commits static files (`index.html`, `docs.html`, `assets/`) to the repository root, which GitHub Pages serves directly.
+The interactive guide deploys via **GitHub Actions** on every push to `main` that changes source files. Built artifacts live in `site/` during CI only — they are not committed to the repository.
 
-| URL                                          | Page              |
-| -------------------------------------------- | ----------------- |
-| https://blabassi.github.io/unswipe/          | Live demo         |
-| https://blabassi.github.io/unswipe/docs.html | API documentation |
+**One-time setup:** In the repository **Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions**.
 
-To publish locally:
+| URL                                          | Page                        |
+| -------------------------------------------- | --------------------------- |
+| https://blabassi.github.io/unswipe/          | Interactive guide           |
+| https://blabassi.github.io/unswipe/docs.html | Redirects to guide (legacy) |
+
+To preview locally:
 
 ```bash
-npm run publish:pages
+npm run preview:site
 ```
 
 ## License
