@@ -13,6 +13,7 @@ body {
   background: #0b0d12;
   color: #e8eaed;
   line-height: 1.6;
+  overflow-x: clip;
 }
 
 a {
@@ -109,7 +110,11 @@ h2 {
   border-top: 1px solid #1e2430;
   font-size: 1.25rem;
   font-weight: 600;
-  scroll-margin-top: 1rem;
+  scroll-margin-top: 5rem;
+}
+
+section[id] {
+  scroll-margin-top: 5rem;
 }
 
 h3 {
@@ -243,6 +248,11 @@ footer {
   display: grid;
   gap: 2rem;
   padding-top: 1.5rem;
+  min-width: 0;
+}
+
+.guide {
+  min-width: 0;
 }
 
 @media (min-width: 56rem) {
@@ -290,17 +300,12 @@ footer {
   display: grid;
   gap: 1rem;
   margin: 1rem 0 1.5rem;
+  min-width: 0;
 }
 
-@media (min-width: 48rem) {
-  .playground {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: start;
-  }
-}
-
-.playground--preview-first .playground__preview {
-  order: -1;
+.playground__preview,
+.playground__code {
+  min-width: 0;
 }
 
 .playground__preview {
@@ -308,6 +313,7 @@ footer {
   border-radius: 0.75rem;
   background: #141820;
   border: 1px solid #222833;
+  overflow: hidden;
 }
 
 .playground__code pre {
@@ -366,6 +372,9 @@ footer {
   padding: 0.25rem;
   scroll-padding: 0.25rem;
   scrollbar-width: none;
+  width: 100%;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
 }
 
 .carousel::-webkit-scrollbar {
@@ -421,6 +430,11 @@ footer {
 .unswipe-nav__container,
 .unswipe-pagination__container {
   margin-top: 0.65rem;
+}
+
+.unswipe-nav__container {
+  display: flex;
+  gap: 0.5rem;
 }
 
 .unswipe-nav__prev,
@@ -498,4 +512,145 @@ footer {
 .guide h2:first-of-type {
   border-top: 0;
   padding-top: 0;
+}
+
+@media (min-width: 48rem) {
+  .playground {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.playground--preview-first .playground__preview {
+  order: -1;
+}
+
+/* ── Mobile layout ── */
+
+@media (max-width: 55.99rem) {
+  .guide-shell {
+    padding: 0 1rem 3rem;
+  }
+
+  .site-header__inner {
+    padding: 0.75rem 1rem;
+  }
+
+  .toc--side {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    margin: 0 -1rem 1rem;
+    padding: 0.65rem 1rem;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+    background: #0f1218ee;
+    backdrop-filter: blur(8px);
+  }
+
+  .toc--side h2 {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .toc--side ul {
+    display: flex;
+    gap: 0.4rem;
+    overflow-x: auto;
+    padding: 0;
+    margin: 0;
+    list-style: none;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .toc--side ul::-webkit-scrollbar {
+    display: none;
+  }
+
+  .toc--side li {
+    margin: 0;
+    flex-shrink: 0;
+  }
+
+  .toc--side a {
+    display: block;
+    padding: 0.35rem 0.7rem;
+    border-radius: 999px;
+    border: 1px solid #2a2f3a;
+    background: #141820;
+    font-size: 0.75rem;
+    text-decoration: none;
+    color: #9aa0a6;
+    white-space: nowrap;
+  }
+
+  .toc--side a.is-active {
+    color: #c4b5fd;
+    border-color: #8b5cf6;
+    background: #2a2240;
+    font-weight: 600;
+  }
+
+  h2,
+  section[id] {
+    scroll-margin-top: 3.5rem;
+  }
+
+  .slide {
+    min-width: 78%;
+  }
+
+  .slide:nth-child(4n + 2) {
+    min-width: 62%;
+  }
+
+  .slide:nth-child(4n + 3) {
+    min-width: 88%;
+  }
+
+  .slide:nth-child(4n) {
+    min-width: 68%;
+  }
+
+  .layout-duo .playground {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Framework examples ── */
+
+.framework-block {
+  margin: 1.25rem 0 1.75rem;
+}
+
+.framework-block summary {
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: #e8eaed;
+  margin-bottom: 0.75rem;
+  list-style-position: outside;
+}
+
+.framework-block[open] summary {
+  margin-bottom: 0.5rem;
+}
+
+.framework-block .playground {
+  margin-top: 0.75rem;
+}
+
+unswipe-carousel {
+  display: block;
+  width: 100%;
+  max-width: 100%;
 }

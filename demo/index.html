@@ -40,7 +40,7 @@
             <li><a href="#layouts">Layouts</a></li>
             <li><a href="#reference">API reference</a></li>
             <li><a href="#accessibility">Accessibility</a></li>
-            <li><a href="#extend">Extend</a></li>
+            <li><a href="#extend">Frameworks</a></li>
           </ul>
         </nav>
 
@@ -511,13 +511,134 @@ slider.update();</code></pre>
           </section>
 
           <section id="extend">
-            <h2>Extend</h2>
-            <h3>Custom plugin</h3>
-            <div class="code-only">
-              <pre><code>import type { SliderPlugin } from 'unswipe';
+            <h2>Frameworks &amp; patterns</h2>
+            <p class="section-lede">
+              Unswipe is framework-agnostic — mount on any DOM node and call
+              <code>destroy()</code> on teardown.
+            </p>
+
+            <details class="framework-block" open>
+              <summary>Web Component (live)</summary>
+              <div class="playground">
+                <div class="playground__preview">
+                  <unswipe-carousel label="Web component demo">
+                    <div class="slide">WC slide 1</div>
+                    <div class="slide">WC slide 2</div>
+                    <div class="slide">WC slide 3</div>
+                  </unswipe-carousel>
+                </div>
+                <div class="playground__code">
+                  <p class="example-label">Element</p>
+                  <pre><code>class UnswipeCarousel extends HTMLElement {
+  #slider;
+
+  connectedCallback() {
+    this.#slider = new Unswipe(this, {
+      label: this.getAttribute('label') ?? 'Carousel',
+      align: 'start',
+    });
+  }
+
+  disconnectedCallback() {
+    this.#slider?.destroy();
+  }
+}
+
+customElements.define('unswipe-carousel', UnswipeCarousel);</code></pre>
+                  <p class="example-label">Markup</p>
+                  <pre><code>&lt;unswipe-carousel label="Products"&gt;
+  &lt;div&gt;Slide 1&lt;/div&gt;
+  &lt;div&gt;Slide 2&lt;/div&gt;
+&lt;/unswipe-carousel&gt;</code></pre>
+                </div>
+              </div>
+            </details>
+
+            <details class="framework-block">
+              <summary>React</summary>
+              <div class="code-only">
+                <pre><code>import { useEffect, useRef } from 'react';
+import { Unswipe } from 'unswipe';
+
+export function Carousel({ slides, label = 'Carousel' }) {
+  const ref = useRef(null);
+
+  useEffect(() =&gt; {
+    const root = ref.current;
+    if (!root) return;
+
+    const slider = new Unswipe(root, { label, align: 'start' });
+    return () =&gt; slider.destroy();
+  }, [label]);
+
+  return (
+    &lt;div ref={ref} className="carousel"&gt;
+      {slides.map((text) =&gt; (
+        &lt;div key={text} className="slide"&gt;{text}&lt;/div&gt;
+      ))}
+    &lt;/div&gt;
+  );
+}</code></pre>
+              </div>
+            </details>
+
+            <details class="framework-block">
+              <summary>Vue 3</summary>
+              <div class="code-only">
+                <pre><code>&lt;script setup&gt;
+import { onMounted, onUnmounted, ref } from 'vue';
+import { Unswipe } from 'unswipe';
+
+const root = ref(null);
+let slider;
+
+onMounted(() =&gt; {
+  slider = new Unswipe(root.value, { label: 'Products' });
+});
+
+onUnmounted(() =&gt; slider?.destroy());
+&lt;/script&gt;
+
+&lt;template&gt;
+  &lt;div ref="root" class="carousel"&gt;
+    &lt;div v-for="n in 3" :key="n" class="slide"&gt;Slide {{ n }}&lt;/div&gt;
+  &lt;/div&gt;
+&lt;/template&gt;</code></pre>
+              </div>
+            </details>
+
+            <details class="framework-block">
+              <summary>Svelte</summary>
+              <div class="code-only">
+                <pre><code>&lt;script&gt;
+  import { onMount, onDestroy } from 'svelte';
+  import { Unswipe } from 'unswipe';
+
+  let root;
+  let slider;
+
+  onMount(() =&gt; {
+    slider = new Unswipe(root, { label: 'Gallery' });
+  });
+
+  onDestroy(() =&gt; slider?.destroy());
+&lt;/script&gt;
+
+&lt;div bind:this={root} class="carousel"&gt;
+  {#each ['A', 'B', 'C'] as label}
+    &lt;div class="slide"&gt;{label}&lt;/div&gt;
+  {/each}
+&lt;/div&gt;</code></pre>
+              </div>
+            </details>
+
+            <details class="framework-block">
+              <summary>Custom plugin</summary>
+              <div class="code-only">
+                <pre><code>import type { SliderPlugin } from 'unswipe';
 
 export function logger(): SliderPlugin {
-  let off: (() => void) | undefined;
+  let off;
   return {
     name: 'logger',
     init(slider) {
@@ -528,14 +649,8 @@ export function logger(): SliderPlugin {
     destroy() { off?.(); },
   };
 }</code></pre>
-            </div>
-            <h3>React</h3>
-            <div class="code-only">
-              <pre><code>useEffect(() =&gt; {
-  const slider = new Unswipe(ref.current, { label: 'Products' });
-  return () =&gt; slider.destroy();
-}, []);</code></pre>
-            </div>
+              </div>
+            </details>
           </section>
 
           <footer>
