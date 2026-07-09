@@ -206,6 +206,29 @@ slider.update();`,
   }
 }
 
+// Web Component demo
+{
+  class UnswipeCarousel extends HTMLElement {
+    #slider;
+
+    connectedCallback() {
+      this.#slider = new Unswipe(this, {
+        label: this.getAttribute('label') ?? 'Carousel',
+        align: 'start',
+        threshold: 0.5,
+      });
+    }
+
+    disconnectedCallback() {
+      this.#slider?.destroy();
+    }
+  }
+
+  if (!customElements.get('unswipe-carousel')) {
+    customElements.define('unswipe-carousel', UnswipeCarousel);
+  }
+}
+
 // Highlight active TOC link on scroll
 {
   const links = document.querySelectorAll('.toc a');
