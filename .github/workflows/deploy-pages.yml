@@ -1,4 +1,4 @@
-name: Deploy demo to GitHub Pages
+name: Deploy to GitHub Pages
 
 on:
   push:
@@ -14,14 +14,16 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
+  pages: write
+  id-token: write
 
 concurrency:
   group: pages
   cancel-in-progress: false
 
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -36,15 +38,24 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build and publish static files
-        run: node scripts/publish-pages.mjs
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
 
-      - name: Commit and push site
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add index.html docs.html site.css guide.js assets .nojekyll
-          git rm -f --ignore-unmatch main.js docs.js docs.css
-          git diff --staged --quiet && echo "No site changes to publish" && exit 0
-          git commit -m "chore(pages): publish interactive guide site"
-          git push
+      - name: Build site
+        run: npm run build:site
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

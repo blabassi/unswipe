@@ -46,7 +46,6 @@
     "build:types": "tsc --emitDeclarationOnly",
     "size": "node scripts/size.mjs",
     "build:site": "node scripts/build-site.mjs",
-    "publish:pages": "node scripts/publish-pages.mjs",
     "preview:site": "npm run build:site && npx --yes serve site -p 4173",
     "dev": "esbuild src/index.ts --bundle --format=esm --outfile=dist/unswipe.js --watch",
     "typecheck": "tsc --noEmit",
