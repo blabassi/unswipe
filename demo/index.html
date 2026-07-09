@@ -12,28 +12,11 @@
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◫</text></svg>"
     />
+    <link rel="stylesheet" href="./site.css" />
     <style>
-      *,
-      *::before,
-      *::after {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        font-family:
-          system-ui,
-          -apple-system,
-          sans-serif;
-        background: #0b0d12;
-        color: #e8eaed;
-        line-height: 1.5;
-      }
-
       .page {
         width: min(100%, 44rem);
-        margin: 0 auto;
-        padding: 2.5rem 1.25rem 3rem;
+        padding-top: 1.5rem;
       }
 
       .eyebrow {
@@ -249,6 +232,17 @@
     </style>
   </head>
   <body>
+    <header class="site-header">
+      <div class="site-header__inner">
+        <a class="site-logo" href="./">Unswipe</a>
+        <nav class="site-nav" aria-label="Site">
+          <a href="./" aria-current="page">Demo</a>
+          <a href="./docs.html">Docs</a>
+          <a href="https://github.com/blabassi/unswipe">GitHub</a>
+        </nav>
+      </div>
+    </header>
+
     <main class="page">
       <p class="eyebrow">Live demo</p>
       <h1>Unswipe</h1>
@@ -304,6 +298,8 @@
       </section>
 
       <footer>
+        <a href="./docs.html">Documentation</a>
+        ·
         <a href="https://github.com/blabassi/unswipe">View source on GitHub</a>
       </footer>
     </main>
