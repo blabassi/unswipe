@@ -54,9 +54,11 @@ jobs:
           test -f site/assets/plugins/pagination.js
           test -f site/.nojekyll
 
+      - name: Install Playwright Chromium
+        run: npx playwright install chromium --with-deps
+
       - name: Responsive layout audit
         run: |
           npx --yes serve site -p 4173 &
-          sleep 2
-          npx --yes playwright@1.49.0 install chromium
+          npx --yes wait-on -t 30000 http://127.0.0.1:4173
           npm run audit:responsive
