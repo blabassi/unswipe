@@ -33,7 +33,40 @@ function logEvent(id, message) {
   }
 }
 
-// Alignment playground
+// Full-featured demo (plugins + variable width)
+{
+  const root = document.getElementById('ex-featured');
+  if (root) {
+    const slider = new Unswipe(
+      root,
+      { align: 'start', label: 'Featured items', threshold: 0.6 },
+      [navigation(), pagination(), autoplay({ delay: 4500 })],
+    );
+    slider.on('select', ({ index }) => {
+      const status = document.getElementById('ex-featured-status');
+      if (status)
+        status.textContent = `Active slide: ${index + 1} of ${slider.slides.length}`;
+    });
+    document
+      .getElementById('ex-featured-add')
+      ?.addEventListener('click', () => {
+        const slide = document.createElement('div');
+        slide.className = 'slide';
+        slide.textContent = `Slide ${root.children.length + 1}`;
+        root.append(slide);
+        slider.update();
+      });
+    document
+      .getElementById('ex-featured-remove')
+      ?.addEventListener('click', () => {
+        if (slider.slides.length <= 1) return;
+        slider.slides[slider.slides.length - 1]?.remove();
+        slider.update();
+      });
+  }
+}
+
+// Alignment
 {
   const root = document.getElementById('ex-align');
   const codeId = 'ex-align-code';
@@ -44,7 +77,7 @@ function logEvent(id, message) {
     const render = () => {
       setCode(
         codeId,
-        `const slider = new Unswipe(root, {
+        `new Unswipe(root, {
   align: '${align}',
   label: 'Alignment demo',
 });`,
@@ -67,7 +100,7 @@ function logEvent(id, message) {
   }
 }
 
-// Events playground
+// Events
 {
   const root = document.getElementById('ex-events');
   const logId = 'ex-events-log';
@@ -85,20 +118,7 @@ function logEvent(id, message) {
   }
 }
 
-// Plugins playground
-{
-  const root = document.getElementById('ex-plugins');
-  if (root) {
-    const slider = new Unswipe(
-      root,
-      { align: 'start', label: 'Plugin demo', threshold: 0.6 },
-      [navigation(), pagination(), autoplay({ delay: 4500 })],
-    );
-    void slider;
-  }
-}
-
-// Mutations playground
+// Mutations
 {
   const root = document.getElementById('ex-mutate');
   const codeId = 'ex-mutate-code';
@@ -110,7 +130,7 @@ function logEvent(id, message) {
       setCode(
         codeId,
         `const slide = document.createElement('div');
-slide.className = 'docs-slide';
+slide.className = 'slide';
 slide.textContent = 'Slide ${count}';
 root.appendChild(slide);
 slider.update();`,
@@ -120,7 +140,7 @@ slider.update();`,
     document.getElementById('ex-mutate-add')?.addEventListener('click', () => {
       count += 1;
       const slide = document.createElement('div');
-      slide.className = 'docs-slide';
+      slide.className = 'slide';
       slide.textContent = `Slide ${count}`;
       root.append(slide);
       slider.update();
@@ -140,7 +160,7 @@ slider.update();`,
   }
 }
 
-// Vertical playground
+// Vertical
 {
   const root = document.getElementById('ex-vertical');
   if (root) {
@@ -153,7 +173,7 @@ slider.update();`,
   }
 }
 
-// Custom selector playground
+// Custom selector
 {
   const root = document.getElementById('ex-selector');
   if (root) {
@@ -165,17 +185,15 @@ slider.update();`,
   }
 }
 
-// Programmatic API playground
+// Programmatic API
 {
   const root = document.getElementById('ex-api');
   const status = document.getElementById('ex-api-status');
   if (root) {
     const slider = new Unswipe(root, { label: 'API controls' });
-
     slider.on('select', ({ index }) => {
       if (status) status.textContent = `slider.index === ${index}`;
     });
-
     document.getElementById('ex-api-prev')?.addEventListener('click', () => {
       slider.prev();
     });
@@ -186,4 +204,26 @@ slider.update();`,
       slider.scrollToIndex(2, 'smooth');
     });
   }
+}
+
+// Highlight active TOC link on scroll
+{
+  const links = document.querySelectorAll('.toc a');
+  const sections = [...links]
+    .map((a) => a.getAttribute('href'))
+    .filter((href) => href)
+    .map((href) => document.querySelector(href));
+  const observer = new IntersectionObserver(
+    (entries) => {
+      for (const entry of entries) {
+        if (!entry.isIntersecting) continue;
+        const id = `#${entry.target.id}`;
+        links.forEach((link) => {
+          link.classList.toggle('is-active', link.getAttribute('href') === id);
+        });
+      }
+    },
+    { rootMargin: '-40% 0px -50% 0px', threshold: 0 },
+  );
+  sections.forEach((section) => section && observer.observe(section));
 }

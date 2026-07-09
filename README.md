@@ -5,7 +5,7 @@
 
 A high-performance, zero-dependency carousel library for the modern web. Unswipe delegates physics, layout, and snapping to native browser APIs — **CSS Scroll Snap** for hardware-accelerated kinetic scrolling and **Intersection Observer** for dynamic accessibility — keeping the core bundle under **2 KB** minified.
 
-**[Live demo](https://blabassi.github.io/unswipe/)** · **[Documentation](https://blabassi.github.io/unswipe/docs.html)**
+**[Interactive guide](https://blabassi.github.io/unswipe/)** — live examples with rendered carousels alongside the code that runs them
 
 ## Why Unswipe?
 

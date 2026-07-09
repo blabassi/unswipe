@@ -5,305 +5,548 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta
       name="description"
-      content="Unswipe demo — a microscopic, zero-dependency carousel powered by CSS Scroll Snap and Intersection Observer."
+      content="Unswipe — learn by doing. Interactive guide with live carousel examples and API reference."
     />
-    <title>Unswipe Demo</title>
+    <title>Unswipe — Guide &amp; Examples</title>
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>◫</text></svg>"
     />
     <link rel="stylesheet" href="./site.css" />
-    <style>
-      .page {
-        width: min(100%, 44rem);
-        padding-top: 1.5rem;
-      }
-
-      .eyebrow {
-        margin: 0 0 0.5rem;
-        font-size: 0.75rem;
-        font-weight: 600;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-        color: #8b5cf6;
-      }
-
-      h1 {
-        margin: 0 0 0.75rem;
-        font-size: clamp(1.5rem, 4vw, 2rem);
-        font-weight: 700;
-        letter-spacing: -0.02em;
-      }
-
-      .lede {
-        margin: 0 0 1.5rem;
-        color: #9aa0a6;
-        max-width: 38ch;
-      }
-
-      .badges {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-bottom: 1.75rem;
-      }
-
-      .badge {
-        padding: 0.25rem 0.65rem;
-        border: 1px solid #2a2f3a;
-        border-radius: 999px;
-        font-size: 0.75rem;
-        color: #c4c7cc;
-        background: #141820;
-      }
-
-      .panel {
-        padding: 1rem;
-        border-radius: 1rem;
-        background: #141820;
-        border: 1px solid #222833;
-      }
-
-      #carousel {
-        display: flex;
-        gap: 1rem;
-        padding: 0.25rem;
-        scroll-padding: 0.25rem;
-        scrollbar-width: none;
-      }
-
-      #carousel::-webkit-scrollbar {
-        display: none;
-      }
-
-      .slide {
-        min-width: 70%;
-        padding: 3rem 1.5rem;
-        border-radius: 0.75rem;
-        font-size: clamp(1.1rem, 3vw, 1.5rem);
-        font-weight: 700;
-        text-align: center;
-        color: #fff;
-      }
-
-      .slide:nth-child(4n + 1) {
-        background: linear-gradient(135deg, #6366f1, #8b5cf6);
-      }
-      .slide:nth-child(4n + 2) {
-        background: linear-gradient(135deg, #ec4899, #f43f5e);
-        min-width: 50%;
-      }
-      .slide:nth-child(4n + 3) {
-        background: linear-gradient(135deg, #14b8a6, #22d3ee);
-        min-width: 85%;
-      }
-      .slide:nth-child(4n) {
-        background: linear-gradient(135deg, #f59e0b, #ef4444);
-        min-width: 60%;
-      }
-
-      .controls {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        margin-top: 1rem;
-      }
-
-      .controls button {
-        flex: 1 1 auto;
-        min-width: 7rem;
-        padding: 0.65rem 0.9rem;
-        border: 1px solid #2a2f3a;
-        border-radius: 0.5rem;
-        background: #1a1f2b;
-        color: inherit;
-        font: inherit;
-        font-size: 0.875rem;
-        cursor: pointer;
-      }
-
-      .controls button:hover {
-        background: #222833;
-      }
-
-      .unswipe-nav__container {
-        display: flex;
-        gap: 0.5rem;
-        margin-top: 1rem;
-      }
-
-      .unswipe-nav__prev,
-      .unswipe-nav__next {
-        flex: 1;
-        padding: 0.75rem;
-        border: none;
-        border-radius: 0.5rem;
-        background: #1a1f2b;
-        color: inherit;
-        font-size: 1.25rem;
-        cursor: pointer;
-      }
-
-      .unswipe-nav__prev:disabled,
-      .unswipe-nav__next:disabled {
-        opacity: 0.35;
-        cursor: not-allowed;
-      }
-
-      .unswipe-pagination__container {
-        margin-top: 0.75rem;
-      }
-
-      .unswipe-pagination {
-        display: flex;
-        justify-content: center;
-        gap: 0.5rem;
-      }
-
-      .unswipe-pagination__dot {
-        width: 0.6rem;
-        height: 0.6rem;
-        border: none;
-        border-radius: 50%;
-        background: #3d4452;
-        cursor: pointer;
-        padding: 0;
-      }
-
-      .unswipe-pagination__dot[aria-selected='true'] {
-        background: #8b5cf6;
-        transform: scale(1.25);
-      }
-
-      #status {
-        margin: 1rem 0 0;
-        font-size: 0.875rem;
-        color: #9aa0a6;
-      }
-
-      .features {
-        display: grid;
-        gap: 0.75rem;
-        margin-top: 2rem;
-      }
-
-      .feature {
-        padding: 1rem;
-        border-radius: 0.75rem;
-        background: #10141c;
-        border: 1px solid #1e2430;
-      }
-
-      .feature h2 {
-        margin: 0 0 0.35rem;
-        font-size: 0.9rem;
-        font-weight: 600;
-      }
-
-      .feature p {
-        margin: 0;
-        font-size: 0.85rem;
-        color: #9aa0a6;
-      }
-
-      footer {
-        margin-top: 2.5rem;
-        padding-top: 1.25rem;
-        border-top: 1px solid #1e2430;
-        font-size: 0.875rem;
-        color: #9aa0a6;
-      }
-
-      footer a {
-        color: #a78bfa;
-      }
-
-      .visually-hidden {
-        position: absolute;
-        width: 1px;
-        height: 1px;
-        padding: 0;
-        margin: -1px;
-        overflow: hidden;
-        clip: rect(0, 0, 0, 0);
-        white-space: nowrap;
-        border: 0;
-      }
-    </style>
   </head>
   <body>
     <header class="site-header">
       <div class="site-header__inner">
         <a class="site-logo" href="./">Unswipe</a>
         <nav class="site-nav" aria-label="Site">
-          <a href="./" aria-current="page">Demo</a>
-          <a href="./docs.html">Docs</a>
           <a href="https://github.com/blabassi/unswipe">GitHub</a>
         </nav>
       </div>
     </header>
 
-    <main class="page">
-      <p class="eyebrow">Live demo</p>
-      <h1>Unswipe</h1>
-      <p class="lede">
-        Swipe or drag the track below. Slides are variable width — layout and
-        snapping are handled entirely by native CSS Scroll Snap.
-      </p>
+    <div class="guide-shell">
+      <div class="guide-layout">
+        <nav class="toc toc--side" aria-label="On this page">
+          <h2>On this page</h2>
+          <ul>
+            <li><a href="#intro">Introduction</a></li>
+            <li><a href="#install">Install</a></li>
+            <li><a href="#quick-start">Quick start</a></li>
+            <li><a href="#featured">Full demo</a></li>
+            <li><a href="#options">Options</a></li>
+            <li><a href="#controls">Controls</a></li>
+            <li><a href="#events">Events</a></li>
+            <li><a href="#mutations">Mutations</a></li>
+            <li><a href="#layouts">Layouts</a></li>
+            <li><a href="#reference">API reference</a></li>
+            <li><a href="#accessibility">Accessibility</a></li>
+            <li><a href="#extend">Extend</a></li>
+          </ul>
+        </nav>
 
-      <div class="badges">
-        <span class="badge">&lt; 2 KB core</span>
-        <span class="badge">Zero dependencies</span>
-        <span class="badge">CSS Scroll Snap</span>
-        <span class="badge">Intersection Observer a11y</span>
+        <main class="guide">
+          <section id="intro">
+            <p class="eyebrow">Interactive guide</p>
+            <h1>Unswipe</h1>
+            <p class="lede">
+              A zero-dependency carousel powered by CSS Scroll Snap and
+              Intersection Observer. Every section below pairs
+              <strong>live UI</strong> with the <strong>code</strong> that runs
+              it.
+            </p>
+            <div class="badges">
+              <span class="badge">&lt; 2 KB core</span>
+              <span class="badge">Zero dependencies</span>
+              <span class="badge">CSS Scroll Snap</span>
+              <span class="badge">IO-driven a11y</span>
+            </div>
+          </section>
+
+          <section id="install">
+            <h2>Install</h2>
+            <div class="playground playground--preview-first">
+              <div class="playground__code">
+                <p class="example-label">npm</p>
+                <pre><code>npm install unswipe</code></pre>
+                <p class="example-label">CDN / copy</p>
+                <pre><code>import { Unswipe } from './assets/unswipe.js';</code></pre>
+              </div>
+              <div class="playground__preview">
+                <p class="section-lede">
+                  No runtime dependencies. Import the core (&lt; 2 KB) and add
+                  plugins only when you need them.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="quick-start">
+            <h2>Quick start</h2>
+            <p class="section-lede">
+              Slides default to direct children of the root element.
+            </p>
+            <div class="playground">
+              <div class="playground__preview">
+                <div id="ex-quick" class="carousel">
+                  <div class="slide">Slide 1</div>
+                  <div class="slide">Slide 2</div>
+                  <div class="slide">Slide 3</div>
+                </div>
+                <p id="ex-quick-status" class="playground__status">
+                  Active slide: 1
+                </p>
+              </div>
+              <div class="playground__code">
+                <p class="example-label">HTML</p>
+                <pre><code>&lt;div id="carousel"&gt;
+  &lt;div&gt;Slide 1&lt;/div&gt;
+  &lt;div&gt;Slide 2&lt;/div&gt;
+  &lt;div&gt;Slide 3&lt;/div&gt;
+&lt;/div&gt;</code></pre>
+                <p class="example-label">JavaScript</p>
+                <pre><code>import { Unswipe } from 'unswipe';
+
+const slider = new Unswipe(
+  document.getElementById('carousel'),
+  { align: 'start', label: 'Featured', threshold: 0.5 },
+);
+
+slider.on('select', ({ index }) =&gt; {
+  console.log('Active:', index);
+});</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <section id="featured">
+            <h2>Full demo</h2>
+            <p class="section-lede">
+              Variable-width slides, navigation arrows, pagination dots, and
+              autoplay — all via optional plugins.
+            </p>
+            <div class="playground">
+              <div class="playground__preview">
+                <div id="ex-featured" class="carousel">
+                  <div class="slide">Variable width A</div>
+                  <div class="slide">Slide B</div>
+                  <div class="slide">Wider slide C</div>
+                  <div class="slide">Slide D</div>
+                </div>
+                <p id="ex-featured-status" class="playground__status">
+                  Active slide: 1 of 4
+                </p>
+                <div class="playground__controls">
+                  <button id="ex-featured-add" type="button">Add slide</button>
+                  <button id="ex-featured-remove" type="button">
+                    Remove last
+                  </button>
+                </div>
+              </div>
+              <div class="playground__code">
+                <p class="example-label">JavaScript</p>
+                <pre><code>import { Unswipe } from 'unswipe';
+import { autoplay } from 'unswipe/plugins/autoplay';
+import { navigation } from 'unswipe/plugins/navigation';
+import { pagination } from 'unswipe/plugins/pagination';
+
+const slider = new Unswipe(root, {
+  align: 'start',
+  label: 'Featured items',
+  threshold: 0.6,
+}, [
+  navigation(),
+  pagination(),
+  autoplay({ delay: 4500 }),
+]);</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <section id="options">
+            <h2>Options</h2>
+            <p class="section-lede">
+              Toggle alignment below — the code updates as you interact.
+            </p>
+            <div class="playground">
+              <div class="playground__preview">
+                <div id="ex-align" class="carousel">
+                  <div class="slide">A</div>
+                  <div class="slide">B</div>
+                  <div class="slide">C</div>
+                  <div class="slide">D</div>
+                </div>
+                <div class="playground__controls">
+                  <button type="button" data-align="start" aria-pressed="true">
+                    start
+                  </button>
+                  <button
+                    type="button"
+                    data-align="center"
+                    aria-pressed="false"
+                  >
+                    center
+                  </button>
+                  <button type="button" data-align="end" aria-pressed="false">
+                    end
+                  </button>
+                </div>
+              </div>
+              <div class="playground__code">
+                <pre><code id="ex-align-code">new Unswipe(root, {
+  align: 'start',
+  label: 'Alignment demo',
+});</code></pre>
+              </div>
+            </div>
+            <details class="ref-block">
+              <summary>All options</summary>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Option</th>
+                      <th>Default</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>slide</code></td>
+                      <td>children</td>
+                      <td>CSS selector for slides</td>
+                    </tr>
+                    <tr>
+                      <td><code>align</code></td>
+                      <td><code>'start'</code></td>
+                      <td><code>'start' | 'center' | 'end'</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>axis</code></td>
+                      <td><code>'x'</code></td>
+                      <td><code>'x' | 'y'</code></td>
+                    </tr>
+                    <tr>
+                      <td><code>label</code></td>
+                      <td>—</td>
+                      <td><code>aria-label</code> on root</td>
+                    </tr>
+                    <tr>
+                      <td><code>threshold</code></td>
+                      <td><code>0.5</code></td>
+                      <td>IO visibility ratio</td>
+                    </tr>
+                    <tr>
+                      <td><code>behavior</code></td>
+                      <td><code>'smooth'</code></td>
+                      <td>Programmatic scroll</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </section>
+
+          <section id="controls">
+            <h2>Controls</h2>
+            <p class="section-lede">
+              Programmatic navigation via the instance API.
+            </p>
+            <div class="playground">
+              <div class="playground__preview">
+                <div id="ex-api" class="carousel">
+                  <div class="slide">First</div>
+                  <div class="slide">Second</div>
+                  <div class="slide">Third</div>
+                  <div class="slide">Fourth</div>
+                </div>
+                <div class="playground__controls">
+                  <button id="ex-api-prev" type="button">prev()</button>
+                  <button id="ex-api-next" type="button">next()</button>
+                  <button id="ex-api-jump" type="button">
+                    scrollToIndex(2)
+                  </button>
+                </div>
+                <p id="ex-api-status" class="playground__status">
+                  slider.index === 0
+                </p>
+              </div>
+              <div class="playground__code">
+                <pre><code>slider.prev();
+slider.next();
+slider.scrollToIndex(2, 'smooth');
+slider.update();
+slider.destroy();</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <section id="events">
+            <h2>Events</h2>
+            <p class="section-lede">
+              Swipe a slide — watch the event log update.
+            </p>
+            <div class="playground">
+              <div class="playground__preview">
+                <div id="ex-events" class="carousel">
+                  <div class="slide">One</div>
+                  <div class="slide">Two</div>
+                  <div class="slide">Three</div>
+                </div>
+                <div id="ex-events-log" class="event-log" aria-live="polite">
+                  <div>Swipe to see events…</div>
+                </div>
+              </div>
+              <div class="playground__code">
+                <pre><code>slider.on('select', ({ index, slide }) =&gt; {
+  console.log('select', index);
+});
+
+slider.on('update', () =&gt; {
+  console.log('DOM re-scanned');
+});
+
+const off = slider.on('select', handler);
+off(); // unsubscribe</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <section id="mutations">
+            <h2>Dynamic mutations</h2>
+            <p class="section-lede">
+              Add or remove slides, then call <code>update()</code>.
+            </p>
+            <div class="playground">
+              <div class="playground__preview">
+                <div id="ex-mutate" class="carousel">
+                  <div class="slide">Slide 1</div>
+                  <div class="slide">Slide 2</div>
+                  <div class="slide">Slide 3</div>
+                </div>
+                <div class="playground__controls">
+                  <button id="ex-mutate-add" type="button">Add slide</button>
+                  <button id="ex-mutate-remove" type="button">
+                    Remove last
+                  </button>
+                </div>
+              </div>
+              <div class="playground__code">
+                <pre><code id="ex-mutate-code">const slide = document.createElement('div');
+slide.className = 'slide';
+slide.textContent = 'Slide 4';
+root.appendChild(slide);
+slider.update();</code></pre>
+              </div>
+            </div>
+          </section>
+
+          <section id="layouts">
+            <h2>Layouts</h2>
+            <div class="layout-duo">
+              <div>
+                <h3>Vertical axis</h3>
+                <div class="playground" style="grid-template-columns: 1fr">
+                  <div class="playground__preview">
+                    <div id="ex-vertical" class="carousel carousel--y">
+                      <div class="slide">2024</div>
+                      <div class="slide">2025</div>
+                      <div class="slide">2026</div>
+                    </div>
+                  </div>
+                  <div class="playground__code">
+                    <pre><code>{ axis: 'y', align: 'start' }</code></pre>
+                  </div>
+                </div>
+              </div>
+              <div>
+                <h3>Custom selector</h3>
+                <div class="playground" style="grid-template-columns: 1fr">
+                  <div class="playground__preview">
+                    <div id="ex-selector" class="carousel">
+                      <article class="slide article-slide">Article A</article>
+                      <article class="slide article-slide">Article B</article>
+                      <article class="slide article-slide">Article C</article>
+                    </div>
+                  </div>
+                  <div class="playground__code">
+                    <pre><code>{ slide: '.article-slide' }</code></pre>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="reference">
+            <h2>API reference</h2>
+            <details class="ref-block" open>
+              <summary>Instance API</summary>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Member</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>root</code></td>
+                      <td>Carousel container element</td>
+                    </tr>
+                    <tr>
+                      <td><code>slides</code></td>
+                      <td>Current slide elements</td>
+                    </tr>
+                    <tr>
+                      <td><code>index</code></td>
+                      <td>Active slide index</td>
+                    </tr>
+                    <tr>
+                      <td><code>next() / prev()</code></td>
+                      <td>Scroll by one slide</td>
+                    </tr>
+                    <tr>
+                      <td><code>scrollToIndex(i, behavior?)</code></td>
+                      <td>Scroll to index</td>
+                    </tr>
+                    <tr>
+                      <td><code>update()</code></td>
+                      <td>Re-scan DOM after mutations</td>
+                    </tr>
+                    <tr>
+                      <td><code>destroy()</code></td>
+                      <td>Teardown observers &amp; plugins</td>
+                    </tr>
+                    <tr>
+                      <td><code>on(event, handler)</code></td>
+                      <td>Subscribe; returns unsubscribe fn</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+            <details class="ref-block">
+              <summary>Types</summary>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Type</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>Slider</code></td>
+                      <td>Public instance interface</td>
+                    </tr>
+                    <tr>
+                      <td><code>SliderOptions</code></td>
+                      <td>Constructor options</td>
+                    </tr>
+                    <tr>
+                      <td><code>SliderPlugin</code></td>
+                      <td>
+                        <code>name</code>, <code>init</code>,
+                        <code>destroy?</code>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>SelectDetail</code></td>
+                      <td><code>{ index, slide }</code></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+            <details class="ref-block">
+              <summary>Plugin options</summary>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Plugin</th>
+                      <th>Key options</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><code>autoplay</code></td>
+                      <td>
+                        <code>delay</code>, <code>pauseOnHover</code>,
+                        <code>loop</code>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>navigation</code></td>
+                      <td>
+                        <code>prevLabel</code>, <code>nextLabel</code>,
+                        <code>className</code>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td><code>pagination</code></td>
+                      <td><code>label</code>, <code>className</code></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </details>
+          </section>
+
+          <section id="accessibility">
+            <h2>Accessibility</h2>
+            <p class="section-lede">
+              Applied automatically — try tabbing through slides above.
+            </p>
+            <ul>
+              <li><code>role="carousel"</code> on the root</li>
+              <li><code>aria-label</code> when <code>label</code> is set</li>
+              <li><code>aria-roledescription="slide"</code> on each slide</li>
+              <li>
+                <code>aria-hidden</code> + <code>tabindex="-1"</code> on
+                off-screen slides
+              </li>
+            </ul>
+          </section>
+
+          <section id="extend">
+            <h2>Extend</h2>
+            <h3>Custom plugin</h3>
+            <div class="code-only">
+              <pre><code>import type { SliderPlugin } from 'unswipe';
+
+export function logger(): SliderPlugin {
+  let off: (() => void) | undefined;
+  return {
+    name: 'logger',
+    init(slider) {
+      off = slider.on('select', ({ index }) =&gt; {
+        console.log('[unswipe]', index);
+      });
+    },
+    destroy() { off?.(); },
+  };
+}</code></pre>
+            </div>
+            <h3>React</h3>
+            <div class="code-only">
+              <pre><code>useEffect(() =&gt; {
+  const slider = new Unswipe(ref.current, { label: 'Products' });
+  return () =&gt; slider.destroy();
+}, []);</code></pre>
+            </div>
+          </section>
+
+          <footer>
+            <a href="https://github.com/blabassi/unswipe"
+              >View source on GitHub</a
+            >
+          </footer>
+        </main>
       </div>
+    </div>
 
-      <section class="panel" aria-labelledby="demo-heading">
-        <h2 id="demo-heading" class="visually-hidden">Carousel demo</h2>
-        <div id="carousel" aria-label="Featured items">
-          <div class="slide">Variable width slide A</div>
-          <div class="slide">Slide B</div>
-          <div class="slide">Wider slide C</div>
-          <div class="slide">Slide D</div>
-        </div>
-        <p id="status">Active slide: 1 of 4</p>
-        <div class="controls">
-          <button id="add-slide" type="button">Add slide</button>
-          <button id="remove-slide" type="button">Remove last slide</button>
-        </div>
-      </section>
-
-      <section class="features" aria-label="Highlights">
-        <article class="feature">
-          <h2>Hardware-accelerated gestures</h2>
-          <p>
-            Touch and mouse dragging ride the browser compositor — no custom
-            physics loop or layout thrashing.
-          </p>
-        </article>
-        <article class="feature">
-          <h2>Dynamic mutation support</h2>
-          <p>
-            Use the buttons above to add or remove slides; the carousel calls
-            <code>.update()</code> to re-observe the DOM without re-init.
-          </p>
-        </article>
-        <article class="feature">
-          <h2>Plugin architecture</h2>
-          <p>
-            This demo loads optional autoplay, arrow navigation, and pagination
-            plugins — each shipped as a separate bundle.
-          </p>
-        </article>
-      </section>
-
-      <footer>
-        <a href="./docs.html">Documentation</a>
-        ·
-        <a href="https://github.com/blabassi/unswipe">View source on GitHub</a>
-      </footer>
-    </main>
-
-    <script type="module" src="./main.js"></script>
+    <script type="module" src="./guide.js"></script>
   </body>
 </html>
