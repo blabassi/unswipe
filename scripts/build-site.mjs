@@ -14,10 +14,8 @@ mkdirSync(join(site, 'assets', 'plugins'), { recursive: true });
 
 cpSync(join(root, 'demo', 'index.html'), join(site, 'index.html'));
 cpSync(join(root, 'demo', 'docs.html'), join(site, 'docs.html'));
-cpSync(join(root, 'demo', 'docs.js'), join(site, 'docs.js'));
-cpSync(join(root, 'demo', 'docs.css'), join(site, 'docs.css'));
 cpSync(join(root, 'demo', 'site.css'), join(site, 'site.css'));
-cpSync(join(root, 'demo', 'main.js'), join(site, 'main.js'));
+cpSync(join(root, 'demo', 'guide.js'), join(site, 'guide.js'));
 cpSync(join(root, 'dist', 'unswipe.js'), join(site, 'assets', 'unswipe.js'));
 cpSync(
   join(root, 'dist', 'plugins', 'autoplay.js'),

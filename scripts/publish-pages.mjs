@@ -9,17 +9,15 @@ const site = join(root, 'site');
 
 execSync('npm run build:site', { cwd: root, stdio: 'inherit' });
 
-const files = [
-  'index.html',
-  'docs.html',
-  'site.css',
-  'docs.css',
-  'main.js',
-  'docs.js',
-];
+const files = ['index.html', 'docs.html', 'site.css', 'guide.js'];
+const stale = ['main.js', 'docs.js', 'docs.css'];
 
 for (const file of files) {
   cpSync(join(site, file), join(root, file));
+}
+
+for (const file of stale) {
+  rmSync(join(root, file), { force: true });
 }
 
 rmSync(join(root, 'assets'), { recursive: true, force: true });
