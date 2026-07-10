@@ -5,5 +5,17 @@ export default defineConfig({
     environment: 'happy-dom',
     include: ['src/**/*.test.ts'],
     setupFiles: ['./src/test/setup.ts'],
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*.ts'],
+      exclude: ['src/**/*.test.ts', 'src/test/**'],
+      reporter: ['text', 'html', 'lcov'],
+      thresholds: {
+        lines: 90,
+        functions: 90,
+        branches: 85,
+        statements: 90,
+      },
+    },
   },
 });

@@ -156,10 +156,12 @@ slider.update(); // re-observes slides, preserves tracking
 
 ```bash
 npm install
-npm run ci             # format + lint + typecheck + build + test + docs site
+npm run ci             # format + lint + typecheck + build + coverage + docs site
 npm run test           # vitest unit tests (core, plugins, bundle budget)
+npm run test:coverage  # vitest with v8 coverage thresholds
 npm run docs:dev       # Astro Starlight docs at http://localhost:4321/unswipe/
 npm run preview:site   # production docs build at http://localhost:4173/unswipe/
+npm run audit:frameworks # Playwright check that framework demos render
 npm run lint
 npm run format
 npm run build          # library + size check only
@@ -170,10 +172,10 @@ Docs live in [`docs/`](docs/) (Astro Starlight). Edit MDX under `docs/src/conten
 
 ### CI/CD
 
-| Workflow                                                 | Trigger             | Purpose                                                                                |
-| -------------------------------------------------------- | ------------------- | -------------------------------------------------------------------------------------- |
-| [`ci.yml`](.github/workflows/ci.yml)                     | Push & PR to `main` | Format, lint, typecheck, build, Vitest, Starlight build, responsive + framework audits |
-| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main`      | Build Starlight site artifact and deploy to GitHub Pages                               |
+| Workflow                                                 | Trigger             | Purpose                                                                                         |
+| -------------------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------- |
+| [`ci.yml`](.github/workflows/ci.yml)                     | Push & PR to `main` | Format, lint, typecheck, build, Vitest coverage, Starlight build, responsive + framework audits |
+| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main`      | Build Starlight site artifact and deploy to GitHub Pages                                        |
 
 ### GitHub Pages
 
