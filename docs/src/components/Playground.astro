@@ -1,0 +1,71 @@
+---
+interface Props {
+  id: string;
+  slides?: string[];
+  label?: string;
+  align?: 'start' | 'center' | 'end';
+  axis?: 'x' | 'y';
+  plugins?: string;
+  slideSelector?: string;
+  status?: boolean;
+  code?: string;
+  codeLabel?: string;
+}
+const {
+  id,
+  slides = ['Slide 1', 'Slide 2', 'Slide 3'],
+  label = 'Carousel',
+  align = 'start',
+  axis = 'x',
+  plugins = '',
+  slideSelector,
+  status = true,
+  code,
+  codeLabel = 'JavaScript',
+} = Astro.props;
+---
+
+<div class="playground" data-pagefind-ignore>
+  <div class="playground__preview">
+    <div
+      id={id}
+      class:list={['carousel', axis === 'y' && 'carousel--y']}
+      data-unswipe
+      data-label={label}
+      data-align={align}
+      data-axis={axis}
+      data-plugins={plugins}
+      data-slide={slideSelector}
+    >
+      {
+        slides.map((text) =>
+          slideSelector ? (
+            <article class="slide item">{text}</article>
+          ) : (
+            <div class="slide">{text}</div>
+          ),
+        )
+      }
+    </div>
+    {
+      status && (
+        <p class="playground__status" data-unswipe-status={id}>
+          Active slide: 1
+        </p>
+      )
+    }
+    <slot name="controls" />
+  </div>
+  <div class="playground__code">
+    {
+      code ? (
+        <>
+          <p class="example-label">{codeLabel}</p>
+          <pre><code>{code}</code></pre>
+        </>
+      ) : (
+        <slot />
+      )
+    }
+  </div>
+</div>

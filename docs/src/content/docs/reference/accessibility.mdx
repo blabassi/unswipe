@@ -1,0 +1,22 @@
+---
+title: Accessibility
+description: Roles, labels, and focus behavior applied by Unswipe.
+---
+
+Unswipe applies accessibility attributes automatically:
+
+- `role="carousel"` on the root
+- `aria-label` when the `label` option is set
+- `aria-roledescription="slide"` on each slide
+- Dynamic `aria-hidden` and `tabindex="-1"` on off-screen slides
+
+Provide a descriptive `label` option for screen-reader context.
+
+```js
+new Unswipe(root, { label: 'Featured products' });
+```
+
+Plugin controls also expose accessible names:
+
+- Navigation buttons use `aria-label` (`Previous slide` / `Next slide` by default)
+- Pagination renders a `role="tablist"` with `aria-selected` on the active dot

@@ -1,0 +1,55 @@
+---
+title: API
+description: Unswipe constructor, options, methods, properties, and events.
+---
+
+## Constructor
+
+```ts
+new Unswipe(root: HTMLElement, options?: SliderOptions, plugins?: SliderPlugin[])
+```
+
+Returns a `Slider` instance.
+
+## Options
+
+| Option      | Type                           | Default         | Description                              |
+| ----------- | ------------------------------ | --------------- | ---------------------------------------- |
+| `slide`     | `string`                       | direct children | CSS selector for slides relative to root |
+| `align`     | `'start' \| 'center' \| 'end'` | `'start'`       | Snap alignment                           |
+| `axis`      | `'x' \| 'y'`                   | `'x'`           | Scroll axis                              |
+| `label`     | `string`                       | —               | `aria-label` for the carousel            |
+| `threshold` | `number`                       | `0.5`           | Intersection ratio for the active slide  |
+| `behavior`  | `ScrollBehavior`               | `'smooth'`      | Programmatic scroll behavior             |
+
+## Methods
+
+| Method                            | Description                                              |
+| --------------------------------- | -------------------------------------------------------- |
+| `next()`                          | Scroll to the next slide                                 |
+| `prev()`                          | Scroll to the previous slide                             |
+| `scrollToIndex(index, behavior?)` | Scroll to a specific slide                               |
+| `update()`                        | Re-scan DOM after slides are added or removed            |
+| `destroy()`                       | Disconnect observers, tear down plugins, clear listeners |
+
+## Properties
+
+| Property | Type            | Description            |
+| -------- | --------------- | ---------------------- |
+| `root`   | `HTMLElement`   | Carousel container     |
+| `slides` | `HTMLElement[]` | Current slide elements |
+| `index`  | `number`        | Active slide index     |
+
+## Events
+
+```ts
+slider.on('select', ({ index, slide }) => {
+  /* active slide changed */
+});
+
+slider.on('update', () => {
+  /* DOM rescanned via update() */
+});
+```
+
+All handlers return an unsubscribe function.

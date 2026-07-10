@@ -9,8 +9,18 @@
     "builtin": true,
     "browser": true
   },
-  "ignorePatterns": ["dist/**", "site/**", "assets/**", "node_modules/**"],
+  "ignorePatterns": [
+    "dist/**",
+    "site/**",
+    "assets/**",
+    "node_modules/**",
+    "docs/dist/**",
+    "docs/node_modules/**",
+    "docs/.astro/**",
+    "coverage/**",
+    ".pages/**"
+  ],
   "rules": {
-    "eslint/no-underscore-dangle": ["warn", { "allow": ["__u"] }]
+    "eslint/no-underscore-dangle": ["warn", { "allow": ["__u", "__unswipe"] }]
   }
 }

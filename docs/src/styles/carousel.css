@@ -1,0 +1,215 @@
+/* Live Unswipe playground styles for Starlight docs */
+
+.playground {
+  display: grid;
+  gap: 1rem;
+  margin: 1rem 0 1.5rem;
+  min-width: 0;
+}
+
+@media (min-width: 48rem) {
+  .playground {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+
+.playground__preview,
+.playground__code {
+  min-width: 0;
+}
+
+.playground__status {
+  margin: 0.5rem 0 0;
+  font-size: 0.85rem;
+  color: var(--sl-color-gray-3);
+}
+
+.playground__controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.playground__controls button {
+  cursor: pointer;
+  padding: 0.4rem 0.75rem;
+  border-radius: 0.4rem;
+  border: 1px solid var(--sl-color-gray-5);
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-white);
+  font: inherit;
+  font-size: 0.85rem;
+}
+
+.playground__controls button[aria-pressed='true'] {
+  border-color: var(--sl-color-accent);
+  background: var(--sl-color-accent-low);
+}
+
+.example-label {
+  margin: 0 0 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--sl-color-gray-3);
+}
+
+.carousel {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.25rem;
+  scroll-padding: 0.25rem;
+  scrollbar-width: none;
+  width: 100%;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-x pinch-zoom;
+}
+
+.carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.carousel--y {
+  flex-direction: column;
+  max-height: 14rem;
+  touch-action: pan-y pinch-zoom;
+}
+
+.slide {
+  flex-shrink: 0;
+  min-width: 68%;
+  padding: 1.5rem 1rem;
+  border-radius: 0.6rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  text-align: center;
+  color: #fff;
+}
+
+.carousel--y .slide {
+  min-width: auto;
+  min-height: 5rem;
+}
+
+.slide:nth-child(4n + 1) {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.slide:nth-child(4n + 2) {
+  background: linear-gradient(135deg, #ec4899, #f43f5e);
+  min-width: 48%;
+}
+
+.slide:nth-child(4n + 3) {
+  background: linear-gradient(135deg, #14b8a6, #22d3ee);
+  min-width: 82%;
+}
+
+.slide:nth-child(4n) {
+  background: linear-gradient(135deg, #f59e0b, #ef4444);
+  min-width: 56%;
+}
+
+.carousel--y .slide:nth-child(4n + 2),
+.carousel--y .slide:nth-child(4n + 3),
+.carousel--y .slide:nth-child(4n) {
+  min-width: auto;
+}
+
+.unswipe-nav__container,
+.unswipe-pagination__container {
+  margin-top: 0.65rem;
+}
+
+.unswipe-nav__container {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.unswipe-nav__prev,
+.unswipe-nav__next {
+  flex: 1;
+  padding: 0.55rem;
+  border: none;
+  border-radius: 0.45rem;
+  background: var(--sl-color-gray-6);
+  color: var(--sl-color-white);
+  cursor: pointer;
+  font-size: 1.1rem;
+}
+
+.unswipe-nav__prev:disabled,
+.unswipe-nav__next:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.unswipe-pagination {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: center;
+}
+
+.unswipe-pagination__dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: var(--sl-color-gray-4);
+  cursor: pointer;
+}
+
+.unswipe-pagination__dot[aria-selected='true'] {
+  background: var(--sl-color-accent);
+  transform: scale(1.2);
+}
+
+unswipe-carousel {
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.25rem;
+  scroll-padding: 0.25rem;
+  scrollbar-width: none;
+  width: 100%;
+  max-width: 100%;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-x pinch-zoom;
+}
+
+unswipe-carousel::-webkit-scrollbar {
+  display: none;
+}
+
+.event-log {
+  margin-top: 0.75rem;
+  padding: 0.65rem 0.75rem;
+  border-radius: 0.45rem;
+  background: var(--sl-color-gray-6);
+  font-family: var(--sl-font-mono);
+  font-size: 0.8rem;
+  max-height: 6rem;
+  overflow: auto;
+}
+
+.badge-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 1rem 0;
+}
+
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--sl-color-gray-5);
+  font-size: 0.8rem;
+  color: var(--sl-color-gray-2);
+}
