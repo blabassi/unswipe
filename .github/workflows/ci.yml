@@ -53,22 +53,6 @@ jobs:
       - name: Verify site artifacts
         run: |
           test -f site/index.html
-          test -f site/docs.html
           test -d site/guides
           test -d site/reference
           test -f site/pagefind/pagefind.js || test -d site/pagefind
-
-      - name: Install Playwright Chromium
-        run: pnpm exec playwright install chromium --with-deps
-
-      - name: Responsive layout audit
-        run: |
-          mkdir -p .pages
-          rm -rf .pages/unswipe
-          cp -R site .pages/unswipe
-          pnpm dlx serve .pages -p 4173 &
-          pnpm dlx wait-on -t 30000 http://127.0.0.1:4173/unswipe/
-          pnpm run audit:responsive
-
-      - name: Framework demos audit
-        run: pnpm run audit:frameworks

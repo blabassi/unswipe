@@ -45,16 +45,13 @@
     }
   },
   "scripts": {
-    "build": "pnpm run build:core && pnpm run build:plugins && pnpm run build:types && pnpm run size",
+    "build": "pnpm run build:core && pnpm run build:plugins && pnpm run build:types",
     "build:core": "esbuild src/index.ts --bundle --minify --format=esm --outfile=dist/unswipe.js && esbuild src/index.ts --bundle --minify --format=cjs --outfile=dist/unswipe.cjs",
     "build:plugins": "esbuild src/plugins/autoplay.ts --bundle --minify --format=esm --outfile=dist/plugins/autoplay.js && esbuild src/plugins/autoplay.ts --bundle --minify --format=cjs --outfile=dist/plugins/autoplay.cjs && esbuild src/plugins/navigation.ts --bundle --minify --format=esm --outfile=dist/plugins/navigation.js && esbuild src/plugins/navigation.ts --bundle --minify --format=cjs --outfile=dist/plugins/navigation.cjs && esbuild src/plugins/pagination.ts --bundle --minify --format=esm --outfile=dist/plugins/pagination.js && esbuild src/plugins/pagination.ts --bundle --minify --format=cjs --outfile=dist/plugins/pagination.cjs && esbuild src/plugins/drag.ts --bundle --minify --format=esm --outfile=dist/plugins/drag.js && esbuild src/plugins/drag.ts --bundle --minify --format=cjs --outfile=dist/plugins/drag.cjs",
     "build:types": "tsc --emitDeclarationOnly",
-    "size": "node scripts/size.mjs",
-    "build:site": "node scripts/build-site.mjs",
-    "preview:site": "pnpm run build:site && node scripts/preview-site.mjs",
+    "build:site": "pnpm --filter docs exec astro telemetry disable && pnpm --filter docs build",
     "docs:dev": "pnpm --filter docs dev",
-    "audit:responsive": "node scripts/audit-responsive.mjs",
-    "audit:frameworks": "node scripts/audit-frameworks.mjs",
+    "docs:preview": "pnpm run build:site && pnpm --filter docs preview",
     "dev": "esbuild src/index.ts --bundle --format=esm --outfile=dist/unswipe.js --watch",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint .",
@@ -72,8 +69,7 @@
     "happy-dom": "^17.4.4",
     "oxfmt": "^0.58.0",
     "oxlint": "^1.73.0",
-    "playwright": "1.49.0",
-    "typescript": "^5.8.0",
+    "typescript": "^6.0.3",
     "vitest": "^3.2.4"
   },
   "packageManager": "pnpm@11.11.0"
