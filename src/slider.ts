@@ -109,7 +109,7 @@ export default class Unswipe implements Slider {
     el.scrollIntoView({
       behavior: behavior ?? this.o.behavior,
       block: 'nearest',
-      inline: this.o.axis === 'x' ? this.o.align : 'nearest',
+      inline: 'nearest',
     });
   }
 

@@ -72,7 +72,7 @@ function logEvent(id, message) {
   const codeId = 'ex-align-code';
   if (root) {
     let align = 'start';
-    let slider = new Unswipe(root, { align, label: 'Alignment demo' });
+    const slider = new Unswipe(root, { align, label: 'Alignment demo' });
 
     const render = () => {
       setCode(
@@ -90,8 +90,9 @@ function logEvent(id, message) {
         document.querySelectorAll('[data-align]').forEach((b) => {
           b.setAttribute('aria-pressed', String(b === btn));
         });
-        slider.destroy();
-        slider = new Unswipe(root, { align, label: 'Alignment demo' });
+        for (const slide of slider.slides) {
+          slide.style.scrollSnapAlign = align;
+        }
         render();
       });
     });
@@ -235,18 +236,56 @@ slider.update();`,
   const sections = [...links]
     .map((a) => a.getAttribute('href'))
     .filter((href) => href)
-    .map((href) => document.querySelector(href));
+    .map((href) => document.querySelector(href))
+    .filter(Boolean);
+  const visible = new Map();
+
+  const setActive = (section) => {
+    const id = `#${section.id}`;
+    links.forEach((link) => {
+      link.classList.toggle('is-active', link.getAttribute('href') === id);
+    });
+  };
+
   const observer = new IntersectionObserver(
     (entries) => {
       for (const entry of entries) {
-        if (!entry.isIntersecting) continue;
-        const id = `#${entry.target.id}`;
-        links.forEach((link) => {
-          link.classList.toggle('is-active', link.getAttribute('href') === id);
-        });
+        visible.set(
+          entry.target,
+          entry.isIntersecting ? entry.intersectionRatio : 0,
+        );
       }
+
+      let best = null;
+      let bestRatio = 0;
+      for (const section of sections) {
+        const ratio = visible.get(section) ?? 0;
+        if (ratio > bestRatio) {
+          bestRatio = ratio;
+          best = section;
+        }
+      }
+
+      if (best) setActive(best);
     },
-    { rootMargin: '-40% 0px -50% 0px', threshold: 0 },
+    {
+      rootMargin: '-20% 0px -55% 0px',
+      threshold: [0, 0.1, 0.25, 0.5, 0.75, 1],
+    },
   );
-  sections.forEach((section) => section && observer.observe(section));
+
+  sections.forEach((section) => observer.observe(section));
+
+  document.querySelector('.toc')?.addEventListener('click', (event) => {
+    const link = event.target.closest('a[href^="#"]');
+    if (!link) return;
+    const href = link.getAttribute('href');
+    const section = href ? document.querySelector(href) : null;
+    if (!section) return;
+
+    event.preventDefault();
+    section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    history.replaceState(null, '', href);
+    setActive(section);
+  });
 }

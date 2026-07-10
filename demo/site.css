@@ -401,6 +401,7 @@ footer {
   margin: 0.75rem 0 0;
   font-size: 0.8rem;
   color: #9aa0a6;
+  overflow-anchor: none;
 }
 
 .playground__controls {
@@ -435,6 +436,7 @@ footer {
   padding: 0.65rem 0.75rem;
   max-height: 5.5rem;
   overflow-y: auto;
+  overflow-anchor: none;
   border-radius: 0.5rem;
   background: #0a0c10;
   border: 1px solid #1e2430;
@@ -452,6 +454,7 @@ footer {
   width: 100%;
   max-width: 100%;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
 }
 
 .carousel::-webkit-scrollbar {
@@ -771,4 +774,5 @@ unswipe-carousel {
   display: block;
   width: 100%;
   max-width: 100%;
+  overscroll-behavior: contain;
 }
