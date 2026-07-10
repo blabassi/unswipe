@@ -14,11 +14,9 @@
     "site/**",
     "assets/**",
     "node_modules/**",
-    "docs/dist/**",
     "docs/node_modules/**",
     "docs/.astro/**",
-    "coverage/**",
-    ".pages/**"
+    "coverage/**"
   ],
   "rules": {
     "eslint/no-underscore-dangle": ["warn", { "allow": ["__u", "__unswipe"] }]

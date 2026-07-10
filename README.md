@@ -162,11 +162,10 @@ pnpm run ci             # format + lint + typecheck + build + coverage + docs si
 pnpm test               # vitest unit tests (core, plugins, bundle budget)
 pnpm run test:coverage  # vitest with v8 coverage thresholds
 pnpm run docs:dev       # Astro Starlight docs at http://localhost:4321/unswipe/
-pnpm run preview:site   # production docs build at http://localhost:4173/unswipe/
-pnpm run audit:frameworks # Playwright check that framework demos render
+pnpm run docs:preview   # production docs preview (Astro)
 pnpm run lint
 pnpm run format
-pnpm run build          # library + size check only
+pnpm run build          # library only (bundle budget enforced in tests)
 pnpm run typecheck
 ```
 
@@ -178,7 +177,7 @@ This repo is a **pnpm workspace**: the library at the root and the `docs` packag
 
 | Workflow                                                 | Trigger             | Purpose                                                                                         |
 | -------------------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------- |
-| [`ci.yml`](.github/workflows/ci.yml)                     | Push & PR to `main` | Format, lint, typecheck, build, Vitest coverage, Starlight build, responsive + framework audits |
+| [`ci.yml`](.github/workflows/ci.yml)                     | Push & PR to `main` | Format, lint, typecheck, build, Vitest coverage, Starlight build |
 | [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main`      | Build Starlight site artifact and deploy to GitHub Pages                                        |
 
 ### GitHub Pages
@@ -187,17 +186,16 @@ The Starlight docs site deploys via **GitHub Actions** on every push to `main` t
 
 **One-time setup:** In the repository **Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions**.
 
-| URL                                          | Page                       |
-| -------------------------------------------- | -------------------------- |
-| https://blabassi.github.io/unswipe/          | Starlight docs             |
-| https://blabassi.github.io/unswipe/docs.html | Redirects to docs (legacy) |
+| URL                                 | Page           |
+| ----------------------------------- | -------------- |
+| https://blabassi.github.io/unswipe/ | Starlight docs |
 
 To preview locally:
 
 ```bash
 pnpm run docs:dev
 # or
-pnpm run preview:site
+pnpm run docs:preview
 ```
 
 ## License
