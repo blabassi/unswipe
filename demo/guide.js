@@ -212,22 +212,174 @@ slider.update();`,
 {
   class UnswipeCarousel extends HTMLElement {
     #slider;
+    #off;
 
     connectedCallback() {
+      this.classList.add('carousel');
       this.#slider = new Unswipe(this, {
         label: this.getAttribute('label') ?? 'Carousel',
         align: 'start',
         threshold: 0.5,
       });
+      const status = document.getElementById('ex-wc-status');
+      const sync = () => {
+        if (!status || !this.#slider) return;
+        status.textContent = `Active slide: ${this.#slider.index + 1} of ${this.#slider.slides.length}`;
+      };
+      sync();
+      this.#off = this.#slider.on('select', sync);
     }
 
     disconnectedCallback() {
+      this.#off?.();
       this.#slider?.destroy();
+      this.#off = undefined;
+      this.#slider = undefined;
     }
   }
 
   if (!customElements.get('unswipe-carousel')) {
     customElements.define('unswipe-carousel', UnswipeCarousel);
+  }
+}
+
+function mountCarouselPreview(host, slides, label) {
+  const root = document.createElement('div');
+  root.className = 'carousel';
+  for (const text of slides) {
+    const slide = document.createElement('div');
+    slide.className = 'slide';
+    slide.textContent = text;
+    root.append(slide);
+  }
+  host.replaceChildren(root);
+
+  const slider = new Unswipe(root, {
+    label,
+    align: 'start',
+    threshold: 0.5,
+  });
+  return { root, slider };
+}
+
+function bindStatus(slider, statusId, suffix = '') {
+  const status = document.getElementById(statusId);
+  if (!status) return;
+  const sync = () => {
+    status.textContent = `Active slide: ${slider.index + 1} of ${slider.slides.length}${suffix}`;
+  };
+  sync();
+  slider.on('select', sync);
+}
+
+// React live demo (CDN mount with offline fallback)
+{
+  const host = document.getElementById('ex-react');
+  if (host) {
+    const slides = ['React slide 1', 'React slide 2', 'React slide 3'];
+    const label = 'React carousel';
+
+    const fallback = () => {
+      const { slider } = mountCarouselPreview(host, slides, label);
+      bindStatus(slider, 'ex-react-status', ' · preview');
+    };
+
+    import('https://esm.sh/react@18.3.1')
+      .then(async (React) => {
+        const { createRoot } =
+          await import('https://esm.sh/react-dom@18.3.1/client');
+        const { useEffect, useRef } = React;
+
+        function Carousel() {
+          const ref = useRef(null);
+
+          useEffect(() => {
+            const root = ref.current;
+            if (!root) return undefined;
+            const slider = new Unswipe(root, {
+              label,
+              align: 'start',
+              threshold: 0.5,
+            });
+            bindStatus(slider, 'ex-react-status', ' · React');
+            return () => slider.destroy();
+          }, []);
+
+          return React.createElement(
+            'div',
+            { ref, className: 'carousel' },
+            slides.map((text) =>
+              React.createElement(
+                'div',
+                { key: text, className: 'slide' },
+                text,
+              ),
+            ),
+          );
+        }
+
+        createRoot(host).render(React.createElement(Carousel));
+      })
+      .catch(fallback);
+  }
+}
+
+// Vue 3 live demo (CDN mount with offline fallback)
+{
+  const host = document.getElementById('ex-vue');
+  if (host) {
+    const slides = ['Vue slide 1', 'Vue slide 2', 'Vue slide 3'];
+    const label = 'Vue carousel';
+
+    const fallback = () => {
+      const { slider } = mountCarouselPreview(host, slides, label);
+      bindStatus(slider, 'ex-vue-status', ' · preview');
+    };
+
+    import('https://esm.sh/vue@3.5.13')
+      .then(({ createApp, h, onMounted, onUnmounted, ref }) => {
+        createApp({
+          setup() {
+            const root = ref(null);
+            let slider;
+
+            onMounted(() => {
+              if (!root.value) return;
+              slider = new Unswipe(root.value, {
+                label,
+                align: 'start',
+                threshold: 0.5,
+              });
+              bindStatus(slider, 'ex-vue-status', ' · Vue');
+            });
+
+            onUnmounted(() => slider?.destroy());
+
+            return () =>
+              h(
+                'div',
+                { ref: root, class: 'carousel' },
+                slides.map((text) =>
+                  h('div', { class: 'slide', key: text }, text),
+                ),
+              );
+          },
+        }).mount(host);
+      })
+      .catch(fallback);
+  }
+}
+
+// Svelte live demo — same Unswipe mount the snippet uses (no Svelte compiler in-browser)
+{
+  const host = document.getElementById('ex-svelte');
+  if (host) {
+    const { slider } = mountCarouselPreview(
+      host,
+      ['Svelte A', 'Svelte B', 'Svelte C'],
+      'Svelte carousel',
+    );
+    bindStatus(slider, 'ex-svelte-status', ' · preview');
   }
 }
 
