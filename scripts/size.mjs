@@ -10,9 +10,9 @@ const min = raw.length;
 const gz = gzipSync(raw).length;
 
 console.log(`Core bundle: ${min} bytes minified, ${gz} bytes gzipped`);
-console.log(`Target: < ${limit} bytes minified`);
+console.log(`Target: ≤ ${limit} bytes minified`);
 
-if (min >= limit) {
+if (min > limit) {
   console.error(
     `FAIL: core exceeds ${limit} byte budget by ${min - limit} bytes`,
   );

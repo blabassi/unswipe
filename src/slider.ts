@@ -14,13 +14,6 @@ type ResolvedOptions = Required<
 type Listener = (detail?: SelectDetail) => void;
 type TrackedSlide = HTMLElement & { __u?: number };
 
-const DEF: ResolvedOptions = {
-  align: 'start',
-  axis: 'x',
-  threshold: 0.5,
-  behavior: 'smooth',
-};
-
 /** Native scroll-snap carousel with IO-driven accessibility. */
 export default class Unswipe implements Slider {
   readonly root: HTMLElement;
@@ -38,7 +31,13 @@ export default class Unswipe implements Slider {
     plugins: SliderPlugin[] = [],
   ) {
     this.root = root;
-    this.o = { ...DEF, ...options };
+    this.o = {
+      align: 'start',
+      axis: 'x',
+      threshold: 0.5,
+      behavior: 'smooth',
+      ...options,
+    };
     this.plugins = plugins;
 
     const st = root.style;
@@ -103,14 +102,14 @@ export default class Unswipe implements Slider {
     return () => set.delete(handler as Listener);
   }
 
-  private go(index: number, behavior?: ScrollBehavior): void {
-    const el = this.s[index];
-    if (!el) return;
-    el.scrollIntoView({
-      behavior: behavior ?? this.o.behavior,
-      block: 'nearest',
-      inline: 'nearest',
-    });
+  private go(i: number, b?: ScrollBehavior): void {
+    const e = this.s[i],
+      r = this.root;
+    if (!e) return;
+    const p: ScrollToOptions = { behavior: b ?? this.o.behavior };
+    if (this.o.axis === 'x') p.left = e.offsetLeft;
+    else p.top = e.offsetTop;
+    r.scrollTo(p);
   }
 
   private refresh(): void {
