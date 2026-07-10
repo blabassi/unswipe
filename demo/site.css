@@ -455,6 +455,7 @@ footer {
   max-width: 100%;
   -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  touch-action: pan-x pinch-zoom;
 }
 
 .carousel::-webkit-scrollbar {
@@ -464,6 +465,7 @@ footer {
 .carousel--y {
   flex-direction: column;
   max-height: 14rem;
+  touch-action: pan-y pinch-zoom;
 }
 
 .slide {
