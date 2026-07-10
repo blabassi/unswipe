@@ -29,6 +29,10 @@ cpSync(
   join(root, 'dist', 'plugins', 'pagination.js'),
   join(site, 'assets', 'plugins', 'pagination.js'),
 );
+cpSync(
+  join(root, 'dist', 'plugins', 'drag.js'),
+  join(site, 'assets', 'plugins', 'drag.js'),
+);
 
 writeFileSync(join(site, '.nojekyll'), '');
 
