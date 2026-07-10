@@ -17,12 +17,20 @@ export function autoplay(options: AutoplayOptions = {}): SliderPlugin {
 
   let slider: Slider | undefined;
   let timer: ReturnType<typeof setInterval> | undefined;
+  let resumeTimer: ReturnType<typeof setTimeout> | undefined;
   let paused = false;
 
   const stop = () => {
     if (timer !== undefined) {
       clearInterval(timer);
       timer = undefined;
+    }
+  };
+
+  const clearResume = () => {
+    if (resumeTimer !== undefined) {
+      clearTimeout(resumeTimer);
+      resumeTimer = undefined;
     }
   };
 
@@ -43,11 +51,22 @@ export function autoplay(options: AutoplayOptions = {}): SliderPlugin {
   const pause = () => {
     paused = true;
     stop();
+    clearResume();
   };
 
   const resume = () => {
     paused = false;
     start();
+  };
+
+  const resumeLater = () => {
+    clearResume();
+    resumeTimer = setTimeout(resume, delay);
+  };
+
+  const onInteract = () => {
+    pause();
+    resumeLater();
   };
 
   return {
@@ -61,15 +80,24 @@ export function autoplay(options: AutoplayOptions = {}): SliderPlugin {
         instance.root.addEventListener('focusin', pause);
         instance.root.addEventListener('focusout', resume);
       }
+      instance.root.addEventListener('pointerdown', onInteract);
+      instance.root.addEventListener('touchstart', onInteract, {
+        passive: true,
+      });
+      instance.root.addEventListener('wheel', onInteract, { passive: true });
     },
     destroy(instance) {
       stop();
+      clearResume();
       if (pauseOnHover) {
         instance.root.removeEventListener('mouseenter', pause);
         instance.root.removeEventListener('mouseleave', resume);
         instance.root.removeEventListener('focusin', pause);
         instance.root.removeEventListener('focusout', resume);
       }
+      instance.root.removeEventListener('pointerdown', onInteract);
+      instance.root.removeEventListener('touchstart', onInteract);
+      instance.root.removeEventListener('wheel', onInteract);
       slider = undefined;
     },
   };
