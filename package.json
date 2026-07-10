@@ -53,6 +53,7 @@
     "build:site": "node scripts/build-site.mjs",
     "preview:site": "npm run build:site && npx --yes serve site -p 4173",
     "audit:responsive": "node scripts/audit-responsive.mjs",
+    "audit:frameworks": "node scripts/audit-frameworks.mjs",
     "dev": "esbuild src/index.ts --bundle --format=esm --outfile=dist/unswipe.js --watch",
     "typecheck": "tsc --noEmit",
     "lint": "oxlint .",
@@ -61,9 +62,11 @@
     "format:check": "oxfmt --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "ci": "npm run format:check && npm run lint && npm run typecheck && npm run build && npm run test && npm run build:site"
+    "test:coverage": "vitest run --coverage",
+    "ci": "npm run format:check && npm run lint && npm run typecheck && npm run build && npm run test:coverage && npm run build:site"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^3.2.7",
     "esbuild": "^0.25.0",
     "happy-dom": "^17.4.4",
     "oxfmt": "^0.58.0",

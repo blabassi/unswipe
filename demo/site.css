@@ -773,8 +773,18 @@ footer {
 }
 
 unswipe-carousel {
-  display: block;
+  display: flex;
+  gap: 0.75rem;
+  padding: 0.25rem;
+  scroll-padding: 0.25rem;
+  scrollbar-width: none;
   width: 100%;
   max-width: 100%;
+  -webkit-overflow-scrolling: touch;
   overscroll-behavior: contain;
+  touch-action: pan-x pinch-zoom;
+}
+
+unswipe-carousel::-webkit-scrollbar {
+  display: none;
 }

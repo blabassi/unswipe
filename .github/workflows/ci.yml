@@ -40,7 +40,7 @@ jobs:
         run: npm run build
 
       - name: Test
-        run: npm test
+        run: npm run test:coverage
 
       - name: Build demo site
         run: npm run build:site
@@ -66,3 +66,6 @@ jobs:
           npx --yes serve site -p 4173 &
           npx --yes wait-on -t 30000 http://127.0.0.1:4173
           npm run audit:responsive
+
+      - name: Framework demos audit
+        run: npm run audit:frameworks

@@ -527,11 +527,18 @@ slider.update();</code></pre>
               <summary>Web Component (live)</summary>
               <div class="playground">
                 <div class="playground__preview">
-                  <unswipe-carousel label="Web component demo">
+                  <unswipe-carousel
+                    class="carousel"
+                    label="Web component demo"
+                    data-testid="ex-wc"
+                  >
                     <div class="slide">WC slide 1</div>
                     <div class="slide">WC slide 2</div>
                     <div class="slide">WC slide 3</div>
                   </unswipe-carousel>
+                  <p id="ex-wc-status" class="playground__status">
+                    Active slide: 1 of 3
+                  </p>
                 </div>
                 <div class="playground__code">
                   <p class="example-label">Element</p>
@@ -539,6 +546,7 @@ slider.update();</code></pre>
   #slider;
 
   connectedCallback() {
+    this.classList.add('carousel');
     this.#slider = new Unswipe(this, {
       label: this.getAttribute('label') ?? 'Carousel',
       align: 'start',
@@ -552,18 +560,26 @@ slider.update();</code></pre>
 
 customElements.define('unswipe-carousel', UnswipeCarousel);</code></pre>
                   <p class="example-label">Markup</p>
-                  <pre><code>&lt;unswipe-carousel label="Products"&gt;
-  &lt;div&gt;Slide 1&lt;/div&gt;
-  &lt;div&gt;Slide 2&lt;/div&gt;
+                  <pre><code>&lt;unswipe-carousel class="carousel" label="Products"&gt;
+  &lt;div class="slide"&gt;Slide 1&lt;/div&gt;
+  &lt;div class="slide"&gt;Slide 2&lt;/div&gt;
 &lt;/unswipe-carousel&gt;</code></pre>
                 </div>
               </div>
             </details>
 
-            <details class="framework-block">
-              <summary>React</summary>
-              <div class="code-only">
-                <pre><code>import { useEffect, useRef } from 'react';
+            <details class="framework-block" open>
+              <summary>React (live)</summary>
+              <div class="playground">
+                <div class="playground__preview">
+                  <div id="ex-react" data-testid="ex-react"></div>
+                  <p id="ex-react-status" class="playground__status">
+                    Mounting…
+                  </p>
+                </div>
+                <div class="playground__code">
+                  <p class="example-label">React</p>
+                  <pre><code>import { useEffect, useRef } from 'react';
 import { Unswipe } from 'unswipe';
 
 export function Carousel({ slides, label = 'Carousel' }) {
@@ -585,13 +601,20 @@ export function Carousel({ slides, label = 'Carousel' }) {
     &lt;/div&gt;
   );
 }</code></pre>
+                </div>
               </div>
             </details>
 
-            <details class="framework-block">
-              <summary>Vue 3</summary>
-              <div class="code-only">
-                <pre><code>&lt;script setup&gt;
+            <details class="framework-block" open>
+              <summary>Vue 3 (live)</summary>
+              <div class="playground">
+                <div class="playground__preview">
+                  <div id="ex-vue" data-testid="ex-vue"></div>
+                  <p id="ex-vue-status" class="playground__status">Mounting…</p>
+                </div>
+                <div class="playground__code">
+                  <p class="example-label">Vue 3</p>
+                  <pre><code>&lt;script setup&gt;
 import { onMounted, onUnmounted, ref } from 'vue';
 import { Unswipe } from 'unswipe';
 
@@ -610,13 +633,22 @@ onUnmounted(() =&gt; slider?.destroy());
     &lt;div v-for="n in 3" :key="n" class="slide"&gt;Slide {{ n }}&lt;/div&gt;
   &lt;/div&gt;
 &lt;/template&gt;</code></pre>
+                </div>
               </div>
             </details>
 
-            <details class="framework-block">
-              <summary>Svelte</summary>
-              <div class="code-only">
-                <pre><code>&lt;script&gt;
+            <details class="framework-block" open>
+              <summary>Svelte (live)</summary>
+              <div class="playground">
+                <div class="playground__preview">
+                  <div id="ex-svelte" data-testid="ex-svelte"></div>
+                  <p id="ex-svelte-status" class="playground__status">
+                    Mounting…
+                  </p>
+                </div>
+                <div class="playground__code">
+                  <p class="example-label">Svelte</p>
+                  <pre><code>&lt;script&gt;
   import { onMount, onDestroy } from 'svelte';
   import { Unswipe } from 'unswipe';
 
@@ -635,6 +667,7 @@ onUnmounted(() =&gt; slider?.destroy());
     &lt;div class="slide"&gt;{label}&lt;/div&gt;
   {/each}
 &lt;/div&gt;</code></pre>
+                </div>
               </div>
             </details>
 
