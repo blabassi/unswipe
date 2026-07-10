@@ -175,10 +175,10 @@ This repo is a **pnpm workspace**: the library at the root and the `docs` packag
 
 ### CI/CD
 
-| Workflow                                                 | Trigger             | Purpose                                                                                         |
-| -------------------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------- |
+| Workflow                                                 | Trigger             | Purpose                                                          |
+| -------------------------------------------------------- | ------------------- | ---------------------------------------------------------------- |
 | [`ci.yml`](.github/workflows/ci.yml)                     | Push & PR to `main` | Format, lint, typecheck, build, Vitest coverage, Starlight build |
-| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main`      | Build Starlight site artifact and deploy to GitHub Pages                                        |
+| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main`      | Build Starlight site artifact and deploy to GitHub Pages         |
 
 ### GitHub Pages
 
