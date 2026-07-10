@@ -154,19 +154,23 @@ slider.update(); // re-observes slides, preserves tracking
 
 ## Development
 
+Requires [pnpm](https://pnpm.io/) 11+ (`corepack enable` on Node 22).
+
 ```bash
-npm install
-npm run ci             # format + lint + typecheck + build + test + docs site
-npm run test           # vitest unit tests (core, plugins, bundle budget)
-npm run docs:dev       # Astro Starlight docs at http://localhost:4321/unswipe/
-npm run preview:site   # production docs build at http://localhost:4173/unswipe/
-npm run lint
-npm run format
-npm run build          # library + size check only
-npm run typecheck
+pnpm install
+pnpm run ci             # format + lint + typecheck + build + test + docs site
+pnpm test               # vitest unit tests (core, plugins, bundle budget)
+pnpm run docs:dev       # Astro Starlight docs at http://localhost:4321/unswipe/
+pnpm run preview:site   # production docs build at http://localhost:4173/unswipe/
+pnpm run lint
+pnpm run format
+pnpm run build          # library + size check only
+pnpm run typecheck
 ```
 
 Docs live in [`docs/`](docs/) (Astro Starlight). Edit MDX under `docs/src/content/docs/` and live playground components under `docs/src/components/`.
+
+This repo is a **pnpm workspace**: the library at the root and the `docs` package share one lockfile (`pnpm-lock.yaml`).
 
 ### CI/CD
 
@@ -189,9 +193,9 @@ The Starlight docs site deploys via **GitHub Actions** on every push to `main` t
 To preview locally:
 
 ```bash
-npm run docs:dev
+pnpm run docs:dev
 # or
-npm run preview:site
+pnpm run preview:site
 ```
 
 ## License

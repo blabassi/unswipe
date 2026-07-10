@@ -12,7 +12,7 @@ rmSync(pages, { recursive: true, force: true });
 mkdirSync(join(pages, 'unswipe'), { recursive: true });
 cpSync(site, join(pages, 'unswipe'), { recursive: true });
 
-const child = spawn('npx', ['--yes', 'serve', pages, '-p', '4173'], {
+const child = spawn('pnpm', ['dlx', 'serve', pages, '-p', '4173'], {
   cwd: root,
   stdio: 'inherit',
 });

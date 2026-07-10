@@ -1,0 +1,9 @@
+packages:
+  - 'docs'
+
+autoInstallPeers: true
+strictPeerDependencies: false
+
+allowBuilds:
+  esbuild: true
+  sharp: true

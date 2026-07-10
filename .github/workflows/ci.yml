@@ -18,36 +18,37 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.11.0
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Install docs dependencies
-        run: npm ci
-        working-directory: docs
+        run: pnpm install --frozen-lockfile
 
       - name: Check formatting
-        run: npm run format:check
+        run: pnpm run format:check
 
       - name: Lint
-        run: npm run lint
+        run: pnpm run lint
 
       - name: Typecheck
-        run: npm run typecheck
+        run: pnpm run typecheck
 
       - name: Build
-        run: npm run build
+        run: pnpm run build
 
       - name: Test
-        run: npm test
+        run: pnpm test
 
       - name: Build docs site
-        run: npm run build:site
+        run: pnpm run build:site
 
       - name: Verify site artifacts
         run: |
@@ -58,16 +59,16 @@ jobs:
           test -f site/pagefind/pagefind.js || test -d site/pagefind
 
       - name: Install Playwright Chromium
-        run: npx playwright install chromium --with-deps
+        run: pnpm exec playwright install chromium --with-deps
 
       - name: Responsive layout audit
         run: |
           mkdir -p .pages
           rm -rf .pages/unswipe
           cp -R site .pages/unswipe
-          npx --yes serve .pages -p 4173 &
-          npx --yes wait-on -t 30000 http://127.0.0.1:4173/unswipe/
-          npm run audit:responsive
+          pnpm dlx serve .pages -p 4173 &
+          pnpm dlx wait-on -t 30000 http://127.0.0.1:4173/unswipe/
+          pnpm run audit:responsive
 
       - name: Framework demos audit
-        run: npm run audit:frameworks
+        run: pnpm run audit:frameworks
