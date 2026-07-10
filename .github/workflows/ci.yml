@@ -27,6 +27,10 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Install docs dependencies
+        run: npm ci
+        working-directory: docs
+
       - name: Check formatting
         run: npm run format:check
 
@@ -42,29 +46,27 @@ jobs:
       - name: Test
         run: npm run test:coverage
 
-      - name: Build demo site
+      - name: Build docs site
         run: npm run build:site
 
       - name: Verify site artifacts
         run: |
           test -f site/index.html
           test -f site/docs.html
-          test -f site/site.css
-          test -f site/guide.js
-          test -f site/assets/unswipe.js
-          test -f site/assets/plugins/autoplay.js
-          test -f site/assets/plugins/navigation.js
-          test -f site/assets/plugins/pagination.js
-          test -f site/assets/plugins/drag.js
-          test -f site/.nojekyll
+          test -d site/guides
+          test -d site/reference
+          test -f site/pagefind/pagefind.js || test -d site/pagefind
 
       - name: Install Playwright Chromium
         run: npx playwright install chromium --with-deps
 
       - name: Responsive layout audit
         run: |
-          npx --yes serve site -p 4173 &
-          npx --yes wait-on -t 30000 http://127.0.0.1:4173
+          mkdir -p .pages
+          rm -rf .pages/unswipe
+          cp -R site .pages/unswipe
+          npx --yes serve .pages -p 4173 &
+          npx --yes wait-on -t 30000 http://127.0.0.1:4173/unswipe/
           npm run audit:responsive
 
       - name: Framework demos audit

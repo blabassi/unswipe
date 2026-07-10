@@ -1,0 +1,143 @@
+---
+title: Live playground
+description: Interactive Unswipe examples — options, controls, events, mutations, and layouts.
+---
+
+import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
+import Playground from '../../../components/Playground.astro';
+import PlaygroundControls from '../../../components/PlaygroundControls.astro';
+
+<UnswipeRuntime />
+<PlaygroundControls />
+
+## Full demo
+
+Variable-width slides with drag, navigation, pagination, and autoplay.
+
+<Playground
+  id="ex-featured"
+  label="Featured items"
+  plugins="drag,navigation,pagination,autoplay"
+  slides={['Variable width A', 'Slide B', 'Wider slide C', 'Slide D']}
+  code={`import { Unswipe } from 'unswipe';
+import { autoplay } from 'unswipe/plugins/autoplay';
+import { drag } from 'unswipe/plugins/drag';
+import { navigation } from 'unswipe/plugins/navigation';
+import { pagination } from 'unswipe/plugins/pagination';
+
+new Unswipe(root, { align: 'start', label: 'Featured items' }, [
+  drag(),
+  navigation(),
+  pagination(),
+  autoplay({ delay: 4500 }),
+]);`}
+>
+  <div slot="controls" class="playground__controls">
+    <button type="button" data-action="add" data-target="ex-featured">
+      Add slide
+    </button>
+    <button type="button" data-action="remove" data-target="ex-featured">
+      Remove last
+    </button>
+  </div>
+</Playground>
+
+## Alignment
+
+Toggle snap alignment — the live carousel updates immediately.
+
+<Playground
+  id="ex-align"
+  label="Alignment demo"
+  align="start"
+  code={`new Unswipe(root, { align: 'start' });`}
+>
+  <div
+    slot="controls"
+    class="playground__controls"
+    data-align-controls="ex-align"
+  >
+    <button type="button" data-align="start" aria-pressed="true">start</button>
+    <button type="button" data-align="center" aria-pressed="false">
+      center
+    </button>
+    <button type="button" data-align="end" aria-pressed="false">end</button>
+  </div>
+</Playground>
+
+## Controls API
+
+<Playground
+  id="ex-api"
+  label="API demo"
+  code={`slider.prev();
+slider.next();
+slider.scrollToIndex(2, 'smooth');`}
+>
+  <div slot="controls" class="playground__controls">
+    <button type="button" data-api="prev" data-target="ex-api">prev()</button>
+    <button type="button" data-api="next" data-target="ex-api">next()</button>
+    <button type="button" data-api="jump" data-target="ex-api">
+      scrollToIndex(2)
+    </button>
+  </div>
+</Playground>
+
+## Events
+
+<Playground
+  id="ex-events"
+  label="Events demo"
+  status={false}
+  code={`slider.on('select', ({ index }) => {
+  console.log('select', index);
+});`}
+>
+  <div
+    slot="controls"
+    id="ex-events-log"
+    class="event-log"
+    aria-live="polite"
+  />
+</Playground>
+
+## Mutations
+
+Call `update()` after adding or removing slides.
+
+<Playground
+  id="ex-mutate"
+  label="Mutations demo"
+  slides={['A', 'B']}
+  code={`root.append(slide);
+slider.update();`}
+>
+  <div slot="controls" class="playground__controls">
+    <button type="button" data-action="add" data-target="ex-mutate">
+      Add slide
+    </button>
+    <button type="button" data-action="remove" data-target="ex-mutate">
+      Remove last
+    </button>
+  </div>
+</Playground>
+
+## Vertical axis
+
+<Playground
+  id="ex-vertical"
+  label="Vertical demo"
+  axis="y"
+  slides={['Top', 'Middle', 'Bottom']}
+  code={`new Unswipe(root, { axis: 'y', label: 'Vertical demo' });`}
+/>
+
+## Custom slide selector
+
+<Playground
+  id="ex-selector"
+  label="Selector demo"
+  slideSelector=".item"
+  slides={['Item 1', 'Item 2', 'Item 3']}
+  code={`new Unswipe(root, { slide: '.item' });`}
+/>

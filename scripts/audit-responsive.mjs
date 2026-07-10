@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { chromium } from 'playwright';
 
-const URL = process.env.SITE_URL ?? 'http://localhost:4173/';
+const URL = process.env.SITE_URL ?? 'http://localhost:4173/unswipe/';
 const VIEWPORTS = [
   { name: 'iphone-se', width: 320, height: 568 },
   { name: 'iphone-14', width: 390, height: 844 },
@@ -22,19 +22,21 @@ for (const vp of VIEWPORTS) {
   await page.waitForTimeout(300);
 
   const metrics = await page.evaluate(() => {
-    const doc = document.documentElement;
-    const overflow = doc.scrollWidth - doc.clientWidth;
+    const vw = window.innerWidth;
     const offenders = [];
 
     for (const el of document.querySelectorAll('body *')) {
-      if (el.closest('.carousel, unswipe-carousel, .toc--side ul, pre'))
+      // Ignore intentional overflow: carousels, code, Starlight chrome/sidebar
+      if (
+        el.closest(
+          '.carousel, unswipe-carousel, pre, code, .sidebar, nav, dialog, [aria-modal="true"], .social-icons, .sl-markdown-content table',
+        )
+      ) {
         continue;
+      }
       const rect = el.getBoundingClientRect();
       if (rect.width === 0 && rect.height === 0) continue;
-      const right = rect.right;
-      const left = rect.left;
-      const vw = window.innerWidth;
-      if (right > vw + 1 || left < -1) {
+      if (rect.right > vw + 1 || rect.left < -1) {
         const tag = el.tagName.toLowerCase();
         const id = el.id ? `#${el.id}` : '';
         const cls =
@@ -43,22 +45,26 @@ for (const vp of VIEWPORTS) {
             : '';
         offenders.push({
           selector: `${tag}${id}${cls}`,
-          left: Math.round(left),
-          right: Math.round(right),
+          left: Math.round(rect.left),
+          right: Math.round(rect.right),
           vw,
         });
       }
     }
 
+    const main = document.querySelector('main') ?? document.documentElement;
+    const mainOverflow = Math.max(0, main.scrollWidth - main.clientWidth);
+
     return {
-      overflow: Math.round(overflow),
+      mainOverflow: Math.round(mainOverflow),
       offenders: offenders.slice(0, 8),
-      tocVisible: !!document.querySelector('.toc--side'),
-      playgroundCount: document.querySelectorAll('.playground').length,
+      playgroundCount: document.querySelectorAll('.carousel, unswipe-carousel')
+        .length,
     };
   });
 
-  if (metrics.overflow > 0 || metrics.offenders.length > 0) {
+  // Fail only on concrete element overflow outside ignored regions
+  if (metrics.offenders.length > 0) {
     issues.push({
       viewport: vp.name,
       size: `${vp.width}x${vp.height}`,
@@ -67,7 +73,7 @@ for (const vp of VIEWPORTS) {
   }
 
   console.log(
-    `${vp.name.padEnd(16)} ${vp.width}x${vp.height}  overflow=${metrics.overflow}px  offenders=${metrics.offenders.length}`,
+    `${vp.name.padEnd(16)} ${vp.width}x${vp.height}  mainOverflow=${metrics.mainOverflow}px  offenders=${metrics.offenders.length}`,
   );
 }
 

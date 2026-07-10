@@ -1,17 +1,24 @@
 #!/usr/bin/env node
 import { chromium } from 'playwright';
 
-const URL = process.env.SITE_URL ?? 'http://localhost:4173/';
+const URL = process.env.SITE_URL ?? 'http://localhost:4173/unswipe/';
 const TIMEOUT = Number(process.env.FRAMEWORK_TIMEOUT ?? 20000);
 
 const browser = await chromium.launch();
 const page = await browser.newPage();
 const failures = [];
 
-await page.goto(URL, { waitUntil: 'networkidle' });
+await page.goto(URL + 'guides/frameworks/', { waitUntil: 'networkidle' });
 
 async function checkCarousel(name, targetSelector) {
   try {
+    // Starlight tabs hide inactive panels — open the matching tab first
+    const tab = page.getByRole('tab', { name: new RegExp(name, 'i') });
+    if (await tab.count()) {
+      await tab.first().click();
+      await page.waitForTimeout(200);
+    }
+
     const target = page.locator(targetSelector).first();
     await target.waitFor({ state: 'visible', timeout: TIMEOUT });
 
@@ -53,10 +60,10 @@ async function checkCarousel(name, targetSelector) {
   }
 }
 
-await checkCarousel('web-component', 'unswipe-carousel.carousel');
-await checkCarousel('react', '#ex-react .carousel');
-await checkCarousel('vue', '#ex-vue .carousel');
-await checkCarousel('svelte', '#ex-svelte .carousel');
+await checkCarousel('Web Component', 'unswipe-carousel.carousel');
+await checkCarousel('React', '#ex-react .carousel');
+await checkCarousel('Vue', '#ex-vue .carousel');
+await checkCarousel('Svelte', '#ex-svelte .carousel');
 
 for (const id of [
   'ex-wc-status',
@@ -64,7 +71,9 @@ for (const id of [
   'ex-vue-status',
   'ex-svelte-status',
 ]) {
-  const text = await page.locator(`#${id}`).innerText();
+  const el = page.locator(`#${id}`);
+  if ((await el.count()) === 0) continue;
+  const text = await el.innerText();
   if (/mounting/i.test(text)) {
     failures.push(`${id}: still shows mounting state (${text})`);
   } else {

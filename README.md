@@ -5,7 +5,7 @@
 
 A high-performance, zero-dependency carousel library for the modern web. Unswipe delegates physics, layout, and snapping to native browser APIs — **CSS Scroll Snap** for hardware-accelerated kinetic scrolling and **Intersection Observer** for dynamic accessibility — keeping the core bundle under **2 KB** minified.
 
-**[Interactive guide](https://blabassi.github.io/unswipe/)** — live examples with rendered carousels alongside the code that runs them
+**[Docs](https://blabassi.github.io/unswipe/)** — Astro Starlight guide with live carousel playgrounds
 
 ## Why Unswipe?
 
@@ -156,41 +156,43 @@ slider.update(); // re-observes slides, preserves tracking
 
 ```bash
 npm install
-npm run ci           # format + lint + typecheck + build + coverage + site
+npm run ci             # format + lint + typecheck + build + coverage + docs site
 npm run test           # vitest unit tests (core, plugins, bundle budget)
-npm run test:watch     # vitest in watch mode
 npm run test:coverage  # vitest with v8 coverage thresholds
+npm run docs:dev       # Astro Starlight docs at http://localhost:4321/unswipe/
+npm run preview:site   # production docs build at http://localhost:4173/unswipe/
 npm run audit:frameworks # Playwright check that framework demos render
-npm run lint         # oxlint
-npm run lint:fix     # oxlint --fix
-npm run format       # oxfmt
-npm run format:check # oxfmt --check
-npm run build        # build + size check only
+npm run lint
+npm run format
+npm run build          # library + size check only
 npm run typecheck
-npm run preview:site   # build demo site and serve at http://localhost:4173
 ```
+
+Docs live in [`docs/`](docs/) (Astro Starlight). Edit MDX under `docs/src/content/docs/` and live playground components under `docs/src/components/`.
 
 ### CI/CD
 
-| Workflow                                                 | Trigger             | Purpose                                                                                                    |
-| -------------------------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------- |
-| [`ci.yml`](.github/workflows/ci.yml)                     | Push & PR to `main` | Format check, oxlint, typecheck, build, Vitest coverage, bundle size budget, responsive + framework audits |
-| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main`      | Build site artifact and deploy to GitHub Pages                                                             |
+| Workflow                                                 | Trigger             | Purpose                                                                                         |
+| -------------------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------- |
+| [`ci.yml`](.github/workflows/ci.yml)                     | Push & PR to `main` | Format, lint, typecheck, build, Vitest coverage, Starlight build, responsive + framework audits |
+| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main`      | Build Starlight site artifact and deploy to GitHub Pages                                        |
 
 ### GitHub Pages
 
-The interactive guide deploys via **GitHub Actions** on every push to `main` that changes source files. Built artifacts live in `site/` during CI only — they are not committed to the repository.
+The Starlight docs site deploys via **GitHub Actions** on every push to `main` that changes docs or library source. Built artifacts live in `site/` during CI only — they are not committed to the repository.
 
 **One-time setup:** In the repository **Settings → Pages**, set **Build and deployment → Source** to **GitHub Actions**.
 
-| URL                                          | Page                        |
-| -------------------------------------------- | --------------------------- |
-| https://blabassi.github.io/unswipe/          | Interactive guide           |
-| https://blabassi.github.io/unswipe/docs.html | Redirects to guide (legacy) |
+| URL                                          | Page                       |
+| -------------------------------------------- | -------------------------- |
+| https://blabassi.github.io/unswipe/          | Starlight docs             |
+| https://blabassi.github.io/unswipe/docs.html | Redirects to docs (legacy) |
 
 To preview locally:
 
 ```bash
+npm run docs:dev
+# or
 npm run preview:site
 ```
 

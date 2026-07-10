@@ -7,6 +7,14 @@
     "site/**",
     "assets/**",
     "node_modules/**",
-    "package-lock.json"
+    "package-lock.json",
+    "docs/dist/**",
+    "docs/node_modules/**",
+    "docs/.astro/**",
+    "docs/package-lock.json",
+    "docs/**/*.mdx",
+    "docs/**/*.md",
+    "coverage/**",
+    ".pages/**"
   ]
 }

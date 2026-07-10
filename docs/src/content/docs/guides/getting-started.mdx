@@ -1,0 +1,47 @@
+---
+title: Getting started
+description: Install Unswipe and mount your first carousel.
+---
+
+import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
+import Playground from '../../../components/Playground.astro';
+
+<UnswipeRuntime />
+
+## Install
+
+```bash
+npm install unswipe
+```
+
+Or import a built file / CDN copy:
+
+```js
+import { Unswipe } from './unswipe.js';
+```
+
+## Quick start
+
+Slides default to **direct children** of the root element.
+
+<Playground
+  id="ex-quick"
+  label="Featured products"
+  code={`import { Unswipe } from 'unswipe';
+
+const slider = new Unswipe(document.getElementById('carousel'), {
+  align: 'start',
+  label: 'Featured products',
+  threshold: 0.5,
+});
+
+slider.on('select', ({ index }) => {
+  console.log('Active:', index);
+});`}
+/>
+
+## Next steps
+
+- Try the [live playground](/guides/playground/)
+- Add [plugins](/guides/plugins/) for drag, autoplay, nav, and dots
+- Wire it into [React, Vue, Svelte, or a Web Component](/guides/frameworks/)

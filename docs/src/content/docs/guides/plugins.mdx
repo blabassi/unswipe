@@ -1,0 +1,89 @@
+---
+title: Plugins
+description: Optional tree-shakeable plugins for drag, autoplay, navigation, and pagination.
+---
+
+import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
+import Playground from '../../../components/Playground.astro';
+
+<UnswipeRuntime />
+
+Plugins implement the `SliderPlugin` interface and ship as separate entry points so they never bloat the core.
+
+```ts
+import { Unswipe } from 'unswipe';
+import { autoplay } from 'unswipe/plugins/autoplay';
+import { drag } from 'unswipe/plugins/drag';
+import { navigation } from 'unswipe/plugins/navigation';
+import { pagination } from 'unswipe/plugins/pagination';
+
+new Unswipe(root, options, [
+  drag(),
+  navigation(),
+  pagination(),
+  autoplay({ delay: 5000, pauseOnHover: true }),
+]);
+```
+
+## Drag
+
+Mouse/pen drag-to-scroll. Touch stays native by default (`mouseOnly: true`).
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `mouseOnly` | `true` | Ignore touch pointers |
+| `threshold` | `3` | Pixels before a drag starts |
+
+<Playground
+  id="plugin-drag"
+  label="Drag demo"
+  plugins="drag"
+  code={`import { drag } from 'unswipe/plugins/drag';
+new Unswipe(root, {}, [drag()]);`}
+/>
+
+## Autoplay
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `delay` | `3000` | Interval in ms |
+| `pauseOnHover` | `true` | Pause on hover/focus |
+| `loop` | `true` | Loop to first slide |
+
+## Navigation
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `prevLabel` | `"Previous slide"` | Accessible label |
+| `nextLabel` | `"Next slide"` | Accessible label |
+| `className` | `"unswipe-nav"` | CSS class prefix |
+| `container` | sibling wrapper | Where buttons render |
+
+## Pagination
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `label` | `"Carousel pagination"` | Tablist label |
+| `className` | `"unswipe-pagination"` | CSS class prefix |
+| `container` | sibling wrapper | Where dots render |
+
+## Custom plugin
+
+```ts
+import type { SliderPlugin } from 'unswipe';
+
+export function logger(): SliderPlugin {
+  let off: (() => void) | undefined;
+  return {
+    name: 'logger',
+    init(slider) {
+      off = slider.on('select', ({ index }) => {
+        console.log('[unswipe]', index);
+      });
+    },
+    destroy() {
+      off?.();
+    },
+  };
+}
+```

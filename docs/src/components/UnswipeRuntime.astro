@@ -1,0 +1,71 @@
+---
+/** Hydrates every `[data-unswipe]` carousel on the page from library source. */
+---
+
+<script>
+  import Unswipe from '../../../src/slider';
+  import { autoplay } from '../../../src/plugins/autoplay';
+  import { drag } from '../../../src/plugins/drag';
+  import { navigation } from '../../../src/plugins/navigation';
+  import { pagination } from '../../../src/plugins/pagination';
+
+  type PluginName = 'drag' | 'autoplay' | 'navigation' | 'pagination';
+
+  function loadPlugins(names: PluginName[]) {
+    return names.map((name) => {
+      if (name === 'drag') return drag();
+      if (name === 'autoplay') return autoplay({ delay: 4500 });
+      if (name === 'navigation') return navigation();
+      return pagination();
+    });
+  }
+
+  function bindStatus(root: HTMLElement, slider: Unswipe) {
+    const status = document.querySelector<HTMLElement>(
+      `[data-unswipe-status="${root.id}"]`,
+    );
+    if (!status) return;
+    const sync = () => {
+      status.textContent = `Active slide: ${slider.index + 1} of ${slider.slides.length}`;
+    };
+    sync();
+    slider.on('select', sync);
+  }
+
+  function hydrate(root: HTMLElement) {
+    if (root.dataset.hydrated === '1') return;
+    root.dataset.hydrated = '1';
+
+    const pluginNames = (root.dataset.plugins ?? '')
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean) as PluginName[];
+
+    const options: Record<string, unknown> = {
+      align: root.dataset.align ?? 'start',
+      axis: root.dataset.axis ?? 'x',
+      label: root.dataset.label ?? 'Carousel',
+      threshold: 0.5,
+      behavior: 'smooth',
+    };
+    if (root.dataset.slide) options.slide = root.dataset.slide;
+
+    const slider = new Unswipe(root, options as never, loadPlugins(pluginNames));
+    bindStatus(root, slider);
+    (root as HTMLElement & { __unswipe?: Unswipe }).__unswipe = slider;
+  }
+
+  function hydrateAll() {
+    document
+      .querySelectorAll<HTMLElement>('[data-unswipe]')
+      .forEach((root) => hydrate(root));
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', hydrateAll);
+  } else {
+    hydrateAll();
+  }
+
+  document.addEventListener('astro:page-load', hydrateAll);
+</script>

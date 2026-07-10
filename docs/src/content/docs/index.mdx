@@ -1,0 +1,68 @@
+---
+title: Unswipe
+description: Zero-dependency carousel powered by CSS Scroll Snap and Intersection Observer.
+template: splash
+hero:
+  title: Unswipe
+  tagline: A microscopic, zero-dependency carousel. Native scroll physics. Automatic accessibility. Plugins when you need them.
+  actions:
+    - text: Get started
+      link: guides/getting-started/
+      icon: right-arrow
+      variant: primary
+    - text: Live playground
+      link: guides/playground/
+      icon: seti:config
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+import Playground from '../../components/Playground.astro';
+import UnswipeRuntime from '../../components/UnswipeRuntime.astro';
+
+<UnswipeRuntime />
+
+<div class="badge-row">
+  <span class="badge">&lt; 2 KB core</span>
+  <span class="badge">Zero dependencies</span>
+  <span class="badge">CSS Scroll Snap</span>
+  <span class="badge">IO-driven a11y</span>
+</div>
+
+<Playground
+  id="home-demo"
+  label="Home demo"
+  plugins="drag,navigation,pagination"
+  slides={['Variable width A', 'Slide B', 'Wider slide C', 'Slide D']}
+  code={`import { Unswipe } from 'unswipe';
+import { drag } from 'unswipe/plugins/drag';
+import { navigation } from 'unswipe/plugins/navigation';
+import { pagination } from 'unswipe/plugins/pagination';
+
+new Unswipe(root, { label: 'Home demo' }, [
+  drag(),
+  navigation(),
+  pagination(),
+]);`}
+/>
+
+## Why Unswipe?
+
+<CardGrid>
+  <Card title="Tiny core" icon="rocket">
+    Core stays under 2 KB minified. Plugins are separate entry points so you only
+    pay for what you use.
+  </Card>
+  <Card title="Native physics" icon="seti:css">
+    CSS Scroll Snap handles kinetic scrolling on the compositor — no
+    `requestAnimationFrame` loops.
+  </Card>
+  <Card title="Accessible by default" icon="approve-check">
+    Intersection Observer drives `aria-hidden` and `tabindex` as slides enter and
+    leave view.
+  </Card>
+  <Card title="Framework-agnostic" icon="puzzle">
+    Mount on any DOM node. Works with Web Components, React, Vue, Svelte, or plain
+    HTML.
+  </Card>
+</CardGrid>
