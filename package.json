@@ -63,9 +63,11 @@
     "format:check": "oxfmt --check .",
     "test": "vitest run",
     "test:watch": "vitest",
-    "ci": "pnpm run format:check && pnpm run lint && pnpm run typecheck && pnpm run build && pnpm run test && pnpm run build:site"
+    "test:coverage": "vitest run --coverage",
+    "ci": "pnpm run format:check && pnpm run lint && pnpm run typecheck && pnpm run build && pnpm run test:coverage && pnpm run build:site"
   },
   "devDependencies": {
+    "@vitest/coverage-v8": "^3.2.7",
     "esbuild": "^0.25.0",
     "happy-dom": "^17.4.4",
     "oxfmt": "^0.58.0",

@@ -65,6 +65,22 @@ await checkCarousel('React', '#ex-react .carousel');
 await checkCarousel('Vue', '#ex-vue .carousel');
 await checkCarousel('Svelte', '#ex-svelte .carousel');
 
+for (const id of [
+  'ex-wc-status',
+  'ex-react-status',
+  'ex-vue-status',
+  'ex-svelte-status',
+]) {
+  const el = page.locator(`#${id}`);
+  if ((await el.count()) === 0) continue;
+  const text = await el.innerText();
+  if (/mounting/i.test(text)) {
+    failures.push(`${id}: still shows mounting state (${text})`);
+  } else {
+    console.log(`${id.padEnd(16)} ${text}`);
+  }
+}
+
 await browser.close();
 
 if (failures.length) {

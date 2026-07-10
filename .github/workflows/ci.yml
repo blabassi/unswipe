@@ -45,7 +45,7 @@ jobs:
         run: pnpm run build
 
       - name: Test
-        run: pnpm test
+        run: pnpm run test:coverage
 
       - name: Build docs site
         run: pnpm run build:site

@@ -158,10 +158,12 @@ Requires [pnpm](https://pnpm.io/) 11+ (`corepack enable` on Node 22).
 
 ```bash
 pnpm install
-pnpm run ci             # format + lint + typecheck + build + test + docs site
+pnpm run ci             # format + lint + typecheck + build + coverage + docs site
 pnpm test               # vitest unit tests (core, plugins, bundle budget)
+pnpm run test:coverage  # vitest with v8 coverage thresholds
 pnpm run docs:dev       # Astro Starlight docs at http://localhost:4321/unswipe/
 pnpm run preview:site   # production docs build at http://localhost:4173/unswipe/
+pnpm run audit:frameworks # Playwright check that framework demos render
 pnpm run lint
 pnpm run format
 pnpm run build          # library + size check only
@@ -174,10 +176,10 @@ This repo is a **pnpm workspace**: the library at the root and the `docs` packag
 
 ### CI/CD
 
-| Workflow                                                 | Trigger             | Purpose                                                                                |
-| -------------------------------------------------------- | ------------------- | -------------------------------------------------------------------------------------- |
-| [`ci.yml`](.github/workflows/ci.yml)                     | Push & PR to `main` | Format, lint, typecheck, build, Vitest, Starlight build, responsive + framework audits |
-| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main`      | Build Starlight site artifact and deploy to GitHub Pages                               |
+| Workflow                                                 | Trigger             | Purpose                                                                                         |
+| -------------------------------------------------------- | ------------------- | ----------------------------------------------------------------------------------------------- |
+| [`ci.yml`](.github/workflows/ci.yml)                     | Push & PR to `main` | Format, lint, typecheck, build, Vitest coverage, Starlight build, responsive + framework audits |
+| [`deploy-pages.yml`](.github/workflows/deploy-pages.yml) | Push to `main`      | Build Starlight site artifact and deploy to GitHub Pages                                        |
 
 ### GitHub Pages
 
