@@ -55,6 +55,7 @@ jobs:
           test -f site/assets/plugins/autoplay.js
           test -f site/assets/plugins/navigation.js
           test -f site/assets/plugins/pagination.js
+          test -f site/assets/plugins/drag.js
           test -f site/.nojekyll
 
       - name: Install Playwright Chromium

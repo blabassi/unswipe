@@ -121,8 +121,8 @@ slider.on('select', ({ index }) =&gt; {
           <section id="featured">
             <h2>Full demo</h2>
             <p class="section-lede">
-              Variable-width slides, navigation arrows, pagination dots, and
-              autoplay — all via optional plugins.
+              Variable-width slides, mouse drag, navigation arrows, pagination
+              dots, and autoplay — all via optional plugins.
             </p>
             <div class="playground">
               <div class="playground__preview">
@@ -146,6 +146,7 @@ slider.on('select', ({ index }) =&gt; {
                 <p class="example-label">JavaScript</p>
                 <pre><code>import { Unswipe } from 'unswipe';
 import { autoplay } from 'unswipe/plugins/autoplay';
+import { drag } from 'unswipe/plugins/drag';
 import { navigation } from 'unswipe/plugins/navigation';
 import { pagination } from 'unswipe/plugins/pagination';
 
@@ -154,6 +155,7 @@ const slider = new Unswipe(root, {
   label: 'Featured items',
   threshold: 0.6,
 }, [
+  drag(),
   navigation(),
   pagination(),
   autoplay({ delay: 4500 }),
@@ -470,6 +472,10 @@ slider.update();</code></pre>
                     </tr>
                   </thead>
                   <tbody>
+                    <tr>
+                      <td><code>drag</code></td>
+                      <td><code>mouseOnly</code>, <code>threshold</code></td>
+                    </tr>
                     <tr>
                       <td><code>autoplay</code></td>
                       <td>

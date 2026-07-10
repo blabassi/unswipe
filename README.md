@@ -97,15 +97,24 @@ Plugins implement the `SliderPlugin` interface and ship as separate entry points
 ```ts
 import { Unswipe } from 'unswipe';
 import { autoplay } from 'unswipe/plugins/autoplay';
+import { drag } from 'unswipe/plugins/drag';
 import { navigation } from 'unswipe/plugins/navigation';
 import { pagination } from 'unswipe/plugins/pagination';
 
 const slider = new Unswipe(root, options, [
+  drag(),
   navigation(),
   pagination(),
   autoplay({ delay: 5000, pauseOnHover: true }),
 ]);
 ```
+
+| Plugin       | Import                       | Purpose                                       |
+| ------------ | ---------------------------- | --------------------------------------------- |
+| `drag`       | `unswipe/plugins/drag`       | Mouse/pen drag-to-scroll (touch stays native) |
+| `autoplay`   | `unswipe/plugins/autoplay`   | Interval advance with pause-on-interact       |
+| `navigation` | `unswipe/plugins/navigation` | Prev/next controls                            |
+| `pagination` | `unswipe/plugins/pagination` | Dot indicators                                |
 
 ### Writing a plugin
 

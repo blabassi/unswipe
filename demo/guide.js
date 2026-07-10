@@ -1,5 +1,6 @@
 import { Unswipe } from './assets/unswipe.js';
 import { autoplay } from './assets/plugins/autoplay.js';
+import { drag } from './assets/plugins/drag.js';
 import { navigation } from './assets/plugins/navigation.js';
 import { pagination } from './assets/plugins/pagination.js';
 
@@ -40,7 +41,7 @@ function logEvent(id, message) {
     const slider = new Unswipe(
       root,
       { align: 'start', label: 'Featured items', threshold: 0.6 },
-      [navigation(), pagination(), autoplay({ delay: 4500 })],
+      [drag(), navigation(), pagination(), autoplay({ delay: 4500 })],
     );
     slider.on('select', ({ index }) => {
       const status = document.getElementById('ex-featured-status');
