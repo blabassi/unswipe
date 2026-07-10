@@ -45,14 +45,14 @@
     }
   },
   "scripts": {
-    "build": "npm run build:core && npm run build:plugins && npm run build:types && npm run size",
+    "build": "pnpm run build:core && pnpm run build:plugins && pnpm run build:types && pnpm run size",
     "build:core": "esbuild src/index.ts --bundle --minify --format=esm --outfile=dist/unswipe.js && esbuild src/index.ts --bundle --minify --format=cjs --outfile=dist/unswipe.cjs",
     "build:plugins": "esbuild src/plugins/autoplay.ts --bundle --minify --format=esm --outfile=dist/plugins/autoplay.js && esbuild src/plugins/autoplay.ts --bundle --minify --format=cjs --outfile=dist/plugins/autoplay.cjs && esbuild src/plugins/navigation.ts --bundle --minify --format=esm --outfile=dist/plugins/navigation.js && esbuild src/plugins/navigation.ts --bundle --minify --format=cjs --outfile=dist/plugins/navigation.cjs && esbuild src/plugins/pagination.ts --bundle --minify --format=esm --outfile=dist/plugins/pagination.js && esbuild src/plugins/pagination.ts --bundle --minify --format=cjs --outfile=dist/plugins/pagination.cjs && esbuild src/plugins/drag.ts --bundle --minify --format=esm --outfile=dist/plugins/drag.js && esbuild src/plugins/drag.ts --bundle --minify --format=cjs --outfile=dist/plugins/drag.cjs",
     "build:types": "tsc --emitDeclarationOnly",
     "size": "node scripts/size.mjs",
     "build:site": "node scripts/build-site.mjs",
-    "preview:site": "npm run build:site && node scripts/preview-site.mjs",
-    "docs:dev": "npm run dev --prefix docs",
+    "preview:site": "pnpm run build:site && node scripts/preview-site.mjs",
+    "docs:dev": "pnpm --filter docs dev",
     "audit:responsive": "node scripts/audit-responsive.mjs",
     "audit:frameworks": "node scripts/audit-frameworks.mjs",
     "dev": "esbuild src/index.ts --bundle --format=esm --outfile=dist/unswipe.js --watch",
@@ -64,7 +64,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
-    "ci": "npm run format:check && npm run lint && npm run typecheck && npm run build && npm run test:coverage && npm run build:site"
+    "ci": "pnpm run format:check && pnpm run lint && pnpm run typecheck && pnpm run build && pnpm run test:coverage && pnpm run build:site"
   },
   "devDependencies": {
     "@vitest/coverage-v8": "^3.2.7",
@@ -75,5 +75,6 @@
     "playwright": "1.49.0",
     "typescript": "^5.8.0",
     "vitest": "^3.2.4"
-  }
+  },
+  "packageManager": "pnpm@11.11.0"
 }

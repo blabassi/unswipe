@@ -8,9 +8,9 @@ on:
       - 'src/**'
       - 'scripts/**'
       - 'package.json'
-      - 'package-lock.json'
+      - 'pnpm-lock.yaml'
+      - 'pnpm-workspace.yaml'
       - 'docs/package.json'
-      - 'docs/package-lock.json'
       - 'tsconfig.json'
       - '.github/workflows/deploy-pages.yml'
   workflow_dispatch:
@@ -31,24 +31,25 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 11.11.0
+
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm
+          cache: pnpm
 
       - name: Install dependencies
-        run: npm ci
-
-      - name: Install docs dependencies
-        run: npm ci
-        working-directory: docs
+        run: pnpm install --frozen-lockfile
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
       - name: Build site
-        run: npm run build:site
+        run: pnpm run build:site
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3

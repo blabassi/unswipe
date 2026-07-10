@@ -5,6 +5,6 @@ site/
 coverage/
 docs/dist/
 docs/.astro/
-docs/node_modules/
 *.log
 .DS_Store
+package-lock.json
