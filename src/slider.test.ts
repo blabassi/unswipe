@@ -26,6 +26,7 @@ describe('Unswipe', () => {
       expect(root.getAttribute('aria-label')).toBe('Products');
       expect(root.style.display).toBe('flex');
       expect(root.style.flexDirection).toBe('row');
+      expect(root.style.alignItems).toBe('stretch');
       expect(root.style.overflow).toBe('auto hidden');
       expect(root.style.scrollSnapType).toBe('x proximity');
     });

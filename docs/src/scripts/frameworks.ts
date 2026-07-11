@@ -2,21 +2,42 @@ import Unswipe from '../../../src/slider';
 
 /** Run `fn` once the element has a visible layout box (e.g. Starlight tab panels). */
 function whenVisible(el: HTMLElement, fn: () => void) {
-  if (el.getClientRects().length > 0) {
+  let done = false;
+  const finish = () => {
+    if (done || el.getClientRects().length === 0) return;
+    done = true;
+    io.disconnect();
+    mo.disconnect();
     fn();
-    return;
-  }
+  };
+
   const io = new IntersectionObserver(
     (entries) => {
-      if (!entries.some((e) => e.isIntersecting && e.intersectionRatio > 0)) {
-        return;
+      if (entries.some((e) => e.isIntersecting && e.intersectionRatio > 0)) {
+        finish();
       }
-      io.disconnect();
-      fn();
     },
     { threshold: 0.01 },
   );
+
+  // Starlight toggles the `hidden` attribute on tabpanels — IO alone can miss that.
+  const mo = new MutationObserver(() => finish());
+
+  if (el.getClientRects().length > 0) {
+    done = true;
+    fn();
+    return;
+  }
+
   io.observe(el);
+  let node: HTMLElement | null = el;
+  while (node) {
+    mo.observe(node, {
+      attributes: true,
+      attributeFilter: ['hidden', 'style', 'class'],
+    });
+    node = node.parentElement;
+  }
 }
 
 class UnswipeCarousel extends HTMLElement {

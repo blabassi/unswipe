@@ -85,6 +85,10 @@ unswipe-carousel:not([role='carousel']) {
   font-weight: 600;
   text-align: center;
   color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 5rem;
 }
 
 .slide:nth-child(4n + 1) {

@@ -258,6 +258,8 @@ export default class Unswipe implements Slider {
     const x = this.o.axis === 'x';
     st.display = 'flex';
     st.flexDirection = x ? 'row' : 'column';
+    // Explicit stretch — `normal` was leaving variable-width slides ragged.
+    st.alignItems = 'stretch';
     st.overflow = x ? 'auto hidden' : 'hidden auto';
     st.direction = this.o.direction ?? 'ltr';
     this.applySnapType();
