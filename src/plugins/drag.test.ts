@@ -47,7 +47,7 @@ describe('drag plugin', () => {
     root.dispatchEvent(
       pointerEvent('pointerup', { clientX: 140, clientY: 10 }),
     );
-    expect(root.style.scrollSnapType).toBe('x mandatory');
+    expect(root.style.scrollSnapType).toBe('x proximity');
     expect(root.style.cursor).toBe('grab');
   });
 
@@ -73,7 +73,7 @@ describe('drag plugin', () => {
     root.dispatchEvent(
       pointerEvent('pointerup', { clientX: 10, clientY: 120 }),
     );
-    expect(root.style.scrollSnapType).toBe('y mandatory');
+    expect(root.style.scrollSnapType).toBe('y proximity');
   });
 
   it('ignores touch pointers when mouseOnly is enabled', () => {

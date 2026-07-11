@@ -34,7 +34,7 @@ const DEFAULTS: Required<
   behavior: 'smooth',
   startIndex: 0,
   slidesToScroll: 1,
-  snap: 'mandatory',
+  snap: 'proximity',
   dragFree: false,
   containScroll: 'trimSnaps',
   skipSnaps: false,
@@ -42,7 +42,7 @@ const DEFAULTS: Required<
 
 function resolveSnap(o: SliderOptions): SnapMode {
   if (o.dragFree) return 'none';
-  return o.snap ?? 'mandatory';
+  return o.snap ?? 'proximity';
 }
 
 /** Native scroll-snap carousel with scroll-driven active slide tracking. */
@@ -58,11 +58,6 @@ export default class Unswipe implements Slider {
   private settling = false;
   private silent = false;
   private loopMode = false;
-  /** Snap temporarily disabled so trackpad/touch inertia isn't glued. */
-  private snapReleased = false;
-  private inertiaTimer = 0;
-  private lastScrollPos = 0;
-  private scrollDir = 0;
   private resizeObs: ResizeObserver | undefined;
   private mediaQueries: { mq: MediaQueryList; handler: () => void }[] = [];
   private baseOptions: SliderOptions = {};
@@ -134,9 +129,6 @@ export default class Unswipe implements Slider {
     this.teardownObservers();
     this.root.removeEventListener('scroll', this.onScroll);
     this.root.removeEventListener('scrollend', this.settled);
-    this.root.removeEventListener('scrollend', this.onInertiaEnd);
-    window.clearTimeout(this.inertiaTimer);
-    this.restoreSnap(false);
     this.fire('destroy');
     this.listeners.clear();
     this.pluginApis = {};
@@ -341,137 +333,8 @@ export default class Unswipe implements Slider {
 
   private onScroll = () => {
     this.fire('scroll', { progress: this.scrollProgress() });
-    if (this.settling || this.silent) return;
-
-    const pos =
-      this.o.axis === 'x' ? this.root.scrollLeft : this.root.scrollTop;
-    const delta = pos - this.lastScrollPos;
-    if (delta !== 0) this.scrollDir = Math.sign(delta);
-    this.lastScrollPos = pos;
-
-    // Drop mandatory snap during the gesture so trackpad/touch inertia can run.
-    this.releaseSnapForInertia();
-    this.pick();
+    if (!this.settling && !this.silent) this.pick();
   };
-
-  private releaseSnapForInertia(): void {
-    if (resolveSnap(this.o) === 'none') return;
-    if (!this.snapReleased) {
-      this.root.style.scrollSnapType = 'none';
-      this.snapReleased = true;
-    }
-    this.root.removeEventListener('scrollend', this.onInertiaEnd);
-    this.root.addEventListener('scrollend', this.onInertiaEnd, { once: true });
-    window.clearTimeout(this.inertiaTimer);
-    // Long fallback only — a short timeout settles mid-fling and causes bounce.
-    this.inertiaTimer = window.setTimeout(this.onInertiaEnd, 480);
-  }
-
-  private onInertiaEnd = () => {
-    if (this.destroyed || this.settling) return;
-    window.clearTimeout(this.inertiaTimer);
-    this.inertiaTimer = 0;
-    this.root.removeEventListener('scrollend', this.onInertiaEnd);
-
-    // Kill residual native inertia before correcting (prevents fight/bounce).
-    const x = this.o.axis === 'x';
-    const pos = x ? this.root.scrollLeft : this.root.scrollTop;
-    this.root.scrollTo({ behavior: 'auto', [x ? 'left' : 'top']: pos });
-
-    this.beginNaturalSettle();
-  };
-
-  private beginNaturalSettle(): void {
-    if (!this.snapReleased) return;
-    if (resolveSnap(this.o) === 'none') {
-      this.snapReleased = false;
-      this.pick();
-      this.fire('settle');
-      return;
-    }
-
-    this.pick();
-    const index = this.settleIndex();
-    const el = this.s[index];
-    if (!el) {
-      this.finishInertia();
-      return;
-    }
-
-    const axisX = this.o.axis === 'x';
-    const target = this.offset(el);
-    const start = axisX ? this.root.scrollLeft : this.root.scrollTop;
-    const dist = target - start;
-
-    this.commit(index);
-
-    if (Math.abs(dist) < 2) {
-      if (axisX) this.root.scrollLeft = target;
-      else this.root.scrollTop = target;
-      this.finishInertia();
-      return;
-    }
-
-    // One native smooth correction — no rAF fighting the scroller.
-    this.settling = true;
-    this.root.scrollTo({
-      behavior: 'smooth',
-      [axisX ? 'left' : 'top']: target,
-    });
-
-    const done = () => {
-      if (!this.settling) return;
-      this.root.removeEventListener('scrollend', done);
-      window.clearTimeout(this.inertiaTimer);
-      this.inertiaTimer = 0;
-      this.settling = false;
-      // Pin exact pixels before re-enabling snap to avoid a CSS tug.
-      const pin = this.offset(el);
-      if (axisX) this.root.scrollLeft = pin;
-      else this.root.scrollTop = pin;
-      this.finishInertia();
-    };
-
-    this.root.addEventListener('scrollend', done, { once: true });
-    this.inertiaTimer = window.setTimeout(done, 500);
-  }
-
-  /** Prefer the slide in the fling direction when clearly past the midpoint. */
-  private settleIndex(): number {
-    if (!this.s.length) return 0;
-    if (!this.scrollDir || this.s.length < 2) return this.i;
-
-    const next = this.i + this.scrollDir;
-    if (next < 0 || next >= this.s.length) return this.i;
-
-    const cur = this.s[this.i]!;
-    const neighbor = this.s[next]!;
-    const a = this.offset(cur);
-    const b = this.offset(neighbor);
-    const span = b - a;
-    if (Math.abs(span) < 1) return this.i;
-
-    const pos =
-      this.o.axis === 'x' ? this.root.scrollLeft : this.root.scrollTop;
-    const progress = (pos - a) / span;
-    return progress > 0.45 ? next : this.i;
-  }
-
-  private finishInertia(): void {
-    this.snapReleased = false;
-    this.scrollDir = 0;
-    this.applySnapType();
-    this.fire('settle');
-  }
-
-  private restoreSnap(align: boolean): void {
-    if (!this.snapReleased) return;
-    if (align) this.beginNaturalSettle();
-    else {
-      this.snapReleased = false;
-      this.applySnapType();
-    }
-  }
 
   private settled = () => {
     this.settling = false;

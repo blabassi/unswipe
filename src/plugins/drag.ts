@@ -18,7 +18,7 @@ function resolveSnapType(slider: Slider): string {
   const opts = slider.getOptions();
   const axis = opts.axis ?? 'x';
   if (opts.dragFree || opts.snap === 'none') return 'none';
-  return `${axis} ${opts.snap ?? 'mandatory'}`;
+  return `${axis} ${opts.snap ?? 'proximity'}`;
 }
 
 /** Mouse/pen drag-to-scroll — complements native touch and trackpad scrolling. */

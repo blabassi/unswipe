@@ -39,7 +39,7 @@ export interface SliderOptions {
   startIndex?: number;
   /** Slides advanced by `next`/`prev` (default: `1`). */
   slidesToScroll?: number;
-  /** Scroll-snap mode (default: `mandatory`). `dragFree` forces `none`. */
+  /** Scroll-snap mode (default: `proximity`). `dragFree` forces `none`. */
   snap?: SnapMode;
   /** Free-scroll mode — equivalent to `snap: 'none'` (default: `false`). */
   dragFree?: boolean;

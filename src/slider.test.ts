@@ -27,7 +27,7 @@ describe('Unswipe', () => {
       expect(root.style.display).toBe('flex');
       expect(root.style.flexDirection).toBe('row');
       expect(root.style.overflow).toBe('auto hidden');
-      expect(root.style.scrollSnapType).toBe('x mandatory');
+      expect(root.style.scrollSnapType).toBe('x proximity');
     });
 
     it('applies vertical carousel styles', () => {
@@ -36,13 +36,19 @@ describe('Unswipe', () => {
 
       expect(root.style.flexDirection).toBe('column');
       expect(root.style.overflow).toBe('hidden auto');
-      expect(root.style.scrollSnapType).toBe('y mandatory');
+      expect(root.style.scrollSnapType).toBe('y proximity');
     });
 
     it('uses dragFree / snap none', () => {
       const root = createCarousel();
       void new Unswipe(root, { dragFree: true });
       expect(root.style.scrollSnapType).toBe('none');
+    });
+
+    it('honors snap: mandatory when requested', () => {
+      const root = createCarousel();
+      void new Unswipe(root, { snap: 'mandatory' });
+      expect(root.style.scrollSnapType).toBe('x mandatory');
     });
 
     it('uses a custom slide selector', () => {
@@ -169,19 +175,6 @@ describe('Unswipe', () => {
       root.scrollLeft = 200;
       root.dispatchEvent(new Event('scroll'));
       expect(handler).toHaveBeenCalledWith({ progress: 0.5 });
-    });
-
-    it('releases mandatory snap during scroll so inertia is not glued', async () => {
-      const root = createCarousel(3);
-      void new Unswipe(root);
-      expect(root.style.scrollSnapType).toBe('x mandatory');
-
-      root.dispatchEvent(new Event('scroll'));
-      expect(root.style.scrollSnapType).toBe('none');
-
-      root.dispatchEvent(new Event('scrollend'));
-      // Already aligned → settle finishes without waiting on rAF distance.
-      expect(root.style.scrollSnapType).toBe('x mandatory');
     });
 
     it('emit() forwards plugin events', () => {
