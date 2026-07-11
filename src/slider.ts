@@ -363,7 +363,8 @@ export default class Unswipe implements Slider {
     this.root.removeEventListener('scrollend', this.onInertiaEnd);
     this.root.addEventListener('scrollend', this.onInertiaEnd, { once: true });
     window.clearTimeout(this.inertiaTimer);
-    this.inertiaTimer = window.setTimeout(this.onInertiaEnd, 120);
+    // Long fallback only — a short timeout settles mid-fling and causes bounce.
+    this.inertiaTimer = window.setTimeout(this.onInertiaEnd, 480);
   }
 
   private onInertiaEnd = () => {
@@ -371,6 +372,12 @@ export default class Unswipe implements Slider {
     window.clearTimeout(this.inertiaTimer);
     this.inertiaTimer = 0;
     this.root.removeEventListener('scrollend', this.onInertiaEnd);
+
+    // Kill residual native inertia before correcting (prevents fight/bounce).
+    const x = this.o.axis === 'x';
+    const pos = x ? this.root.scrollLeft : this.root.scrollTop;
+    this.root.scrollTo({ behavior: 'auto', [x ? 'left' : 'top']: pos });
+
     this.beginNaturalSettle();
   };
 
@@ -396,36 +403,40 @@ export default class Unswipe implements Slider {
     const start = axisX ? this.root.scrollLeft : this.root.scrollTop;
     const dist = target - start;
 
-    if (Math.abs(dist) < 1.5) {
-      this.commit(index);
+    this.commit(index);
+
+    if (Math.abs(dist) < 2) {
+      if (axisX) this.root.scrollLeft = target;
+      else this.root.scrollTop = target;
       this.finishInertia();
       return;
     }
 
-    // Ease onto the target while snap stays off — then re-enable.
+    // One native smooth correction — no rAF fighting the scroller.
     this.settling = true;
-    this.commit(index);
-    const duration = Math.min(280, Math.max(150, Math.abs(dist) * 0.4));
-    const t0 = performance.now();
-    const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
+    this.root.scrollTo({
+      behavior: 'smooth',
+      [axisX ? 'left' : 'top']: target,
+    });
 
-    const tick = (now: number) => {
-      if (this.destroyed) return;
-      const t = Math.min(1, (now - t0) / duration);
-      const next = start + dist * easeOutCubic(t);
-      if (axisX) this.root.scrollLeft = next;
-      else this.root.scrollTop = next;
-      if (t < 1) {
-        requestAnimationFrame(tick);
-        return;
-      }
+    const done = () => {
+      if (!this.settling) return;
+      this.root.removeEventListener('scrollend', done);
+      window.clearTimeout(this.inertiaTimer);
+      this.inertiaTimer = 0;
       this.settling = false;
+      // Pin exact pixels before re-enabling snap to avoid a CSS tug.
+      const pin = this.offset(el);
+      if (axisX) this.root.scrollLeft = pin;
+      else this.root.scrollTop = pin;
       this.finishInertia();
     };
-    requestAnimationFrame(tick);
+
+    this.root.addEventListener('scrollend', done, { once: true });
+    this.inertiaTimer = window.setTimeout(done, 500);
   }
 
-  /** Prefer the slide in the fling direction when near a midpoint. */
+  /** Prefer the slide in the fling direction when clearly past the midpoint. */
   private settleIndex(): number {
     if (!this.s.length) return 0;
     if (!this.scrollDir || this.s.length < 2) return this.i;
@@ -443,8 +454,7 @@ export default class Unswipe implements Slider {
     const pos =
       this.o.axis === 'x' ? this.root.scrollLeft : this.root.scrollTop;
     const progress = (pos - a) / span;
-    // Commit early in the fling direction so settle matches intent.
-    return progress > 0.2 ? next : this.i;
+    return progress > 0.45 ? next : this.i;
   }
 
   private finishInertia(): void {
