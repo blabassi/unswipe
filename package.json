@@ -10,6 +10,7 @@
     "zero-dependencies"
   ],
   "license": "MIT",
+  "style": "./dist/style.css",
   "files": [
     "dist"
   ],
@@ -23,6 +24,7 @@
       "import": "./dist/unswipe.js",
       "require": "./dist/unswipe.cjs"
     },
+    "./style.css": "./dist/style.css",
     "./plugins/autoplay": {
       "types": "./dist/plugins/autoplay.d.ts",
       "import": "./dist/plugins/autoplay.js",
@@ -45,10 +47,11 @@
     }
   },
   "scripts": {
-    "build": "pnpm run build:core && pnpm run build:plugins && pnpm run build:types",
+    "build": "pnpm run build:core && pnpm run build:plugins && pnpm run build:types && pnpm run build:css",
     "build:core": "esbuild src/index.ts --bundle --minify --format=esm --outfile=dist/unswipe.js && esbuild src/index.ts --bundle --minify --format=cjs --outfile=dist/unswipe.cjs",
     "build:plugins": "esbuild src/plugins/autoplay.ts --bundle --minify --format=esm --outfile=dist/plugins/autoplay.js && esbuild src/plugins/autoplay.ts --bundle --minify --format=cjs --outfile=dist/plugins/autoplay.cjs && esbuild src/plugins/navigation.ts --bundle --minify --format=esm --outfile=dist/plugins/navigation.js && esbuild src/plugins/navigation.ts --bundle --minify --format=cjs --outfile=dist/plugins/navigation.cjs && esbuild src/plugins/pagination.ts --bundle --minify --format=esm --outfile=dist/plugins/pagination.js && esbuild src/plugins/pagination.ts --bundle --minify --format=cjs --outfile=dist/plugins/pagination.cjs && esbuild src/plugins/drag.ts --bundle --minify --format=esm --outfile=dist/plugins/drag.js && esbuild src/plugins/drag.ts --bundle --minify --format=cjs --outfile=dist/plugins/drag.cjs",
     "build:types": "tsc --emitDeclarationOnly",
+    "build:css": "cp src/style.css dist/style.css",
     "build:site": "pnpm --filter docs exec astro telemetry disable && pnpm --filter docs build",
     "docs:dev": "pnpm --filter docs dev",
     "docs:preview": "pnpm run build:site && pnpm --filter docs preview",

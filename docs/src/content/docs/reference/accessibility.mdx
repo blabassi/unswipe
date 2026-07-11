@@ -8,7 +8,8 @@ Unswipe applies accessibility attributes automatically:
 - `role="carousel"` on the root
 - `aria-label` when the `label` option is set
 - `aria-roledescription="slide"` on each slide
-- Dynamic `aria-hidden` and `tabindex="-1"` on off-screen slides
+- Dynamic `aria-hidden` and `tabindex="-1"` on inactive slides (derived from
+  scroll position / snap alignment)
 
 Provide a descriptive `label` option for screen-reader context.
 

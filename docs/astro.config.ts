@@ -1,5 +1,6 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
+import catppuccin from '@catppuccin/starlight';
 
 // https://astro.build/config
 export default defineConfig({
@@ -9,8 +10,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'Unswipe',
-      description:
-        'Zero-dependency carousel powered by CSS Scroll Snap and Intersection Observer.',
+      description: 'Zero-dependency carousel powered by CSS Scroll Snap.',
       social: [
         {
           icon: 'github',
@@ -21,6 +21,12 @@ export default defineConfig({
       editLink: {
         baseUrl: 'https://github.com/blabassi/unswipe/edit/main/docs/',
       },
+      plugins: [
+        catppuccin({
+          dark: { flavor: 'mocha' },
+          light: { flavor: 'latte' },
+        }),
+      ],
       sidebar: [
         { label: 'Introduction', slug: '' },
         {
@@ -40,7 +46,7 @@ export default defineConfig({
           ],
         },
       ],
-      customCss: ['./src/styles/carousel.css'],
+      customCss: ['../src/style.css', './src/styles/carousel.css'],
     }),
   ],
 });

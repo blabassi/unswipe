@@ -1,15 +1,19 @@
-/* Live Unswipe playground styles for Starlight docs */
+/* Docs-only layout + demo chrome. Library defaults live in ../../src/style.css */
 
+/*
+ * `not-content` opts out of Starlight’s markdown sibling spacing
+ * (button + button { margin-top }), which otherwise misaligns dots/nav.
+ */
 .playground {
   display: grid;
-  gap: 1rem;
+  gap: 1.25rem;
   margin: 1rem 0 1.5rem;
   min-width: 0;
 }
 
-@media (min-width: 48rem) {
+@media (min-width: 72rem) {
   .playground {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
     align-items: start;
   }
 }
@@ -17,6 +21,11 @@
 .playground__preview,
 .playground__code {
   min-width: 0;
+}
+
+.playground__preview {
+  display: flex;
+  flex-direction: column;
 }
 
 .playground__status {
@@ -48,52 +57,27 @@
   background: var(--sl-color-accent-low);
 }
 
-.example-label {
-  margin: 0 0 0.35rem;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  color: var(--sl-color-gray-3);
-}
-
-.carousel {
-  display: flex;
-  gap: 0.75rem;
-  padding: 0.25rem;
-  scroll-padding: 0.25rem;
-  scrollbar-width: none;
+/* Theme library tokens to Starlight + colorful demo slides */
+.carousel,
+unswipe-carousel {
   width: 100%;
-  max-width: 100%;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  touch-action: pan-x pinch-zoom;
-}
-
-.carousel::-webkit-scrollbar {
-  display: none;
+  --unswipe-control-bg: var(--sl-color-gray-6);
+  --unswipe-control-color: var(--sl-color-white);
+  --unswipe-dot-bg: var(--sl-color-gray-4);
+  --unswipe-accent: var(--sl-color-accent);
 }
 
 .carousel--y {
-  flex-direction: column;
   max-height: 14rem;
-  touch-action: pan-y pinch-zoom;
+  --unswipe-slide-min-width: auto;
+  --unswipe-slide-min-height: 5rem;
 }
 
 .slide {
-  flex-shrink: 0;
-  min-width: 68%;
-  padding: 1.5rem 1rem;
-  border-radius: 0.6rem;
   font-size: 0.95rem;
   font-weight: 600;
   text-align: center;
   color: #fff;
-}
-
-.carousel--y .slide {
-  min-width: auto;
-  min-height: 5rem;
 }
 
 .slide:nth-child(4n + 1) {
@@ -119,72 +103,6 @@
 .carousel--y .slide:nth-child(4n + 3),
 .carousel--y .slide:nth-child(4n) {
   min-width: auto;
-}
-
-.unswipe-nav__container,
-.unswipe-pagination__container {
-  margin-top: 0.65rem;
-}
-
-.unswipe-nav__container {
-  display: flex;
-  gap: 0.5rem;
-}
-
-.unswipe-nav__prev,
-.unswipe-nav__next {
-  flex: 1;
-  padding: 0.55rem;
-  border: none;
-  border-radius: 0.45rem;
-  background: var(--sl-color-gray-6);
-  color: var(--sl-color-white);
-  cursor: pointer;
-  font-size: 1.1rem;
-}
-
-.unswipe-nav__prev:disabled,
-.unswipe-nav__next:disabled {
-  opacity: 0.4;
-  cursor: not-allowed;
-}
-
-.unswipe-pagination {
-  display: flex;
-  gap: 0.4rem;
-  justify-content: center;
-}
-
-.unswipe-pagination__dot {
-  width: 0.55rem;
-  height: 0.55rem;
-  padding: 0;
-  border: none;
-  border-radius: 999px;
-  background: var(--sl-color-gray-4);
-  cursor: pointer;
-}
-
-.unswipe-pagination__dot[aria-selected='true'] {
-  background: var(--sl-color-accent);
-  transform: scale(1.2);
-}
-
-unswipe-carousel {
-  display: flex;
-  gap: 0.75rem;
-  padding: 0.25rem;
-  scroll-padding: 0.25rem;
-  scrollbar-width: none;
-  width: 100%;
-  max-width: 100%;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  touch-action: pan-x pinch-zoom;
-}
-
-unswipe-carousel::-webkit-scrollbar {
-  display: none;
 }
 
 .event-log {

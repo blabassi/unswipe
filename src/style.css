@@ -1,0 +1,128 @@
+/**
+ * Optional Unswipe defaults — import separately so the JS core stays unstyled.
+ *
+ * @example
+ * import 'unswipe/style.css';
+ *
+ * Override tokens on `:root` or a carousel ancestor:
+ * [role="carousel"] { --unswipe-accent: #0ea5e9; }
+ */
+
+:root {
+  --unswipe-gap: 0.75rem;
+  --unswipe-padding: 0.25rem;
+  --unswipe-slide-min-width: 70%;
+  --unswipe-slide-min-height: auto;
+  --unswipe-slide-padding: 1.25rem 1rem;
+  --unswipe-slide-radius: 0.5rem;
+  --unswipe-slide-bg: #e5e7eb;
+  --unswipe-slide-color: #111827;
+  --unswipe-control-gap: 0.5rem;
+  --unswipe-control-bg: #f3f4f6;
+  --unswipe-control-color: #111827;
+  --unswipe-control-radius: 0.45rem;
+  --unswipe-control-padding: 0.55rem;
+  --unswipe-dot-size: 0.55rem;
+  --unswipe-dot-gap: 0.4rem;
+  --unswipe-dot-bg: #9ca3af;
+  --unswipe-accent: #4f46e5;
+  --unswipe-disabled-opacity: 0.4;
+}
+
+/* Library always sets role="carousel" on the root */
+[role='carousel'] {
+  position: relative;
+  gap: var(--unswipe-gap);
+  padding: var(--unswipe-padding);
+  scroll-padding: var(--unswipe-padding);
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-x pinch-zoom;
+  max-width: 100%;
+}
+
+[role='carousel']::-webkit-scrollbar {
+  display: none;
+}
+
+/* Let the last slide snap to the start edge with align:start. */
+[role='carousel']::after {
+  content: '';
+  flex: 0 0 calc(100% - var(--unswipe-slide-min-width, 70%));
+  pointer-events: none;
+}
+
+[role='carousel'][style*='column'] {
+  touch-action: pan-y pinch-zoom;
+}
+
+[aria-roledescription='slide'] {
+  box-sizing: border-box;
+  min-width: var(--unswipe-slide-min-width);
+  min-height: var(--unswipe-slide-min-height);
+  padding: var(--unswipe-slide-padding);
+  border-radius: var(--unswipe-slide-radius);
+  background: var(--unswipe-slide-bg);
+  color: var(--unswipe-slide-color);
+}
+
+.unswipe-nav__container,
+.unswipe-pagination__container {
+  margin-top: 0.65rem;
+}
+
+.unswipe-nav__container {
+  display: flex;
+  gap: var(--unswipe-control-gap);
+  justify-content: center;
+  align-items: center;
+}
+
+.unswipe-nav__prev,
+.unswipe-nav__next {
+  flex: 0 0 auto;
+  box-sizing: border-box;
+  min-width: 2.5rem;
+  margin: 0;
+  padding: var(--unswipe-control-padding) 0.85rem;
+  border: none;
+  border-radius: var(--unswipe-control-radius);
+  background: var(--unswipe-control-bg);
+  color: var(--unswipe-control-color);
+  cursor: pointer;
+  font: inherit;
+  font-size: 1.1rem;
+  line-height: 1;
+}
+
+.unswipe-nav__prev:disabled,
+.unswipe-nav__next:disabled {
+  opacity: var(--unswipe-disabled-opacity);
+  cursor: not-allowed;
+}
+
+.unswipe-pagination {
+  display: flex;
+  gap: var(--unswipe-dot-gap);
+  justify-content: center;
+  align-items: center;
+}
+
+.unswipe-pagination__dot {
+  box-sizing: border-box;
+  flex: 0 0 auto;
+  width: var(--unswipe-dot-size);
+  height: var(--unswipe-dot-size);
+  margin: 0;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: var(--unswipe-dot-bg);
+  cursor: pointer;
+}
+
+.unswipe-pagination__dot[aria-selected='true'] {
+  background: var(--unswipe-accent);
+  transform: scale(1.2);
+}

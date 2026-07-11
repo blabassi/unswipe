@@ -14,7 +14,7 @@ export interface SliderOptions {
   axis?: SliderAxis;
   /** Accessible name for the carousel region. */
   label?: string;
-  /** Intersection ratio (0–1) at which a slide is considered visible (default: `0.5`). */
+  /** @deprecated Unused — active slide is derived from scroll position. */
   threshold?: number;
   /** Scroll behavior for programmatic navigation (default: `smooth`). */
   behavior?: ScrollBehavior;
