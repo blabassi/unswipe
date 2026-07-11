@@ -266,9 +266,14 @@ export default class Unswipe implements Slider {
 
   private applySnapType(): void {
     const snap = resolveSnap(this.o);
-    const x = this.o.axis === 'x';
-    this.root.style.scrollSnapType =
-      snap === 'none' ? 'none' : `${x ? 'x' : 'y'} ${snap}`;
+    if (snap === 'none') {
+      this.root.style.scrollSnapType = 'none';
+      return;
+    }
+    const axis = this.o.axis === 'x' ? 'x' : 'y';
+    // Always write both keywords — some engines omit a defaulted strictness
+    // when serializing the shorthand back to the style attribute.
+    this.root.style.setProperty('scroll-snap-type', `${axis} ${snap}`);
   }
 
   private applyContainScroll(mode: ContainScroll): void {

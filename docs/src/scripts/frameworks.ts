@@ -1,15 +1,41 @@
 import Unswipe from '../../../src/slider';
 
+/** Run `fn` once the element has a visible layout box (e.g. Starlight tab panels). */
+function whenVisible(el: HTMLElement, fn: () => void) {
+  if (el.getClientRects().length > 0) {
+    fn();
+    return;
+  }
+  const io = new IntersectionObserver(
+    (entries) => {
+      if (!entries.some((e) => e.isIntersecting && e.intersectionRatio > 0)) {
+        return;
+      }
+      io.disconnect();
+      fn();
+    },
+    { threshold: 0.01 },
+  );
+  io.observe(el);
+}
+
 class UnswipeCarousel extends HTMLElement {
   #slider: Unswipe | undefined;
   #off: (() => void) | undefined;
+  #started = false;
 
   connectedCallback() {
     this.classList.add('carousel');
+    // Tab panels are often `hidden` on connect — wait until visible so flex/% sizes work.
+    whenVisible(this, () => this.#mount());
+  }
+
+  #mount() {
+    if (this.#started) return;
+    this.#started = true;
     this.#slider = new Unswipe(this, {
       label: this.getAttribute('label') ?? 'Carousel',
       align: 'start',
-      threshold: 0.5,
     });
     const status = document.getElementById('ex-wc-status');
     const sync = () => {
@@ -23,6 +49,9 @@ class UnswipeCarousel extends HTMLElement {
   disconnectedCallback() {
     this.#off?.();
     this.#slider?.destroy();
+    this.#slider = undefined;
+    this.#off = undefined;
+    this.#started = false;
   }
 }
 
@@ -46,14 +75,16 @@ function mountPreview(
     root.append(slide);
   }
   host.replaceChildren(root);
-  const slider = new Unswipe(root, { label, align: 'start', threshold: 0.5 });
-  const status = document.getElementById(statusId);
-  const sync = () => {
-    if (!status) return;
-    status.textContent = `Active slide: ${slider.index + 1} of ${slider.slides.length}${suffix}`;
-  };
-  sync();
-  slider.on('select', sync);
+  whenVisible(root, () => {
+    const slider = new Unswipe(root, { label, align: 'start' });
+    const status = document.getElementById(statusId);
+    const sync = () => {
+      if (!status) return;
+      status.textContent = `Active slide: ${slider.index + 1} of ${slider.slides.length}${suffix}`;
+    };
+    sync();
+    slider.on('select', sync);
+  });
 }
 
 {
@@ -71,19 +102,25 @@ function mountPreview(
           useEffect(() => {
             const root = ref.current as HTMLElement | null;
             if (!root) return;
-            const slider = new Unswipe(root, {
-              label: 'React carousel',
-              align: 'start',
-              threshold: 0.5,
+            let slider: Unswipe | undefined;
+            let off: (() => void) | undefined;
+            whenVisible(root, () => {
+              slider = new Unswipe(root, {
+                label: 'React carousel',
+                align: 'start',
+              });
+              const status = document.getElementById('ex-react-status');
+              const sync = () => {
+                if (!status || !slider) return;
+                status.textContent = `Active slide: ${slider.index + 1} of ${slider.slides.length} · React`;
+              };
+              sync();
+              off = slider.on('select', sync);
             });
-            const status = document.getElementById('ex-react-status');
-            const sync = () => {
-              if (!status) return;
-              status.textContent = `Active slide: ${slider.index + 1} of ${slider.slides.length} · React`;
+            return () => {
+              off?.();
+              slider?.destroy();
             };
-            sync();
-            slider.on('select', sync);
-            return () => slider.destroy();
           }, []);
           return React.createElement(
             'div',
@@ -124,18 +161,19 @@ function mountPreview(
             let slider: Unswipe | undefined;
             onMounted(() => {
               if (!root.value) return;
-              slider = new Unswipe(root.value, {
-                label: 'Vue carousel',
-                align: 'start',
-                threshold: 0.5,
+              whenVisible(root.value, () => {
+                slider = new Unswipe(root.value, {
+                  label: 'Vue carousel',
+                  align: 'start',
+                });
+                const status = document.getElementById('ex-vue-status');
+                const sync = () => {
+                  if (!status || !slider) return;
+                  status.textContent = `Active slide: ${slider.index + 1} of ${slider.slides.length} · Vue`;
+                };
+                sync();
+                slider.on('select', sync);
               });
-              const status = document.getElementById('ex-vue-status');
-              const sync = () => {
-                if (!status || !slider) return;
-                status.textContent = `Active slide: ${slider.index + 1} of ${slider.slides.length} · Vue`;
-              };
-              sync();
-              slider.on('select', sync);
             });
             onUnmounted(() => slider?.destroy());
             return () =>

@@ -93,6 +93,7 @@ class UnswipeCarousel extends HTMLElement {
 
   connectedCallback() {
     this.classList.add('carousel');
+    // Defer if this can mount inside a hidden tab — % slide widths need a real box.
     this.#slider = new Unswipe(this, {
       label: this.getAttribute('label') ?? 'Carousel',
     });

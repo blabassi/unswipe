@@ -60,11 +60,18 @@
 /* Theme library tokens to Starlight + colorful demo slides */
 .carousel,
 unswipe-carousel {
+  display: block;
   width: 100%;
+  min-height: 5.5rem;
   --unswipe-control-bg: var(--sl-color-gray-6);
   --unswipe-control-color: var(--sl-color-white);
   --unswipe-dot-bg: var(--sl-color-gray-4);
   --unswipe-accent: var(--sl-color-accent);
+}
+
+/* Custom elements are inline until JS runs — keep the track block-level. */
+unswipe-carousel:not([role='carousel']) {
+  display: block;
 }
 
 .carousel--y {
