@@ -21,10 +21,11 @@ export function navigation(options: NavigationOptions = {}): SliderPlugin {
   let nextBtn: HTMLButtonElement | null = null;
   let ownedContainer: HTMLElement | null = null;
   let unbindSelect: (() => void) | null = null;
+  let unbindReInit: (() => void) | null = null;
 
   const sync = (slider: Slider) => {
-    if (prevBtn) prevBtn.disabled = slider.index <= 0;
-    if (nextBtn) nextBtn.disabled = slider.index >= slider.slides.length - 1;
+    if (prevBtn) prevBtn.disabled = !slider.canScrollPrev();
+    if (nextBtn) nextBtn.disabled = !slider.canScrollNext();
   };
 
   return {
@@ -60,10 +61,13 @@ export function navigation(options: NavigationOptions = {}): SliderPlugin {
       container.append(prevBtn, nextBtn);
       sync(slider);
       unbindSelect = slider.on('select', () => sync(slider));
+      unbindReInit = slider.on('reInit', () => sync(slider));
     },
     destroy() {
       unbindSelect?.();
+      unbindReInit?.();
       unbindSelect = null;
+      unbindReInit = null;
       prevBtn?.remove();
       nextBtn?.remove();
       ownedContainer?.remove();

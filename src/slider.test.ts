@@ -39,6 +39,12 @@ describe('Unswipe', () => {
       expect(root.style.scrollSnapType).toBe('y mandatory');
     });
 
+    it('uses dragFree / snap none', () => {
+      const root = createCarousel();
+      void new Unswipe(root, { dragFree: true });
+      expect(root.style.scrollSnapType).toBe('none');
+    });
+
     it('uses a custom slide selector', () => {
       const root = document.createElement('div');
       root.innerHTML =
@@ -49,12 +55,27 @@ describe('Unswipe', () => {
       expect(slider.slides).toHaveLength(2);
     });
 
-    it('initializes plugins', () => {
+    it('initializes plugins and stores returned APIs', () => {
       const root = createCarousel();
-      const init = vi.fn();
+      const init = vi.fn(() => ({ ping: () => 'pong' }));
       const plugin: SliderPlugin = { name: 'test', init };
-      void new Unswipe(root, {}, [plugin]);
+      const slider = new Unswipe(root, {}, [plugin]);
       expect(init).toHaveBeenCalledOnce();
+      expect(slider.plugins().test).toEqual({ ping: expect.any(Function) });
+    });
+
+    it('emits init after plugins register listeners', () => {
+      const root = createCarousel();
+      const seen = vi.fn();
+      void new Unswipe(root, {}, [
+        {
+          name: 'catch',
+          init(s) {
+            s.on('init', seen);
+          },
+        },
+      ]);
+      expect(seen).toHaveBeenCalledOnce();
     });
   });
 
@@ -79,6 +100,17 @@ describe('Unswipe', () => {
       expect(slider.slides[1]?.hasAttribute('aria-hidden')).toBe(false);
       expect(slider.slides[2]?.getAttribute('aria-hidden')).toBe('true');
       expect(slider.index).toBe(1);
+    });
+
+    it('excludes clone nodes from slides', () => {
+      const root = createCarousel(3);
+      const slider = new Unswipe(root);
+      const clone = root.children[0]!.cloneNode(true) as HTMLElement;
+      clone.setAttribute('data-unswipe-clone', 'pre');
+      clone.setAttribute('data-unswipe-index', '2');
+      root.insertBefore(clone, root.firstChild);
+      slider.resync();
+      expect(slider.slides).toHaveLength(3);
     });
   });
 
@@ -125,6 +157,27 @@ describe('Unswipe', () => {
 
       expect(handler).toHaveBeenCalledOnce();
       expect(slider.slides).toHaveLength(3);
+    });
+
+    it('emits scroll with progress', () => {
+      const root = createCarousel(3);
+      Object.defineProperty(root, 'clientWidth', { get: () => 400 });
+      Object.defineProperty(root, 'scrollWidth', { get: () => 800 });
+      const slider = new Unswipe(root);
+      const handler = vi.fn();
+      slider.on('scroll', handler);
+      root.scrollLeft = 200;
+      root.dispatchEvent(new Event('scroll'));
+      expect(handler).toHaveBeenCalledWith({ progress: 0.5 });
+    });
+
+    it('emit() forwards plugin events', () => {
+      const root = createCarousel();
+      const slider = new Unswipe(root);
+      const handler = vi.fn();
+      slider.on('pointerDown', handler);
+      slider.emit('pointerDown');
+      expect(handler).toHaveBeenCalledOnce();
     });
   });
 
@@ -186,9 +239,45 @@ describe('Unswipe', () => {
       expect(scrollTo).not.toHaveBeenCalled();
     });
 
+    it('respects slidesToScroll', () => {
+      const root = createCarousel(5, { width: 200 });
+      const slider = new Unswipe(root, {
+        behavior: 'auto',
+        slidesToScroll: 2,
+      });
+      mockScrollTo(root, slider.slides);
+      activateSlide(0, slider.slides);
+      slider.next();
+      expect(slider.index).toBe(2);
+    });
+
+    it('wraps next/prev when loop mode is enabled', () => {
+      const root = createCarousel(3, { width: 200 });
+      const slider = new Unswipe(root, { behavior: 'auto' });
+      mockScrollTo(root, slider.slides);
+      slider.setLoopMode(true);
+      activateSlide(2, slider.slides);
+      slider.next();
+      expect(slider.index).toBe(0);
+      slider.prev();
+      expect(slider.index).toBe(2);
+    });
+
+    it('canScrollNext/Prev reflect bounds and loop mode', () => {
+      const root = createCarousel(3);
+      const slider = new Unswipe(root);
+      activateSlide(0, slider.slides);
+      expect(slider.canScrollPrev()).toBe(false);
+      expect(slider.canScrollNext()).toBe(true);
+      activateSlide(2, slider.slides);
+      expect(slider.canScrollNext()).toBe(false);
+      slider.setLoopMode(true);
+      expect(slider.canScrollNext()).toBe(true);
+      expect(slider.canScrollPrev()).toBe(true);
+    });
+
     it('scrolls next by one slide using layout-relative offsets', () => {
       const root = createCarousel(4, { width: 200 });
-      // Simulate flex gap: slide N starts further than width*N
       root.scrollLeft = 0;
       root.childNodes.forEach((node, i) => {
         const slide = node as HTMLElement;
@@ -225,8 +314,6 @@ describe('Unswipe', () => {
       Object.defineProperty(root, 'scrollWidth', { get: () => 700 });
       const slider = new Unswipe(root, { behavior: 'auto' });
 
-      // Max scroll cannot align slide 3 to the start edge; closest-edge
-      // would prefer an earlier slide without the end boundary rule.
       root.scrollLeft = 300;
       root.childNodes.forEach((node, i) => {
         const slide = node as HTMLElement;
@@ -260,6 +347,37 @@ describe('Unswipe', () => {
         top: slideScrollOffset(root, slider.slides[1]!, 'y'),
         behavior: 'auto',
       });
+    });
+  });
+
+  describe('helpers', () => {
+    it('reports scrollProgress and slidesInView', () => {
+      const root = createCarousel(3, { width: 200 });
+      Object.defineProperty(root, 'clientWidth', { get: () => 400 });
+      Object.defineProperty(root, 'scrollWidth', { get: () => 600 });
+      const slider = new Unswipe(root);
+      root.scrollLeft = 0;
+      expect(slider.scrollProgress()).toBe(0);
+      expect(slider.slidesInView().length).toBeGreaterThan(0);
+      expect(slider.getOptions().axis).toBe('x');
+    });
+
+    it('reInit merges options and re-inits plugins', () => {
+      const root = createCarousel(3);
+      const destroy = vi.fn();
+      const init = vi.fn();
+      const slider = new Unswipe(root, { align: 'start' }, [
+        { name: 't', init, destroy },
+      ]);
+      expect(init).toHaveBeenCalledOnce();
+      slider.reInit({ align: 'center' });
+      expect(destroy).toHaveBeenCalledOnce();
+      expect(init).toHaveBeenCalledTimes(2);
+      expect(slider.getOptions().align).toBe('center');
+      expect(
+        root.children[0] &&
+          (root.children[0] as HTMLElement).style.scrollSnapAlign,
+      ).toBe('center');
     });
   });
 

@@ -1,6 +1,6 @@
 ---
 title: Plugins
-description: Optional tree-shakeable plugins for drag, autoplay, navigation, and pagination.
+description: Tree-shakeable plugins for drag, loop, autoplay, navigation, and more.
 ---
 
 import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
@@ -8,31 +8,35 @@ import Playground from '../../../components/Playground.astro';
 
 <UnswipeRuntime />
 
-Plugins implement the `SliderPlugin` interface and ship as separate entry points so they never bloat the core.
+Plugins implement the `SliderPlugin` interface and ship as separate entry points so they never bloat the core. `init` may return a public API object exposed via `slider.plugins()`.
 
 ```ts
 import { Unswipe } from 'unswipe';
 import { autoplay } from 'unswipe/plugins/autoplay';
 import { drag } from 'unswipe/plugins/drag';
+import { loop } from 'unswipe/plugins/loop';
 import { navigation } from 'unswipe/plugins/navigation';
 import { pagination } from 'unswipe/plugins/pagination';
 
 new Unswipe(root, options, [
+  loop(),
   drag(),
   navigation(),
   pagination(),
-  autoplay({ delay: 5000, pauseOnHover: true }),
+  autoplay({ delay: 5000 }),
 ]);
 ```
 
 ## Drag
 
-Mouse/pen drag-to-scroll. Touch stays native by default (`mouseOnly: true`).
+Mouse/pen drag-to-scroll. Touch stays native by default. Emits `pointerDown` / `pointerUp`.
 
 | Option | Default | Description |
 | --- | --- | --- |
 | `mouseOnly` | `true` | Ignore touch pointers |
-| `threshold` | `3` | Pixels before a drag starts |
+| `threshold` | `10` | Pixels before a drag starts |
+
+Pair with `{ dragFree: true }` for free scroll without mandatory snap.
 
 <Playground
   id="plugin-drag"
@@ -42,15 +46,37 @@ Mouse/pen drag-to-scroll. Touch stays native by default (`mouseOnly: true`).
 new Unswipe(root, {}, [drag()]);`}
 />
 
+## Loop
+
+Infinite carousel via edge clones + silent teleports. Keeps CSS Scroll Snap physics.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `clones` | `1` | Clones per edge |
+
+<Playground
+  id="plugin-loop"
+  label="Loop demo"
+  plugins="loop,drag,navigation"
+  code={`import { loop } from 'unswipe/plugins/loop';
+import { drag } from 'unswipe/plugins/drag';
+import { navigation } from 'unswipe/plugins/navigation';
+new Unswipe(root, {}, [loop(), drag(), navigation()]);`}
+/>
+
 ## Autoplay
 
 | Option | Default | Description |
 | --- | --- | --- |
 | `delay` | `3000` | Interval in ms |
 | `pauseOnHover` | `true` | Pause on hover/focus |
-| `loop` | `true` | Loop to first slide |
+| `loop` | `true` | Jump to first when not using the loop plugin |
+
+Uses `canScrollNext()` so it cooperates with the loop plugin.
 
 ## Navigation
+
+Prev/next buttons. Disabled state follows `canScrollNext` / `canScrollPrev`.
 
 | Option | Default | Description |
 | --- | --- | --- |
@@ -61,11 +87,49 @@ new Unswipe(root, {}, [drag()]);`}
 
 ## Pagination
 
+Dots — one per snap group when `slidesToScroll > 1`.
+
 | Option | Default | Description |
 | --- | --- | --- |
 | `label` | `"Carousel pagination"` | Tablist label |
 | `className` | `"unswipe-pagination"` | CSS class prefix |
 | `container` | sibling wrapper | Where dots render |
+
+## Class names
+
+| Option | Default |
+| --- | --- |
+| `selected` | `is-selected` |
+| `draggable` | `is-draggable` |
+| `dragging` | `is-dragging` |
+| `inView` | `is-in-view` |
+
+## Wheel
+
+Maps vertical wheel to horizontal scroll.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `speed` | `1` | Delta multiplier |
+
+## Auto scroll
+
+Continuous motion (distinct from interval autoplay). Exposes `{ play, stop }` via `plugins().autoScroll`.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `speed` | `1` | Pixels per frame |
+| `pauseOnHover` | `true` | Pause on hover |
+| `reverse` | `false` | Reverse direction |
+
+## Fade
+
+Opacity crossfade. Best with full-width slides.
+
+| Option | Default |
+| --- | --- |
+| `activeOpacity` | `1` |
+| `inactiveOpacity` | `0.25` |
 
 Import `unswipe/style.css` for default nav/dot styling (override with `--unswipe-*` tokens).
 
@@ -82,6 +146,7 @@ export function logger(): SliderPlugin {
       off = slider.on('select', ({ index }) => {
         console.log('[unswipe]', index);
       });
+      return { ping: () => 'pong' };
     },
     destroy() {
       off?.();
