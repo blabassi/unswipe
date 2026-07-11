@@ -61,6 +61,8 @@ export default class Unswipe implements Slider {
   /** Snap temporarily disabled so trackpad/touch inertia isn't glued. */
   private snapReleased = false;
   private inertiaTimer = 0;
+  private lastScrollPos = 0;
+  private scrollDir = 0;
   private resizeObs: ResizeObserver | undefined;
   private mediaQueries: { mq: MediaQueryList; handler: () => void }[] = [];
   private baseOptions: SliderOptions = {};
@@ -340,6 +342,13 @@ export default class Unswipe implements Slider {
   private onScroll = () => {
     this.fire('scroll', { progress: this.scrollProgress() });
     if (this.settling || this.silent) return;
+
+    const pos =
+      this.o.axis === 'x' ? this.root.scrollLeft : this.root.scrollTop;
+    const delta = pos - this.lastScrollPos;
+    if (delta !== 0) this.scrollDir = Math.sign(delta);
+    this.lastScrollPos = pos;
+
     // Drop mandatory snap during the gesture so trackpad/touch inertia can run.
     this.releaseSnapForInertia();
     this.pick();
@@ -354,32 +363,104 @@ export default class Unswipe implements Slider {
     this.root.removeEventListener('scrollend', this.onInertiaEnd);
     this.root.addEventListener('scrollend', this.onInertiaEnd, { once: true });
     window.clearTimeout(this.inertiaTimer);
-    this.inertiaTimer = window.setTimeout(this.onInertiaEnd, 150);
+    this.inertiaTimer = window.setTimeout(this.onInertiaEnd, 120);
   }
 
   private onInertiaEnd = () => {
-    if (this.destroyed) return;
+    if (this.destroyed || this.settling) return;
     window.clearTimeout(this.inertiaTimer);
     this.inertiaTimer = 0;
     this.root.removeEventListener('scrollend', this.onInertiaEnd);
-    this.restoreSnap(true);
+    this.beginNaturalSettle();
   };
+
+  private beginNaturalSettle(): void {
+    if (!this.snapReleased) return;
+    if (resolveSnap(this.o) === 'none') {
+      this.snapReleased = false;
+      this.pick();
+      this.fire('settle');
+      return;
+    }
+
+    this.pick();
+    const index = this.settleIndex();
+    const el = this.s[index];
+    if (!el) {
+      this.finishInertia();
+      return;
+    }
+
+    const axisX = this.o.axis === 'x';
+    const target = this.offset(el);
+    const start = axisX ? this.root.scrollLeft : this.root.scrollTop;
+    const dist = target - start;
+
+    if (Math.abs(dist) < 1.5) {
+      this.commit(index);
+      this.finishInertia();
+      return;
+    }
+
+    // Ease onto the target while snap stays off — then re-enable.
+    this.settling = true;
+    this.commit(index);
+    const duration = Math.min(280, Math.max(150, Math.abs(dist) * 0.4));
+    const t0 = performance.now();
+    const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
+
+    const tick = (now: number) => {
+      if (this.destroyed) return;
+      const t = Math.min(1, (now - t0) / duration);
+      const next = start + dist * easeOutCubic(t);
+      if (axisX) this.root.scrollLeft = next;
+      else this.root.scrollTop = next;
+      if (t < 1) {
+        requestAnimationFrame(tick);
+        return;
+      }
+      this.settling = false;
+      this.finishInertia();
+    };
+    requestAnimationFrame(tick);
+  }
+
+  /** Prefer the slide in the fling direction when near a midpoint. */
+  private settleIndex(): number {
+    if (!this.s.length) return 0;
+    if (!this.scrollDir || this.s.length < 2) return this.i;
+
+    const next = this.i + this.scrollDir;
+    if (next < 0 || next >= this.s.length) return this.i;
+
+    const cur = this.s[this.i]!;
+    const neighbor = this.s[next]!;
+    const a = this.offset(cur);
+    const b = this.offset(neighbor);
+    const span = b - a;
+    if (Math.abs(span) < 1) return this.i;
+
+    const pos =
+      this.o.axis === 'x' ? this.root.scrollLeft : this.root.scrollTop;
+    const progress = (pos - a) / span;
+    // Commit early in the fling direction so settle matches intent.
+    return progress > 0.2 ? next : this.i;
+  }
+
+  private finishInertia(): void {
+    this.snapReleased = false;
+    this.scrollDir = 0;
+    this.applySnapType();
+    this.fire('settle');
+  }
 
   private restoreSnap(align: boolean): void {
     if (!this.snapReleased) return;
-    this.snapReleased = false;
-    this.applySnapType();
-    if (!align) return;
-    this.pick();
-    const el = this.s[this.i];
-    if (el && resolveSnap(this.o) !== 'none') {
-      // Instant align after inertia — avoids a second glued fling.
-      this.root.scrollTo({
-        behavior: 'auto',
-        [this.axisKey()]: this.offset(el),
-      });
+    if (align) this.beginNaturalSettle();
+    else {
+      this.snapReleased = false;
+      this.applySnapType();
     }
-    this.fire('settle');
   }
 
   private settled = () => {

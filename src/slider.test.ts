@@ -171,17 +171,17 @@ describe('Unswipe', () => {
       expect(handler).toHaveBeenCalledWith({ progress: 0.5 });
     });
 
-    it('releases mandatory snap during scroll so inertia is not glued', () => {
+    it('releases mandatory snap during scroll so inertia is not glued', async () => {
       const root = createCarousel(3);
-      const slider = new Unswipe(root);
+      void new Unswipe(root);
       expect(root.style.scrollSnapType).toBe('x mandatory');
 
       root.dispatchEvent(new Event('scroll'));
       expect(root.style.scrollSnapType).toBe('none');
 
       root.dispatchEvent(new Event('scrollend'));
+      // Already aligned → settle finishes without waiting on rAF distance.
       expect(root.style.scrollSnapType).toBe('x mandatory');
-      void slider;
     });
 
     it('emit() forwards plugin events', () => {
