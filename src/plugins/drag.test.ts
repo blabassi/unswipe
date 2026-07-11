@@ -98,7 +98,7 @@ describe('drag plugin', () => {
     );
 
     expect(root.scrollLeft).toBe(0);
-    expect(root.style.scrollSnapType).toBe('x mandatory');
+    expect(root.style.scrollSnapType).toBe('x proximity');
   });
 
   it('does not start dragging until the threshold is crossed', () => {
@@ -113,7 +113,7 @@ describe('drag plugin', () => {
     root.dispatchEvent(pointerEvent('pointermove', { clientX: 195 }));
 
     expect(root.scrollLeft).toBe(0);
-    expect(root.style.scrollSnapType).toBe('x mandatory');
+    expect(root.style.scrollSnapType).toBe('x proximity');
   });
 
   it('suppresses the following click after a drag', () => {
