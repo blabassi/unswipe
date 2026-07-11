@@ -19,6 +19,7 @@ export function autoplay(options: AutoplayOptions = {}): SliderPlugin {
   let timer: ReturnType<typeof setInterval> | undefined;
   let resumeTimer: ReturnType<typeof setTimeout> | undefined;
   let paused = false;
+  let unbindSelect: (() => void) | undefined;
 
   const stop = () => {
     if (timer !== undefined) {
@@ -64,9 +65,18 @@ export function autoplay(options: AutoplayOptions = {}): SliderPlugin {
     resumeTimer = setTimeout(resume, delay);
   };
 
+  /** Pause and reschedule — root gestures only. */
   const onInteract = () => {
     pause();
     resumeLater();
+  };
+
+  /** Restart the interval after any slide change (nav/dots live outside the root). */
+  const onSelect = () => {
+    if (!paused) {
+      stop();
+      start();
+    }
   };
 
   return {
@@ -75,28 +85,27 @@ export function autoplay(options: AutoplayOptions = {}): SliderPlugin {
       slider = instance;
       start();
       if (pauseOnHover) {
-        instance.root.addEventListener('mouseenter', pause);
-        instance.root.addEventListener('mouseleave', resume);
+        instance.root.addEventListener('pointerenter', pause);
+        instance.root.addEventListener('pointerleave', resume);
         instance.root.addEventListener('focusin', pause);
         instance.root.addEventListener('focusout', resume);
       }
       instance.root.addEventListener('pointerdown', onInteract);
-      instance.root.addEventListener('touchstart', onInteract, {
-        passive: true,
-      });
       instance.root.addEventListener('wheel', onInteract, { passive: true });
+      unbindSelect = instance.on('select', onSelect);
     },
     destroy(instance) {
       stop();
       clearResume();
+      unbindSelect?.();
+      unbindSelect = undefined;
       if (pauseOnHover) {
-        instance.root.removeEventListener('mouseenter', pause);
-        instance.root.removeEventListener('mouseleave', resume);
+        instance.root.removeEventListener('pointerenter', pause);
+        instance.root.removeEventListener('pointerleave', resume);
         instance.root.removeEventListener('focusin', pause);
         instance.root.removeEventListener('focusout', resume);
       }
       instance.root.removeEventListener('pointerdown', onInteract);
-      instance.root.removeEventListener('touchstart', onInteract);
       instance.root.removeEventListener('wheel', onInteract);
       slider = undefined;
     },

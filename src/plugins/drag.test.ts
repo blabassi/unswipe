@@ -135,6 +135,17 @@ describe('drag plugin', () => {
     expect(prevent).toHaveBeenCalled();
   });
 
+  it('does not preventDefault on pointerdown before the drag threshold', () => {
+    const root = createCarousel(3, { width: 200 });
+    void new Unswipe(root, { behavior: 'auto' }, [drag({ threshold: 10 })]);
+
+    const down = pointerEvent('pointerdown', { clientX: 200 });
+    const prevent = vi.spyOn(down, 'preventDefault');
+    root.dispatchEvent(down);
+
+    expect(prevent).not.toHaveBeenCalled();
+  });
+
   it('removes listeners and restores cursor on destroy', () => {
     const root = createCarousel(3, { width: 200 });
     Object.defineProperty(root, 'scrollLeft', {

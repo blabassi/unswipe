@@ -49,7 +49,6 @@ export function drag(options: DragOptions = {}): SliderPlugin {
     prevUserSelect = root.style.userSelect;
 
     root.setPointerCapture?.(event.pointerId);
-    event.preventDefault();
   };
 
   const onMove = (event: PointerEvent) => {
@@ -64,6 +63,7 @@ export function drag(options: DragOptions = {}): SliderPlugin {
       root.style.scrollSnapType = 'none';
       root.style.cursor = 'grabbing';
       root.style.userSelect = 'none';
+      event.preventDefault();
     }
 
     const next = startScroll - delta;
@@ -71,7 +71,7 @@ export function drag(options: DragOptions = {}): SliderPlugin {
     else root.scrollTop = next;
   };
 
-  const onUp = (event: PointerEvent) => {
+  const end = (event: PointerEvent) => {
     if (!root || !active || event.pointerId !== pointerId) return;
 
     active = false;
@@ -100,16 +100,18 @@ export function drag(options: DragOptions = {}): SliderPlugin {
       root.style.cursor = 'grab';
       root.addEventListener('pointerdown', onDown);
       root.addEventListener('pointermove', onMove);
-      root.addEventListener('pointerup', onUp);
-      root.addEventListener('pointercancel', onUp);
+      root.addEventListener('pointerup', end);
+      root.addEventListener('pointercancel', end);
+      root.addEventListener('lostpointercapture', end);
       root.addEventListener('click', onClick, true);
     },
     destroy(slider: Slider) {
       const el = slider.root;
       el.removeEventListener('pointerdown', onDown);
       el.removeEventListener('pointermove', onMove);
-      el.removeEventListener('pointerup', onUp);
-      el.removeEventListener('pointercancel', onUp);
+      el.removeEventListener('pointerup', end);
+      el.removeEventListener('pointercancel', end);
+      el.removeEventListener('lostpointercapture', end);
       el.removeEventListener('click', onClick, true);
       if (prevCursor) el.style.cursor = prevCursor;
       else el.style.removeProperty('cursor');

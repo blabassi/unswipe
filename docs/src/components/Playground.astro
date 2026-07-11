@@ -1,4 +1,6 @@
 ---
+import { Code } from '@astrojs/starlight/components';
+
 interface Props {
   id: string;
   slides?: string[];
@@ -9,7 +11,8 @@ interface Props {
   slideSelector?: string;
   status?: boolean;
   code?: string;
-  codeLabel?: string;
+  title?: string;
+  lang?: string;
 }
 const {
   id,
@@ -21,11 +24,12 @@ const {
   slideSelector,
   status = true,
   code,
-  codeLabel = 'JavaScript',
+  title = 'example.js',
+  lang = 'js',
 } = Astro.props;
 ---
 
-<div class="playground" data-pagefind-ignore>
+<div class="playground not-content" data-pagefind-ignore>
   <div class="playground__preview">
     <div
       id={id}
@@ -57,15 +61,6 @@ const {
     <slot name="controls" />
   </div>
   <div class="playground__code">
-    {
-      code ? (
-        <>
-          <p class="example-label">{codeLabel}</p>
-          <pre><code>{code}</code></pre>
-        </>
-      ) : (
-        <slot />
-      )
-    }
+    {code ? <Code code={code} lang={lang} title={title} /> : <slot />}
   </div>
 </div>

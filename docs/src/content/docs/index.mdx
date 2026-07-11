@@ -1,6 +1,6 @@
 ---
 title: Unswipe
-description: Zero-dependency carousel powered by CSS Scroll Snap and Intersection Observer.
+description: Zero-dependency carousel powered by CSS Scroll Snap.
 template: splash
 hero:
   title: Unswipe
@@ -23,10 +23,10 @@ import UnswipeRuntime from '../../components/UnswipeRuntime.astro';
 <UnswipeRuntime />
 
 <div class="badge-row">
-  <span class="badge">&lt; 2 KB core</span>
+  <span class="badge">≈ 2.5 KB core</span>
   <span class="badge">Zero dependencies</span>
   <span class="badge">CSS Scroll Snap</span>
-  <span class="badge">IO-driven a11y</span>
+  <span class="badge">Scroll-driven a11y</span>
 </div>
 
 <Playground
@@ -50,7 +50,7 @@ new Unswipe(root, { label: 'Home demo' }, [
 
 <CardGrid>
   <Card title="Tiny core" icon="rocket">
-    Core stays under 2 KB minified. Plugins are separate entry points so you only
+    Core stays around 2.5 KB minified. Plugins are separate entry points so you only
     pay for what you use.
   </Card>
   <Card title="Native physics" icon="seti:css">
@@ -58,8 +58,7 @@ new Unswipe(root, { label: 'Home demo' }, [
     `requestAnimationFrame` loops.
   </Card>
   <Card title="Accessible by default" icon="approve-check">
-    Intersection Observer drives `aria-hidden` and `tabindex` as slides enter and
-    leave view.
+    Scroll position drives `aria-hidden` and `tabindex` for the active slide.
   </Card>
   <Card title="Framework-agnostic" icon="puzzle">
     Mount on any DOM node. Works with Web Components, React, Vue, Svelte, or plain

@@ -24,15 +24,21 @@ import { Unswipe } from './unswipe.js';
 
 Slides default to **direct children** of the root element.
 
+Optionally import the default stylesheet for usable chrome (gap, slides, nav, dots). Tokens are CSS custom properties — override `--unswipe-accent`, `--unswipe-gap`, and friends as needed:
+
+```js
+import 'unswipe/style.css';
+```
+
 <Playground
   id="ex-quick"
   label="Featured products"
   code={`import { Unswipe } from 'unswipe';
+import 'unswipe/style.css';
 
 const slider = new Unswipe(document.getElementById('carousel'), {
   align: 'start',
   label: 'Featured products',
-  threshold: 0.5,
 });
 
 slider.on('select', ({ index }) => {
@@ -42,6 +48,6 @@ slider.on('select', ({ index }) => {
 
 ## Next steps
 
-- Try the [live playground](/guides/playground/)
-- Add [plugins](/guides/plugins/) for drag, autoplay, nav, and dots
-- Wire it into [React, Vue, Svelte, or a Web Component](/guides/frameworks/)
+- Try the [live playground](../playground/)
+- Add [plugins](../plugins/) for drag, autoplay, nav, and dots
+- Wire it into [React, Vue, Svelte, or a Web Component](../frameworks/)

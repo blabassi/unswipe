@@ -3,19 +3,19 @@
 [![CI](https://github.com/blabassi/unswipe/actions/workflows/ci.yml/badge.svg)](https://github.com/blabassi/unswipe/actions/workflows/ci.yml)
 [![Pages](https://github.com/blabassi/unswipe/actions/workflows/deploy-pages.yml/badge.svg)](https://github.com/blabassi/unswipe/actions/workflows/deploy-pages.yml)
 
-A high-performance, zero-dependency carousel library for the modern web. Unswipe delegates physics, layout, and snapping to native browser APIs — **CSS Scroll Snap** for hardware-accelerated kinetic scrolling and **Intersection Observer** for dynamic accessibility — keeping the core bundle under **2 KB** minified.
+A high-performance, zero-dependency carousel library for the modern web. Unswipe delegates physics, layout, and snapping to native browser APIs — **CSS Scroll Snap** for hardware-accelerated kinetic scrolling — keeping the core bundle around **2.5 KB** minified.
 
 **[Docs](https://blabassi.github.io/unswipe/)** — Astro Starlight guide with live carousel playgrounds
 
 ## Why Unswipe?
 
-| Concern       | Approach                                                       |
-| ------------- | -------------------------------------------------------------- |
-| Bundle size   | Core &lt; 2 KB minified, no runtime dependencies               |
-| Physics       | Native compositor scrolling — no `requestAnimationFrame` loops |
-| Layout        | Variable-width, asymmetrical slides via flexbox + scroll-snap  |
-| Accessibility | Automatic `role`, `aria-hidden`, `tabindex` via IO             |
-| Extensibility | Tree-shakeable plugins for autoplay, nav, pagination           |
+| Concern       | Approach                                                         |
+| ------------- | ---------------------------------------------------------------- |
+| Bundle size   | Core ≈ 2.5 KB minified, no runtime dependencies                  |
+| Physics       | Native compositor scrolling — no `requestAnimationFrame` loops   |
+| Layout        | Variable-width, asymmetrical slides via flexbox + scroll-snap    |
+| Accessibility | Automatic `role`, `aria-hidden`, `tabindex` from scroll position |
+| Extensibility | Tree-shakeable plugins for autoplay, nav, pagination             |
 
 ## Install
 
@@ -41,7 +41,6 @@ Or use a CDN / copy `dist/unswipe.js` directly.
     align: 'start', // 'start' | 'center' | 'end'
     axis: 'x', // 'x' | 'y'
     label: 'Featured', // aria-label
-    threshold: 0.5, // IO visibility threshold
     behavior: 'smooth', // programmatic scroll behavior
   });
 
@@ -52,6 +51,22 @@ Or use a CDN / copy `dist/unswipe.js` directly.
 ```
 
 Slides default to **direct children** of the root element. Use the `slide` option to target a custom selector.
+
+## Styles (optional)
+
+The core JS stays unstyled. Import the optional stylesheet for usable defaults (gap, slide chrome, nav, dots) driven by CSS custom properties:
+
+```js
+import 'unswipe/style.css';
+```
+
+```css
+:root {
+  --unswipe-accent: #0ea5e9;
+  --unswipe-slide-bg: #f1f5f9;
+  --unswipe-gap: 1rem;
+}
+```
 
 ## API
 

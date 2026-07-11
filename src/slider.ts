@@ -7,14 +7,13 @@ import type {
 } from './types';
 
 type ResolvedOptions = Required<
-  Pick<SliderOptions, 'align' | 'axis' | 'threshold' | 'behavior'>
+  Pick<SliderOptions, 'align' | 'axis' | 'behavior'>
 > &
   SliderOptions;
 
 type Listener = (detail?: SelectDetail) => void;
-type TrackedSlide = HTMLElement & { __u?: number };
 
-/** Native scroll-snap carousel with IO-driven accessibility. */
+/** Native scroll-snap carousel with scroll-driven active slide tracking. */
 export default class Unswipe implements Slider {
   readonly root: HTMLElement;
 
@@ -23,7 +22,7 @@ export default class Unswipe implements Slider {
   private readonly listeners = new Map<SliderEvent, Set<Listener>>();
   private s: HTMLElement[] = [];
   private i = 0;
-  private io: IntersectionObserver | null = null;
+  private settling = false;
 
   constructor(
     root: HTMLElement,
@@ -31,27 +30,21 @@ export default class Unswipe implements Slider {
     plugins: SliderPlugin[] = [],
   ) {
     this.root = root;
-    this.o = {
-      align: 'start',
-      axis: 'x',
-      threshold: 0.5,
-      behavior: 'smooth',
-      ...options,
-    };
+    this.o = { align: 'start', axis: 'x', behavior: 'smooth', ...options };
     this.plugins = plugins;
 
     const st = root.style;
     const x = this.o.axis === 'x';
     st.display = 'flex';
     st.flexDirection = x ? 'row' : 'column';
-    st.overflowX = x ? 'auto' : 'hidden';
-    st.overflowY = x ? 'hidden' : 'auto';
+    st.overflow = x ? 'auto hidden' : 'hidden auto';
     st.scrollSnapType = (x ? 'x' : 'y') + ' mandatory';
 
     root.setAttribute('role', 'carousel');
     if (this.o.label) root.setAttribute('aria-label', this.o.label);
 
     this.refresh();
+    root.addEventListener('scroll', this.onScroll, { passive: true });
     for (const p of plugins) p.init(this);
   }
 
@@ -81,8 +74,8 @@ export default class Unswipe implements Slider {
   }
 
   destroy(): void {
-    this.io?.disconnect();
-    this.io = null;
+    this.root.removeEventListener('scroll', this.onScroll);
+    this.root.removeEventListener('scrollend', this.settled);
     for (const p of this.plugins) p.destroy?.(this);
     this.listeners.clear();
   }
@@ -102,14 +95,48 @@ export default class Unswipe implements Slider {
     return () => set.delete(handler as Listener);
   }
 
+  private onScroll = () => {
+    if (!this.settling) this.pick();
+  };
+
+  private settled = () => {
+    this.settling = false;
+    this.pick();
+  };
+
+  private axisKey(): 'left' | 'top' {
+    return this.o.axis === 'x' ? 'left' : 'top';
+  }
+
+  private alignPos(box: DOMRect, start: number): number {
+    const a = this.o.align;
+    if (a === 'start') return start;
+    const size = this.o.axis === 'x' ? box.width : box.height;
+    return start + (a === 'center' ? size / 2 : size);
+  }
+
+  private offset(el: HTMLElement): number {
+    const k = this.axisKey();
+    return (
+      el.getBoundingClientRect()[k] -
+      this.root.getBoundingClientRect()[k] +
+      (this.o.axis === 'x' ? this.root.scrollLeft : this.root.scrollTop)
+    );
+  }
+
   private go(i: number, b?: ScrollBehavior): void {
-    const e = this.s[i],
-      r = this.root;
+    const e = this.s[i];
     if (!e) return;
-    const p: ScrollToOptions = { behavior: b ?? this.o.behavior };
-    if (this.o.axis === 'x') p.left = e.offsetLeft;
-    else p.top = e.offsetTop;
-    r.scrollTo(p);
+    const behavior = b ?? this.o.behavior;
+    this.settling = behavior !== 'auto';
+    this.root.scrollTo({
+      behavior,
+      [this.axisKey()]: this.offset(e),
+    });
+    this.commit(i);
+    if (this.settling) {
+      this.root.addEventListener('scrollend', this.settled, { once: true });
+    }
   }
 
   private refresh(): void {
@@ -124,44 +151,47 @@ export default class Unswipe implements Slider {
       el.style.scrollSnapAlign = a;
       el.setAttribute('aria-roledescription', 'slide');
     }
-
-    this.io?.disconnect();
-    if (!this.s.length) {
-      this.io = null;
-      return;
-    }
-
-    this.io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries)
-          (e.target as TrackedSlide).__u = e.intersectionRatio;
-        this.pick();
-      },
-      { root: this.root, threshold: this.o.threshold },
-    );
-
-    for (const el of this.s) {
-      (el as TrackedSlide).__u = 0;
-      this.io.observe(el);
-    }
-
     this.pick();
   }
 
   private pick(): void {
-    let n = -1;
-    let top = -1;
+    if (!this.s.length) return;
 
+    const x = this.o.axis === 'x';
+    const scroll = x ? this.root.scrollLeft : this.root.scrollTop;
+    const max = x
+      ? this.root.scrollWidth - this.root.clientWidth
+      : this.root.scrollHeight - this.root.clientHeight;
+
+    // At the ends, align:start can't put the last slide flush left when it
+    // is narrower than the viewport — prefer first/last over closest-edge.
+    if (scroll <= 1) {
+      this.commit(0);
+      return;
+    }
+    if (max > 0 && scroll >= max - 1) {
+      this.commit(this.s.length - 1);
+      return;
+    }
+
+    const k = this.axisKey();
+    const rootBox = this.root.getBoundingClientRect();
+    const origin = this.alignPos(rootBox, rootBox[k]);
+
+    let n = 0;
+    let best = Infinity;
     for (let j = 0; j < this.s.length; j++) {
-      const r = (this.s[j] as TrackedSlide).__u ?? 0;
-      if (r > top) {
-        top = r;
+      const box = this.s[j]!.getBoundingClientRect();
+      const d = Math.abs(this.alignPos(box, box[k]) - origin);
+      if (d < best) {
+        best = d;
         n = j;
       }
     }
+    this.commit(n);
+  }
 
-    if (n < 0 || top < this.o.threshold) return;
-
+  private commit(n: number): void {
     for (let j = 0; j < this.s.length; j++) {
       const el = this.s[j]!;
       if (j === n) {
@@ -172,7 +202,6 @@ export default class Unswipe implements Slider {
         el.setAttribute('tabindex', '-1');
       }
     }
-
     if (n !== this.i) {
       this.i = n;
       this.fire('select', { index: n, slide: this.s[n]! });

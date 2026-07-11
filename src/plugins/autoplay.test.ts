@@ -79,13 +79,33 @@ describe('autoplay plugin', () => {
     mockScrollTo(root, slider.slides);
     activateSlide(0, slider.slides);
 
-    root.dispatchEvent(new Event('mouseenter'));
+    root.dispatchEvent(new Event('pointerenter'));
     vi.advanceTimersByTime(500);
     expect(slider.index).toBe(0);
 
-    root.dispatchEvent(new Event('mouseleave'));
+    root.dispatchEvent(new Event('pointerleave'));
     vi.advanceTimersByTime(500);
     expect(slider.index).toBe(1);
+  });
+
+  it('reschedules after external navigation via select', () => {
+    const root = createCarousel(3, { width: 200 });
+    const slider = new Unswipe(root, { behavior: 'auto' }, [
+      autoplay({ delay: 1000, pauseOnHover: false }),
+    ]);
+    mockScrollTo(root, slider.slides);
+    activateSlide(0, slider.slides);
+
+    vi.advanceTimersByTime(600);
+    activateSlide(2, slider.slides);
+    expect(slider.index).toBe(2);
+
+    // Interval was reset on select — should not advance until a full delay elapses.
+    vi.advanceTimersByTime(600);
+    expect(slider.index).toBe(2);
+
+    vi.advanceTimersByTime(400);
+    expect(slider.index).toBe(0);
   });
 
   it('cleans up timers and listeners on destroy', () => {
