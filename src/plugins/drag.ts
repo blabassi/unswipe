@@ -6,22 +6,27 @@ export interface DragOptions {
    * (default: `true`).
    */
   mouseOnly?: boolean;
-  /** Movement in px before a drag starts (default: `3`). */
+  /** Movement in px before a drag starts (default: `10`). */
   threshold?: number;
 }
 
-function resolveAxis(el: HTMLElement): 'x' | 'y' {
-  return el.style.scrollSnapType.startsWith('y') ||
-    el.style.overflowY === 'auto'
-    ? 'y'
-    : 'x';
+function resolveAxis(slider: Slider): 'x' | 'y' {
+  return slider.getOptions().axis ?? 'x';
+}
+
+function resolveSnapType(slider: Slider): string {
+  const opts = slider.getOptions();
+  const axis = opts.axis ?? 'x';
+  if (opts.dragFree || opts.snap === 'none') return 'none';
+  return `${axis} ${opts.snap ?? 'mandatory'}`;
 }
 
 /** Mouse/pen drag-to-scroll — complements native touch and trackpad scrolling. */
 export function drag(options: DragOptions = {}): SliderPlugin {
   const mouseOnly = options.mouseOnly ?? true;
-  const threshold = options.threshold ?? 3;
+  const threshold = options.threshold ?? 10;
 
+  let slider: Slider | null = null;
   let root: HTMLElement | null = null;
   let axis: 'x' | 'y' = 'x';
   let active = false;
@@ -34,21 +39,22 @@ export function drag(options: DragOptions = {}): SliderPlugin {
   let prevUserSelect = '';
 
   const onDown = (event: PointerEvent) => {
-    if (!root) return;
+    if (!root || !slider) return;
     if (mouseOnly && event.pointerType === 'touch') return;
     if (event.pointerType === 'mouse' && event.button !== 0) return;
 
     active = true;
     dragging = false;
     pointerId = event.pointerId;
-    axis = resolveAxis(root);
+    axis = resolveAxis(slider);
     startPos = axis === 'x' ? event.clientX : event.clientY;
     startScroll = axis === 'x' ? root.scrollLeft : root.scrollTop;
-    snapType = root.style.scrollSnapType;
+    snapType = root.style.scrollSnapType || resolveSnapType(slider);
     prevCursor = root.style.cursor;
     prevUserSelect = root.style.userSelect;
 
     root.setPointerCapture?.(event.pointerId);
+    slider.emit('pointerDown');
   };
 
   const onMove = (event: PointerEvent) => {
@@ -72,7 +78,7 @@ export function drag(options: DragOptions = {}): SliderPlugin {
   };
 
   const end = (event: PointerEvent) => {
-    if (!root || !active || event.pointerId !== pointerId) return;
+    if (!root || !slider || !active || event.pointerId !== pointerId) return;
 
     active = false;
     if (root.hasPointerCapture?.(pointerId)) {
@@ -83,6 +89,7 @@ export function drag(options: DragOptions = {}): SliderPlugin {
     root.style.scrollSnapType = snapType;
     root.style.cursor = prevCursor || 'grab';
     root.style.userSelect = prevUserSelect;
+    slider.emit('pointerUp');
   };
 
   const onClick = (event: MouseEvent) => {
@@ -94,9 +101,10 @@ export function drag(options: DragOptions = {}): SliderPlugin {
 
   return {
     name: 'drag',
-    init(slider: Slider) {
-      root = slider.root;
-      axis = resolveAxis(root);
+    init(instance: Slider) {
+      slider = instance;
+      root = instance.root;
+      axis = resolveAxis(instance);
       root.style.cursor = 'grab';
       root.addEventListener('pointerdown', onDown);
       root.addEventListener('pointermove', onMove);
@@ -105,8 +113,8 @@ export function drag(options: DragOptions = {}): SliderPlugin {
       root.addEventListener('lostpointercapture', end);
       root.addEventListener('click', onClick, true);
     },
-    destroy(slider: Slider) {
-      const el = slider.root;
+    destroy(instance: Slider) {
+      const el = instance.root;
       el.removeEventListener('pointerdown', onDown);
       el.removeEventListener('pointermove', onMove);
       el.removeEventListener('pointerup', end);
@@ -116,8 +124,9 @@ export function drag(options: DragOptions = {}): SliderPlugin {
       if (prevCursor) el.style.cursor = prevCursor;
       else el.style.removeProperty('cursor');
       el.style.userSelect = prevUserSelect;
-      el.style.scrollSnapType = snapType || el.style.scrollSnapType;
+      el.style.scrollSnapType = snapType || resolveSnapType(instance);
       root = null;
+      slider = null;
       active = false;
       dragging = false;
     },

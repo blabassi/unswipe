@@ -46,11 +46,19 @@
   display: none;
 }
 
-/* Let the last slide snap to the start edge with align:start. */
+/* Let the last slide snap to the start edge with align:start (trimSnaps). */
 [role='carousel']::after {
   content: '';
   flex: 0 0 calc(100% - var(--unswipe-slide-min-width, 70%));
   pointer-events: none;
+}
+
+[role='carousel']:not([style*='--unswipe-contain'])::after {
+  display: none;
+}
+
+[role='carousel'].unswipe-fade [aria-roledescription='slide'] {
+  scroll-snap-align: center;
 }
 
 [role='carousel'][style*='column'] {

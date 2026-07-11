@@ -12,7 +12,10 @@
   "license": "MIT",
   "style": "./dist/style.css",
   "files": [
-    "dist"
+    "dist",
+    "packages/react/dist",
+    "packages/vue/dist",
+    "packages/svelte/dist"
   ],
   "type": "module",
   "main": "./dist/unswipe.cjs",
@@ -25,6 +28,21 @@
       "require": "./dist/unswipe.cjs"
     },
     "./style.css": "./dist/style.css",
+    "./react": {
+      "types": "./packages/react/dist/index.d.ts",
+      "import": "./packages/react/dist/index.js",
+      "require": "./packages/react/dist/index.cjs"
+    },
+    "./vue": {
+      "types": "./packages/vue/dist/index.d.ts",
+      "import": "./packages/vue/dist/index.js",
+      "require": "./packages/vue/dist/index.cjs"
+    },
+    "./svelte": {
+      "types": "./packages/svelte/dist/index.d.ts",
+      "import": "./packages/svelte/dist/index.js",
+      "require": "./packages/svelte/dist/index.cjs"
+    },
     "./plugins/autoplay": {
       "types": "./dist/plugins/autoplay.d.ts",
       "import": "./dist/plugins/autoplay.js",
@@ -44,19 +62,45 @@
       "types": "./dist/plugins/drag.d.ts",
       "import": "./dist/plugins/drag.js",
       "require": "./dist/plugins/drag.cjs"
+    },
+    "./plugins/loop": {
+      "types": "./dist/plugins/loop.d.ts",
+      "import": "./dist/plugins/loop.js",
+      "require": "./dist/plugins/loop.cjs"
+    },
+    "./plugins/classNames": {
+      "types": "./dist/plugins/classNames.d.ts",
+      "import": "./dist/plugins/classNames.js",
+      "require": "./dist/plugins/classNames.cjs"
+    },
+    "./plugins/wheel": {
+      "types": "./dist/plugins/wheel.d.ts",
+      "import": "./dist/plugins/wheel.js",
+      "require": "./dist/plugins/wheel.cjs"
+    },
+    "./plugins/autoScroll": {
+      "types": "./dist/plugins/autoScroll.d.ts",
+      "import": "./dist/plugins/autoScroll.js",
+      "require": "./dist/plugins/autoScroll.cjs"
+    },
+    "./plugins/fade": {
+      "types": "./dist/plugins/fade.d.ts",
+      "import": "./dist/plugins/fade.js",
+      "require": "./dist/plugins/fade.cjs"
     }
   },
   "scripts": {
-    "build": "pnpm run build:core && pnpm run build:plugins && pnpm run build:types && pnpm run build:css",
+    "build": "pnpm run build:core && pnpm run build:plugins && pnpm run build:types && pnpm run build:css && pnpm run build:frameworks",
     "build:core": "esbuild src/index.ts --bundle --minify --format=esm --outfile=dist/unswipe.js && esbuild src/index.ts --bundle --minify --format=cjs --outfile=dist/unswipe.cjs",
-    "build:plugins": "esbuild src/plugins/autoplay.ts --bundle --minify --format=esm --outfile=dist/plugins/autoplay.js && esbuild src/plugins/autoplay.ts --bundle --minify --format=cjs --outfile=dist/plugins/autoplay.cjs && esbuild src/plugins/navigation.ts --bundle --minify --format=esm --outfile=dist/plugins/navigation.js && esbuild src/plugins/navigation.ts --bundle --minify --format=cjs --outfile=dist/plugins/navigation.cjs && esbuild src/plugins/pagination.ts --bundle --minify --format=esm --outfile=dist/plugins/pagination.js && esbuild src/plugins/pagination.ts --bundle --minify --format=cjs --outfile=dist/plugins/pagination.cjs && esbuild src/plugins/drag.ts --bundle --minify --format=esm --outfile=dist/plugins/drag.js && esbuild src/plugins/drag.ts --bundle --minify --format=cjs --outfile=dist/plugins/drag.cjs",
+    "build:plugins": "node scripts/build-plugins.mjs",
     "build:types": "tsc --emitDeclarationOnly",
     "build:css": "cp src/style.css dist/style.css",
+    "build:frameworks": "pnpm --filter @unswipe/react build && pnpm --filter @unswipe/vue build && pnpm --filter @unswipe/svelte build",
     "build:site": "pnpm --filter docs exec astro telemetry disable && pnpm --filter docs build",
     "docs:dev": "pnpm --filter docs dev",
     "docs:preview": "pnpm run build:site && pnpm --filter docs preview",
     "dev": "esbuild src/index.ts --bundle --format=esm --outfile=dist/unswipe.js --watch",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && pnpm --filter @unswipe/react typecheck && pnpm --filter @unswipe/vue typecheck && pnpm --filter @unswipe/svelte typecheck",
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
     "format": "oxfmt .",

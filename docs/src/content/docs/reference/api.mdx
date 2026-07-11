@@ -13,43 +13,67 @@ Returns a `Slider` instance.
 
 ## Options
 
-| Option      | Type                           | Default         | Description                              |
-| ----------- | ------------------------------ | --------------- | ---------------------------------------- |
-| `slide`     | `string`                       | direct children | CSS selector for slides relative to root |
-| `align`     | `'start' \| 'center' \| 'end'` | `'start'`       | Snap alignment                           |
-| `axis`      | `'x' \| 'y'`                   | `'x'`           | Scroll axis                              |
-| `label`     | `string`                       | —               | `aria-label` for the carousel            |
-| `threshold` | `number` | — | Deprecated no-op (active slide is scroll-derived) |
-| `behavior`  | `ScrollBehavior`               | `'smooth'`      | Programmatic scroll behavior             |
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `slide` | `string` | direct children | CSS selector for slides relative to root |
+| `align` | `'start' \| 'center' \| 'end'` | `'start'` | Snap alignment |
+| `axis` | `'x' \| 'y'` | `'x'` | Scroll axis |
+| `direction` | `'ltr' \| 'rtl'` | `'ltr'` | Track writing direction |
+| `label` | `string` | — | `aria-label` for the carousel |
+| `behavior` | `ScrollBehavior` | `'smooth'` | Programmatic scroll behavior |
+| `startIndex` | `number` | `0` | Initial slide index |
+| `slidesToScroll` | `number` | `1` | Step size for `next` / `prev` |
+| `snap` | `'mandatory' \| 'proximity' \| 'none'` | `'mandatory'` | CSS scroll-snap mode |
+| `dragFree` | `boolean` | `false` | Free scroll (`snap: 'none'`) |
+| `containScroll` | `'trimSnaps' \| 'keepSnaps' \| false` | `'trimSnaps'` | Edge snap containment |
+| `skipSnaps` | `boolean` | `false` | Snap only every `slidesToScroll`-th slide |
+| `breakpoints` | `Record<string, Partial<SliderOptions>>` | — | Media-query option overrides |
+| `threshold` | `number` | — | Deprecated no-op |
 
 ## Methods
 
-| Method                            | Description                                              |
-| --------------------------------- | -------------------------------------------------------- |
-| `next()`                          | Scroll to the next slide                                 |
-| `prev()`                          | Scroll to the previous slide                             |
-| `scrollToIndex(index, behavior?)` | Scroll to a specific slide                               |
-| `update()`                        | Re-scan DOM after slides are added or removed            |
-| `destroy()`                       | Disconnect observers, tear down plugins, clear listeners |
+| Method | Description |
+| --- | --- |
+| `next()` / `prev()` | Advance by `slidesToScroll` (wraps when loop mode is on) |
+| `scrollToIndex(index, behavior?, opts?)` | Scroll to a slide; `opts.silent` skips intermediate select |
+| `update()` | Re-scan DOM after slides are added or removed |
+| `resync()` | Re-scan without emitting `update` (used by loop) |
+| `reInit(options?, plugins?)` | Re-apply options / plugins |
+| `canScrollNext()` / `canScrollPrev()` | Boundary helpers (always true in loop mode) |
+| `scrollProgress()` | `0…1` scroll position |
+| `slidesInView()` | Indices overlapping the viewport |
+| `getOptions()` | Resolved options snapshot |
+| `plugins()` | Map of plugin name → public API |
+| `setLoopMode(enabled)` | Enable wrap-around navigation |
+| `emit(event, detail?)` | Fire a carousel event (plugins) |
+| `destroy()` | Tear down observers, plugins, listeners |
 
 ## Properties
 
-| Property | Type            | Description            |
-| -------- | --------------- | ---------------------- |
-| `root`   | `HTMLElement`   | Carousel container     |
-| `slides` | `HTMLElement[]` | Current slide elements |
-| `index`  | `number`        | Active slide index     |
+| Property | Type | Description |
+| --- | --- | --- |
+| `root` | `HTMLElement` | Carousel container |
+| `slides` | `HTMLElement[]` | Logical slides (excludes loop clones) |
+| `index` | `number` | Active slide index |
 
 ## Events
 
-```ts
-slider.on('select', ({ index, slide }) => {
-  /* active slide changed */
-});
+| Event | Payload | When |
+| --- | --- | --- |
+| `init` | — | After construction |
+| `select` | `{ index, slide }` | Active slide changed |
+| `scroll` | `{ progress }` | During scroll |
+| `settle` | — | After `scrollend` |
+| `resize` | — | Root resized |
+| `pointerDown` / `pointerUp` | — | Emitted by drag plugin |
+| `reInit` | — | After `reInit` or breakpoint change |
+| `update` | — | After `update()` |
+| `destroy` | — | On destroy |
 
-slider.on('update', () => {
-  /* DOM rescanned via update() */
-});
+```ts
+slider.on('select', ({ index, slide }) => { /* ... */ });
+slider.on('scroll', ({ progress }) => { /* ... */ });
+slider.on('settle', () => { /* ... */ });
 ```
 
 All handlers return an unsubscribe function.

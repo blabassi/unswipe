@@ -1,6 +1,6 @@
 ---
 title: Frameworks
-description: Mount Unswipe from Web Components, React, Vue, or Svelte.
+description: Official React, Vue, and Svelte bindings — plus vanilla Web Components.
 ---
 
 import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
@@ -10,9 +10,71 @@ import { Tabs, TabItem } from '@astrojs/starlight/components';
 <UnswipeRuntime />
 <FrameworkDemos />
 
-Unswipe is framework-agnostic — mount on any DOM node and call `destroy()` on teardown.
+Unswipe is framework-agnostic. Use the official thin wrappers below, or mount on any DOM node and call `destroy()` on teardown.
 
 <Tabs>
+  <TabItem label="React">
+
+```tsx
+import { useUnswipe } from 'unswipe/react';
+import { drag } from 'unswipe/plugins/drag';
+import 'unswipe/style.css';
+
+export function Carousel({ slides }: { slides: string[] }) {
+  const { ref } = useUnswipe({ label: 'Products' }, [drag()]);
+
+  return (
+    <div ref={ref} className="carousel">
+      {slides.map((text) => (
+        <div key={text} className="slide">
+          {text}
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+  </TabItem>
+
+  <TabItem label="Vue 3">
+
+```vue
+<script setup>
+import { useUnswipe } from 'unswipe/vue';
+import { drag } from 'unswipe/plugins/drag';
+import 'unswipe/style.css';
+
+const { el } = useUnswipe({ label: 'Products' }, [drag()]);
+</script>
+
+<template>
+  <div ref="el" class="carousel">
+    <div v-for="n in 3" :key="n" class="slide">Slide {{ n }}</div>
+  </div>
+</template>
+```
+
+  </TabItem>
+
+  <TabItem label="Svelte">
+
+```svelte
+<script>
+  import { unswipe } from 'unswipe/svelte';
+  import { drag } from 'unswipe/plugins/drag';
+  import 'unswipe/style.css';
+</script>
+
+<div class="carousel" use:unswipe={{ options: { label: 'Gallery' }, plugins: [drag()] }}>
+  {#each ['A', 'B', 'C'] as label}
+    <div class="slide">{label}</div>
+  {/each}
+</div>
+```
+
+  </TabItem>
+
   <TabItem label="Web Component">
     <div class="playground" data-pagefind-ignore>
       <div class="playground__preview">
@@ -25,125 +87,24 @@ Unswipe is framework-agnostic — mount on any DOM node and call `destroy()` on 
       </div>
     </div>
 
-    ```js
-    class UnswipeCarousel extends HTMLElement {
-      #slider;
+```js
+class UnswipeCarousel extends HTMLElement {
+  #slider;
 
-      connectedCallback() {
-        this.classList.add('carousel');
-        this.#slider = new Unswipe(this, {
-          label: this.getAttribute('label') ?? 'Carousel',
-          align: 'start',
-        });
-      }
-
-      disconnectedCallback() {
-        this.#slider?.destroy();
-      }
-    }
-
-    customElements.define('unswipe-carousel', UnswipeCarousel);
-    ```
-
-  </TabItem>
-
-  <TabItem label="React">
-    <div class="playground" data-pagefind-ignore>
-      <div class="playground__preview">
-        <div id="ex-react" data-testid="ex-react"></div>
-        <p id="ex-react-status" class="playground__status">Mounting…</p>
-      </div>
-    </div>
-
-    ```tsx
-    import { useEffect, useRef } from 'react';
-    import { Unswipe } from 'unswipe';
-
-    export function Carousel({ slides, label = 'Carousel' }) {
-      const ref = useRef(null);
-
-      useEffect(() => {
-        const root = ref.current;
-        if (!root) return;
-        const slider = new Unswipe(root, { label, align: 'start' });
-        return () => slider.destroy();
-      }, [label]);
-
-      return (
-        <div ref={ref} className="carousel">
-          {slides.map((text) => (
-            <div key={text} className="slide">
-              {text}
-            </div>
-          ))}
-        </div>
-      );
-    }
-    ```
-
-  </TabItem>
-
-  <TabItem label="Vue 3">
-    <div class="playground" data-pagefind-ignore>
-      <div class="playground__preview">
-        <div id="ex-vue" data-testid="ex-vue"></div>
-        <p id="ex-vue-status" class="playground__status">Mounting…</p>
-      </div>
-    </div>
-
-    ```vue
-    <script setup>
-    import { onMounted, onUnmounted, ref } from 'vue';
-    import { Unswipe } from 'unswipe';
-
-    const root = ref(null);
-    let slider;
-
-    onMounted(() => {
-      slider = new Unswipe(root.value, { label: 'Products' });
+  connectedCallback() {
+    this.classList.add('carousel');
+    this.#slider = new Unswipe(this, {
+      label: this.getAttribute('label') ?? 'Carousel',
     });
+  }
 
-    onUnmounted(() => slider?.destroy());
-    </script>
+  disconnectedCallback() {
+    this.#slider?.destroy();
+  }
+}
 
-    <template>
-      <div ref="root" class="carousel">
-        <div v-for="n in 3" :key="n" class="slide">Slide {{ n }}</div>
-      </div>
-    </template>
-    ```
-
-  </TabItem>
-
-  <TabItem label="Svelte">
-    <div class="playground" data-pagefind-ignore>
-      <div class="playground__preview">
-        <div id="ex-svelte" data-testid="ex-svelte"></div>
-        <p id="ex-svelte-status" class="playground__status">Mounting…</p>
-      </div>
-    </div>
-
-    ```svelte
-    <script>
-      import { onMount, onDestroy } from 'svelte';
-      import { Unswipe } from 'unswipe';
-
-      let root;
-      let slider;
-
-      onMount(() => {
-        slider = new Unswipe(root, { label: 'Gallery' });
-      });
-
-      onDestroy(() => slider?.destroy());
-    </script>
-
-    <div bind:this={root} class="carousel">
-      {#each ['A', 'B', 'C'] as label}
-        <div class="slide">{label}</div>
-      {/each}
-    </div>
-    ```
+customElements.define('unswipe-carousel', UnswipeCarousel);
+```
 
   </TabItem>
 </Tabs>

@@ -36,6 +36,7 @@ export default defineConfig({
             { label: 'Live playground', slug: 'guides/playground' },
             { label: 'Plugins', slug: 'guides/plugins' },
             { label: 'Frameworks', slug: 'guides/frameworks' },
+            { label: 'Compared to Embla', slug: 'guides/compared-to-embla' },
           ],
         },
         {
