@@ -58,6 +58,9 @@ export default class Unswipe implements Slider {
   private settling = false;
   private silent = false;
   private loopMode = false;
+  /** Snap temporarily disabled so trackpad/touch inertia isn't glued. */
+  private snapReleased = false;
+  private inertiaTimer = 0;
   private resizeObs: ResizeObserver | undefined;
   private mediaQueries: { mq: MediaQueryList; handler: () => void }[] = [];
   private baseOptions: SliderOptions = {};
@@ -129,6 +132,9 @@ export default class Unswipe implements Slider {
     this.teardownObservers();
     this.root.removeEventListener('scroll', this.onScroll);
     this.root.removeEventListener('scrollend', this.settled);
+    this.root.removeEventListener('scrollend', this.onInertiaEnd);
+    window.clearTimeout(this.inertiaTimer);
+    this.restoreSnap(false);
     this.fire('destroy');
     this.listeners.clear();
     this.pluginApis = {};
@@ -256,14 +262,19 @@ export default class Unswipe implements Slider {
   private applyLayout(): void {
     const st = this.root.style;
     const x = this.o.axis === 'x';
-    const snap = resolveSnap(this.o);
     st.display = 'flex';
     st.flexDirection = x ? 'row' : 'column';
     st.overflow = x ? 'auto hidden' : 'hidden auto';
     st.direction = this.o.direction ?? 'ltr';
-    st.scrollSnapType = snap === 'none' ? 'none' : `${x ? 'x' : 'y'} ${snap}`;
-
+    this.applySnapType();
     this.applyContainScroll(this.o.containScroll ?? 'trimSnaps');
+  }
+
+  private applySnapType(): void {
+    const snap = resolveSnap(this.o);
+    const x = this.o.axis === 'x';
+    this.root.style.scrollSnapType =
+      snap === 'none' ? 'none' : `${x ? 'x' : 'y'} ${snap}`;
   }
 
   private applyContainScroll(mode: ContainScroll): void {
@@ -328,8 +339,48 @@ export default class Unswipe implements Slider {
 
   private onScroll = () => {
     this.fire('scroll', { progress: this.scrollProgress() });
-    if (!this.settling && !this.silent) this.pick();
+    if (this.settling || this.silent) return;
+    // Drop mandatory snap during the gesture so trackpad/touch inertia can run.
+    this.releaseSnapForInertia();
+    this.pick();
   };
+
+  private releaseSnapForInertia(): void {
+    if (resolveSnap(this.o) === 'none') return;
+    if (!this.snapReleased) {
+      this.root.style.scrollSnapType = 'none';
+      this.snapReleased = true;
+    }
+    this.root.removeEventListener('scrollend', this.onInertiaEnd);
+    this.root.addEventListener('scrollend', this.onInertiaEnd, { once: true });
+    window.clearTimeout(this.inertiaTimer);
+    this.inertiaTimer = window.setTimeout(this.onInertiaEnd, 150);
+  }
+
+  private onInertiaEnd = () => {
+    if (this.destroyed) return;
+    window.clearTimeout(this.inertiaTimer);
+    this.inertiaTimer = 0;
+    this.root.removeEventListener('scrollend', this.onInertiaEnd);
+    this.restoreSnap(true);
+  };
+
+  private restoreSnap(align: boolean): void {
+    if (!this.snapReleased) return;
+    this.snapReleased = false;
+    this.applySnapType();
+    if (!align) return;
+    this.pick();
+    const el = this.s[this.i];
+    if (el && resolveSnap(this.o) !== 'none') {
+      // Instant align after inertia — avoids a second glued fling.
+      this.root.scrollTo({
+        behavior: 'auto',
+        [this.axisKey()]: this.offset(el),
+      });
+    }
+    this.fire('settle');
+  }
 
   private settled = () => {
     this.settling = false;
