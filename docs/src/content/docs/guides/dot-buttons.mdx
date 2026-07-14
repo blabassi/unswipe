@@ -1,0 +1,34 @@
+---
+title: Dot buttons
+description: Add pagination dots with the pagination plugin.
+---
+
+import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
+import Playground from '../../../components/Playground.astro';
+
+<UnswipeRuntime />
+
+```ts
+import { pagination } from 'unswipe/plugins/pagination';
+
+new Unswipe(root, { slidesToScroll: 2 }, [pagination()]);
+```
+
+One dot per snap group when `slidesToScroll > 1`.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `label` | `"Carousel pagination"` | Tablist label |
+| `className` | `"unswipe-pagination"` | CSS class prefix |
+| `container` | sibling wrapper | Where dots render |
+
+<Playground
+  id="guide-dots"
+  label="Pagination demo"
+  plugins="navigation,pagination"
+  code={`import { pagination } from 'unswipe/plugins/pagination';
+import { navigation } from 'unswipe/plugins/navigation';
+new Unswipe(root, {}, [navigation(), pagination()]);`}
+/>
+
+Full plugin docs: [Pagination](../../plugins/pagination/).

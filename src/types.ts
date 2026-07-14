@@ -37,7 +37,9 @@ export interface SliderOptions {
   behavior?: ScrollBehavior;
   /** Initial slide index (default: `0`). */
   startIndex?: number;
-  /** Slides advanced by `next`/`prev` (default: `1`). */
+  /**
+   * Slides advanced by `next`/`prev` and pagination groups (default: `1`).
+   */
   slidesToScroll?: number;
   /** Scroll-snap mode (default: `proximity`). `dragFree` forces `none`. */
   snap?: SnapMode;
@@ -57,26 +59,68 @@ export interface SliderOptions {
 /** Payload emitted on the `select` event. */
 export interface SelectDetail {
   index: number;
+  /** Previous active index (`-1` before the first selection). */
+  previous: number;
   slide: HTMLElement;
 }
 
 /** Payload emitted on the `scroll` event. */
 export interface ScrollDetail {
   progress: number;
+  slidesInView: number[];
+}
+
+/** Payload emitted on the `settle` event. */
+export interface SettleDetail {
+  index: number;
+}
+
+/** Payload emitted on the `resize` event. */
+export interface ResizeDetail {
+  width: number;
+  height: number;
+}
+
+/** Payload emitted on pointer events (drag plugin). */
+export interface PointerDetail {
+  x: number;
+  y: number;
+}
+
+/** Payload emitted when the logical slide list changes. */
+export interface SlidesChangedDetail {
+  length: number;
+}
+
+/** Payload emitted on `update`. */
+export interface UpdateDetail {
+  length: number;
+}
+
+/** Empty payload for lifecycle events. */
+export type EmptyDetail = Record<string, never>;
+
+/** Map of event name → payload. */
+export interface SliderEventMap {
+  init: EmptyDetail;
+  select: SelectDetail;
+  scroll: ScrollDetail;
+  settle: SettleDetail;
+  resize: ResizeDetail;
+  pointerDown: PointerDetail;
+  pointerMove: PointerDetail;
+  pointerUp: PointerDetail;
+  slidesChanged: SlidesChangedDetail;
+  reInit: EmptyDetail;
+  destroy: EmptyDetail;
+  update: UpdateDetail;
 }
 
 /** Carousel event names. */
-export type SliderEvent =
-  | 'init'
-  | 'select'
-  | 'scroll'
-  | 'settle'
-  | 'resize'
-  | 'pointerDown'
-  | 'pointerUp'
-  | 'reInit'
-  | 'destroy'
-  | 'update';
+export type SliderEvent = keyof SliderEventMap;
+
+/** Union of all event payloads. */
+export type SliderEventDetail = SliderEventMap[SliderEvent];
 
 /** Plugin contract — decoupled from core for tree-shakeable extensions. */
 export interface SliderPlugin {
@@ -116,12 +160,10 @@ export interface Slider {
   /** Enable wrap-around navigation (used by the loop plugin). */
   setLoopMode(enabled: boolean): void;
   /** Emit a carousel event (used by plugins such as drag). */
-  emit(event: SliderEvent, detail?: SelectDetail | ScrollDetail): void;
+  emit<E extends SliderEvent>(event: E, detail?: SliderEventMap[E]): void;
 
-  on(event: 'select', handler: (detail: SelectDetail) => void): () => void;
-  on(event: 'scroll', handler: (detail: ScrollDetail) => void): () => void;
-  on(
-    event: Exclude<SliderEvent, 'select' | 'scroll'>,
-    handler: () => void,
+  on<E extends SliderEvent>(
+    event: E,
+    handler: (detail: SliderEventMap[E]) => void,
   ): () => void;
 }

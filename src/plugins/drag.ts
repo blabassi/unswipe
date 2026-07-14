@@ -54,11 +54,11 @@ export function drag(options: DragOptions = {}): SliderPlugin {
     prevUserSelect = root.style.userSelect;
 
     root.setPointerCapture?.(event.pointerId);
-    slider.emit('pointerDown');
+    slider.emit('pointerDown', { x: event.clientX, y: event.clientY });
   };
 
   const onMove = (event: PointerEvent) => {
-    if (!root || !active || event.pointerId !== pointerId) return;
+    if (!root || !slider || !active || event.pointerId !== pointerId) return;
 
     const pos = axis === 'x' ? event.clientX : event.clientY;
     const delta = pos - startPos;
@@ -75,6 +75,7 @@ export function drag(options: DragOptions = {}): SliderPlugin {
     const next = startScroll - delta;
     if (axis === 'x') root.scrollLeft = next;
     else root.scrollTop = next;
+    slider.emit('pointerMove', { x: event.clientX, y: event.clientY });
   };
 
   const end = (event: PointerEvent) => {
@@ -89,7 +90,7 @@ export function drag(options: DragOptions = {}): SliderPlugin {
     root.style.scrollSnapType = snapType;
     root.style.cursor = prevCursor || 'grab';
     root.style.userSelect = prevUserSelect;
-    slider.emit('pointerUp');
+    slider.emit('pointerUp', { x: event.clientX, y: event.clientY });
   };
 
   const onClick = (event: MouseEvent) => {

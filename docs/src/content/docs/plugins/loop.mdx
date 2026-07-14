@@ -1,0 +1,31 @@
+---
+title: Loop
+description: Infinite carousel via edge clones and silent teleports.
+---
+
+import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
+import Playground from '../../../components/Playground.astro';
+
+<UnswipeRuntime />
+
+```ts
+import { loop } from 'unswipe/plugins/loop';
+
+new Unswipe(root, {}, [loop()]);
+```
+
+Keeps CSS Scroll Snap physics. Uses edge clones + silent teleports.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `clones` | `1` | Clones per edge |
+
+<Playground
+  id="plugin-loop"
+  label="Loop demo"
+  plugins="loop,drag,navigation"
+  code={`import { loop } from 'unswipe/plugins/loop';
+import { drag } from 'unswipe/plugins/drag';
+import { navigation } from 'unswipe/plugins/navigation';
+new Unswipe(root, {}, [loop(), drag(), navigation()]);`}
+/>

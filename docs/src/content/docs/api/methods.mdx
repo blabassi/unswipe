@@ -1,0 +1,36 @@
+---
+title: Methods
+description: Navigate, update, and query Unswipe state.
+---
+
+## Methods
+
+| Method | Description |
+| --- | --- |
+| `next()` / `prev()` | Advance by `slidesToScroll` (wraps when loop mode is on) |
+| `scrollToIndex(index, behavior?, opts?)` | Scroll to a slide; `opts.silent` skips intermediate select |
+| `update()` | Re-scan DOM after slides are added or removed |
+| `resync()` | Re-scan without emitting `update` (used by loop) |
+| `reInit(options?, plugins?)` | Re-apply options / plugins |
+| `canScrollNext()` / `canScrollPrev()` | Boundary helpers (always true in loop mode) |
+| `scrollProgress()` | `0…1` scroll position |
+| `slidesInView()` | Indices overlapping the viewport |
+| `getOptions()` | Resolved options snapshot |
+| `plugins()` | Map of plugin name → public API |
+| `setLoopMode(enabled)` | Enable wrap-around navigation |
+| `emit(event, detail?)` | Fire a carousel event (plugins) |
+| `destroy()` | Tear down observers, plugins, listeners |
+
+## Properties
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `root` | `HTMLElement` | Carousel container |
+| `slides` | `HTMLElement[]` | Logical slides (excludes loop clones) |
+| `index` | `number` | Active slide index |
+
+```ts
+slider.next();
+slider.scrollToIndex(2, 'smooth');
+console.log(slider.canScrollPrev(), slider.scrollProgress());
+```

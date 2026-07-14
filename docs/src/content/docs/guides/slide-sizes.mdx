@@ -1,0 +1,61 @@
+---
+title: Slide sizes
+description: Control how many slides are visible with CSS (or an optional plugin).
+---
+
+import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
+import Playground from '../../../components/Playground.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+<UnswipeRuntime />
+
+Unswipe is **CSS-first for layout**. There is no core `slidesPerView` option.
+
+## With `unswipe/style.css`
+
+Set `--unswipe-slide-min-width`:
+
+| Goal | Token value |
+| --- | --- |
+| 1 full slide | `100%` |
+| ~2 slides | `calc((100% - var(--unswipe-gap)) / 2)` |
+| ~3 slides | `calc((100% - 2 * var(--unswipe-gap)) / 3)` |
+| Peek of next (default) | `70%` |
+
+```css
+[role='carousel'] {
+  --unswipe-slide-min-width: calc((100% - 2 * var(--unswipe-gap)) / 3);
+}
+```
+
+<Playground
+  id="sizes-one"
+  label="One slide"
+  slideMinWidth="100%"
+  plugins="navigation"
+  slides={['One A', 'One B', 'One C', 'One D']}
+  code={`// CSS: --unswipe-slide-min-width: 100%;
+new Unswipe(root, { label: 'One slide' }, [navigation()]);`}
+/>
+
+<Playground
+  id="sizes-two"
+  label="Two slides"
+  slideMinWidth="calc((100% - var(--unswipe-gap)) / 2)"
+  slidesToScroll={2}
+  plugins="navigation,pagination"
+  slides={['Two A', 'Two B', 'Two C', 'Two D', 'Two E', 'Two F']}
+  code={`[role="carousel"] {
+  --unswipe-slide-min-width: calc((100% - var(--unswipe-gap)) / 2);
+}`}
+/>
+
+Without the stylesheet, use your own rules (`flex: 0 0 50%`, grid, …).
+
+## Optional JS helper
+
+Prefer equal-width pages from JS? Use the [`slidesPerView` plugin](../../plugins/slides-per-view/).
+
+<Aside type="tip">
+Pair visible width with [`slidesToScroll`](../grouping-slides/) when you want `next()` / dots to advance a full page.
+</Aside>

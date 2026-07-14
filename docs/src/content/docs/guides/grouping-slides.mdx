@@ -1,0 +1,36 @@
+---
+title: Grouping slides
+description: Advance by more than one slide with slidesToScroll.
+---
+
+import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
+import Playground from '../../../components/Playground.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+<UnswipeRuntime />
+
+`slidesToScroll` controls how many slides `next()` / `prev()` and pagination groups advance. It does **not** set how many slides are visible — that is CSS (or the `slidesPerView` plugin).
+
+```ts
+new Unswipe(root, { slidesToScroll: 3 });
+```
+
+<Playground
+  id="guide-group"
+  label="Group by three"
+  slideMinWidth="calc((100% - 2 * var(--unswipe-gap)) / 3)"
+  slidesToScroll={3}
+  plugins="navigation,pagination"
+  slides={['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']}
+  code={`new Unswipe(root, { slidesToScroll: 3 }, [
+  navigation(),
+  pagination(),
+]);
+// CSS: show ~3 slides via --unswipe-slide-min-width`}
+/>
+
+<Aside type="tip">
+Show several slides but nudge one at a time with `slidesToScroll: 1` (the default).
+</Aside>
+
+Responsive steps via [breakpoints](../../api/options/#breakpoints).

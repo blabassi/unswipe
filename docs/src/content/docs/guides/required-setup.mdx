@@ -1,0 +1,38 @@
+---
+title: Required setup
+description: Minimal HTML and CSS for an Unswipe carousel.
+---
+
+## Markup
+
+Unswipe mounts on a single root. Slides are **direct children** by default (or a custom `slide` selector).
+
+```html
+<div id="carousel">
+  <div>Slide 1</div>
+  <div>Slide 2</div>
+  <div>Slide 3</div>
+</div>
+```
+
+```js
+import { Unswipe } from 'unswipe';
+
+const root = document.getElementById('carousel');
+const slider = new Unswipe(root, { label: 'Featured' });
+```
+
+Place prev/next and dots **outside** the scroll root (the navigation and pagination plugins insert siblings by default).
+
+## Stylesheet (optional)
+
+```js
+import 'unswipe/style.css';
+```
+
+This sets gap, default peek widths, and chrome for nav/dots via `--unswipe-*` tokens. Without it, size slides yourself (`flex: 0 0 100%`, etc.). Unswipe still applies flex + overflow + snap on the root at init.
+
+## Next
+
+- [Slide sizes](../slide-sizes/)
+- [Get Started — Module](../../get-started/module/)

@@ -1,0 +1,18 @@
+---
+title: Autoplay
+description: Interval advance for Unswipe carousels.
+---
+
+```ts
+import { autoplay } from 'unswipe/plugins/autoplay';
+
+new Unswipe(root, {}, [autoplay({ delay: 4000 })]);
+```
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `delay` | `3000` | Interval in ms |
+| `pauseOnHover` | `true` | Pause on hover/focus |
+| `loop` | `true` | Jump to first when not using the loop plugin |
+
+Uses `canScrollNext()` so it cooperates with the [loop](../loop/) plugin. Exposes play/stop via `plugins().autoplay`.

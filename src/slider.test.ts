@@ -135,6 +135,7 @@ describe('Unswipe', () => {
       expect(handler).toHaveBeenCalledOnce();
       expect(handler).toHaveBeenCalledWith({
         index: 1,
+        previous: 0,
         slide: slider.slides[1],
       });
     });
@@ -152,21 +153,30 @@ describe('Unswipe', () => {
       expect(handler).not.toHaveBeenCalled();
     });
 
-    it('emits update when the DOM is rescanned', () => {
+    it('emits update and slidesChanged when the DOM is rescanned', () => {
       const root = createCarousel(2);
       const slider = new Unswipe(root);
-      const handler = vi.fn();
-      slider.on('update', handler);
+      const onUpdate = vi.fn();
+      const onSlidesChanged = vi.fn();
+      slider.on('update', onUpdate);
+      slider.on('slidesChanged', onSlidesChanged);
 
       const slide = document.createElement('div');
       root.append(slide);
       slider.update();
 
-      expect(handler).toHaveBeenCalledOnce();
+      expect(onSlidesChanged).toHaveBeenCalledWith({ length: 3 });
+      expect(onUpdate).toHaveBeenCalledWith({ length: 3 });
       expect(slider.slides).toHaveLength(3);
+
+      onUpdate.mockClear();
+      onSlidesChanged.mockClear();
+      slider.update();
+      expect(onSlidesChanged).not.toHaveBeenCalled();
+      expect(onUpdate).toHaveBeenCalledWith({ length: 3 });
     });
 
-    it('emits scroll with progress', () => {
+    it('emits scroll with progress and slidesInView', () => {
       const root = createCarousel(3);
       Object.defineProperty(root, 'clientWidth', { get: () => 400 });
       Object.defineProperty(root, 'scrollWidth', { get: () => 800 });
@@ -175,7 +185,10 @@ describe('Unswipe', () => {
       slider.on('scroll', handler);
       root.scrollLeft = 200;
       root.dispatchEvent(new Event('scroll'));
-      expect(handler).toHaveBeenCalledWith({ progress: 0.5 });
+      expect(handler).toHaveBeenCalledWith({
+        progress: 0.5,
+        slidesInView: expect.any(Array),
+      });
     });
 
     it('emit() forwards plugin events', () => {
@@ -183,8 +196,20 @@ describe('Unswipe', () => {
       const slider = new Unswipe(root);
       const handler = vi.fn();
       slider.on('pointerDown', handler);
-      slider.emit('pointerDown');
-      expect(handler).toHaveBeenCalledOnce();
+      slider.emit('pointerDown', { x: 10, y: 20 });
+      expect(handler).toHaveBeenCalledWith({ x: 10, y: 20 });
+    });
+
+    it('emits settle with the active index', () => {
+      const root = createCarousel(3, { width: 200 });
+      const slider = new Unswipe(root, { behavior: 'smooth' });
+      mockScrollTo(root, slider.slides);
+      activateSlide(0, slider.slides);
+      const handler = vi.fn();
+      slider.on('settle', handler);
+      slider.next();
+      root.dispatchEvent(new Event('scrollend'));
+      expect(handler).toHaveBeenCalledWith({ index: 1 });
     });
   });
 

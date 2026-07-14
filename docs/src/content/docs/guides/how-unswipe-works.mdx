@@ -1,0 +1,22 @@
+---
+title: How Unswipe works
+description: Native CSS Scroll Snap host with a lean plugin API.
+---
+
+Unswipe is a **carousel host**, not a custom physics engine.
+
+## Native scroll
+
+The root element is a flex scrollport. Snapping uses CSS `scroll-snap-*`. Momentum, rubber-banding, and trackpad inertia come from the browser.
+
+## Active slide
+
+Scroll position drives which slide is “selected”. Unswipe updates `aria-hidden` / `tabindex` and emits `select` / `scroll` / `settle`.
+
+## Plugins
+
+Optional features (drag, loop, autoplay, nav, dots, …) attach through the third constructor argument and never bloat the core.
+
+## Compared to Embla
+
+Embla owns a JS scroll engine. Unswipe stays on CSS Scroll Snap. Feature coverage is similar via plugins — see [Compared to Embla](../compared-to-embla/).

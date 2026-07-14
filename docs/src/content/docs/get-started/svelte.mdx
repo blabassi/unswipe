@@ -1,0 +1,23 @@
+---
+title: Svelte
+description: Use Unswipe with the official Svelte action.
+---
+
+```svelte
+<script>
+  import { unswipe } from 'unswipe/svelte';
+  import { drag } from 'unswipe/plugins/drag';
+  import 'unswipe/style.css';
+</script>
+
+<div
+  class="carousel"
+  use:unswipe={{ options: { label: 'Gallery' }, plugins: [drag()] }}
+>
+  {#each ['A', 'B', 'C'] as label}
+    <div class="slide">{label}</div>
+  {/each}
+</div>
+```
+
+See also [Module](../module/) for the core API and [Plugins](../../plugins/).

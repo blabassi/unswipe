@@ -1,0 +1,60 @@
+---
+title: Plugins
+description: How plugins attach to the Unswipe constructor.
+---
+
+The third argument to `new Unswipe(root, options, plugins)` is an array of `SliderPlugin` instances.
+
+```ts
+import { drag } from 'unswipe/plugins/drag';
+import { navigation } from 'unswipe/plugins/navigation';
+
+new Unswipe(root, { label: 'Gallery' }, [drag(), navigation()]);
+```
+
+## Plugin contract
+
+```ts
+interface SliderPlugin {
+  readonly name: string;
+  init(slider: Slider): void | Record<string, unknown>;
+  destroy?(slider: Slider): void;
+}
+```
+
+`init` may return a public API object, available later via `slider.plugins()[name]`.
+
+```ts
+const { autoplay } = slider.plugins() as {
+  autoplay?: { play: () => void; stop: () => void };
+};
+autoplay?.stop();
+```
+
+Update plugins after init with `reInit(options, plugins)`.
+
+## Official plugins
+
+See the [Plugins](../../plugins/) section for drag, loop, autoplay, navigation, and more.
+
+## Custom plugin
+
+```ts
+import type { SliderPlugin } from 'unswipe';
+
+export function logger(): SliderPlugin {
+  let off: (() => void) | undefined;
+  return {
+    name: 'logger',
+    init(slider) {
+      off = slider.on('select', ({ index }) => {
+        console.log('[unswipe]', index);
+      });
+      return { ping: () => 'pong' };
+    },
+    destroy() {
+      off?.();
+    },
+  };
+}
+```

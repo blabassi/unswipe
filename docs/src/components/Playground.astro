@@ -9,6 +9,11 @@ interface Props {
   axis?: 'x' | 'y';
   plugins?: string;
   slideSelector?: string;
+  /** CSS value for `--unswipe-slide-min-width` (controls how many slides fit). */
+  slideMinWidth?: string;
+  /** JS option — how many slides fit in view. */
+  slidesPerView?: number;
+  slidesToScroll?: number;
   status?: boolean;
   code?: string;
   title?: string;
@@ -22,6 +27,9 @@ const {
   axis = 'x',
   plugins = '',
   slideSelector,
+  slideMinWidth,
+  slidesPerView,
+  slidesToScroll,
   status = true,
   code,
   title = 'example.js',
@@ -40,6 +48,12 @@ const {
       data-axis={axis}
       data-plugins={plugins}
       data-slide={slideSelector}
+      data-slides-to-scroll={slidesToScroll}
+      data-slides-per-view={slidesPerView}
+      data-fixed-slide-width={slideMinWidth || slidesPerView ? '' : undefined}
+      style={slideMinWidth
+        ? `--unswipe-slide-min-width: ${slideMinWidth}`
+        : undefined}
     >
       {
         slides.map((text) =>

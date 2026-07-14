@@ -1,15 +1,23 @@
 export { default as Unswipe } from './slider';
 export type {
   ContainScroll,
+  EmptyDetail,
+  PointerDetail,
+  ResizeDetail,
   ScrollDetail,
   ScrollToOptions,
   SelectDetail,
+  SettleDetail,
   Slider,
   SliderAxis,
   SliderDirection,
   SliderEvent,
+  SliderEventDetail,
+  SliderEventMap,
   SliderOptions,
   SliderPlugin,
+  SlidesChangedDetail,
   SnapAlign,
   SnapMode,
+  UpdateDetail,
 } from './types';

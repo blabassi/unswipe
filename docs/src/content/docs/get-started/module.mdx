@@ -1,6 +1,6 @@
 ---
-title: Getting started
-description: Install Unswipe and mount your first carousel.
+title: Module
+description: Install Unswipe and mount your first carousel with vanilla JS.
 ---
 
 import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
@@ -24,7 +24,7 @@ import { Unswipe } from './unswipe.js';
 
 Slides default to **direct children** of the root element.
 
-Optionally import the default stylesheet for usable chrome (gap, slides, nav, dots). Tokens are CSS custom properties — override `--unswipe-accent`, `--unswipe-gap`, and friends as needed:
+Optionally import the default stylesheet for usable chrome (gap, slides, nav, dots). Size slides with CSS tokens like `--unswipe-slide-min-width` (see [Slide sizes](../../guides/slide-sizes/)):
 
 ```js
 import 'unswipe/style.css';
@@ -46,8 +46,18 @@ slider.on('select', ({ index }) => {
 });`}
 />
 
+## Adding plugins
+
+```ts
+import { drag } from 'unswipe/plugins/drag';
+import { navigation } from 'unswipe/plugins/navigation';
+
+new Unswipe(root, { label: 'Gallery' }, [drag(), navigation()]);
+```
+
 ## Next steps
 
-- Try the [live playground](../playground/)
-- Add [plugins](../plugins/) for drag, autoplay, nav, and dots
-- Wire it into [React, Vue, Svelte, or a Web Component](../frameworks/)
+- [Required setup](../../guides/required-setup/) — markup and CSS
+- [Options](../../api/options/) — configure behavior
+- [Plugins](../../plugins/) — drag, loop, autoplay, and more
+- [Playground](../../examples/playground/) — interactive demos

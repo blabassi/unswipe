@@ -87,6 +87,11 @@
       "types": "./dist/plugins/fade.d.ts",
       "import": "./dist/plugins/fade.js",
       "require": "./dist/plugins/fade.cjs"
+    },
+    "./plugins/slidesPerView": {
+      "types": "./dist/plugins/slidesPerView.d.ts",
+      "import": "./dist/plugins/slidesPerView.js",
+      "require": "./dist/plugins/slidesPerView.cjs"
     }
   },
   "scripts": {
@@ -100,7 +105,7 @@
     "docs:dev": "pnpm --filter docs dev",
     "docs:preview": "pnpm run build:site && pnpm --filter docs preview",
     "dev": "esbuild src/index.ts --bundle --format=esm --outfile=dist/unswipe.js --watch",
-    "typecheck": "tsc --noEmit && pnpm --filter @unswipe/react typecheck && pnpm --filter @unswipe/vue typecheck && pnpm --filter @unswipe/svelte typecheck",
+    "typecheck": "pnpm run build:types && tsc --noEmit && pnpm --filter @unswipe/react typecheck && pnpm --filter @unswipe/vue typecheck && pnpm --filter @unswipe/svelte typecheck",
     "lint": "oxlint .",
     "lint:fix": "oxlint . --fix",
     "format": "oxfmt .",

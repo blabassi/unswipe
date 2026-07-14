@@ -1,0 +1,32 @@
+---
+title: Drag
+description: Mouse and pen drag-to-scroll for Unswipe.
+---
+
+import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
+import Playground from '../../../components/Playground.astro';
+
+<UnswipeRuntime />
+
+```ts
+import { drag } from 'unswipe/plugins/drag';
+
+new Unswipe(root, {}, [drag()]);
+```
+
+Mouse/pen drag-to-scroll. Touch stays native by default. Emits `pointerDown` / `pointerMove` / `pointerUp` with `{ x, y }`.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `mouseOnly` | `true` | Ignore touch pointers |
+| `threshold` | `10` | Pixels before a drag starts |
+
+Pair with `{ dragFree: true }` for free scroll without snap.
+
+<Playground
+  id="plugin-drag"
+  label="Drag demo"
+  plugins="drag"
+  code={`import { drag } from 'unswipe/plugins/drag';
+new Unswipe(root, {}, [drag()]);`}
+/>

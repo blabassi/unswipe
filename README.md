@@ -11,7 +11,7 @@ A high-performance, zero-dependency carousel library for the modern web. Unswipe
 
 | Concern       | Approach                                                         |
 | ------------- | ---------------------------------------------------------------- |
-| Bundle size   | Core ≈ 6.8 KB minified, no runtime dependencies                  |
+| Bundle size   | Core ≈ 8 KB minified (~3 KB gzip), no runtime dependencies       |
 | Physics       | Native compositor scrolling — no `requestAnimationFrame` loops   |
 | Layout        | Variable-width, asymmetrical slides via flexbox + scroll-snap    |
 | Accessibility | Automatic `role`, `aria-hidden`, `tabindex` from scroll position |
@@ -65,19 +65,37 @@ Slides default to **direct children** of the root element. Use the `slide` optio
 import 'unswipe/style.css';
 ```
 
+Visible slide count is **CSS** (Embla-style). With the stylesheet:
+
+```css
+[role='carousel'] {
+  --unswipe-slide-min-width: calc((100% - 2 * var(--unswipe-gap)) / 3);
+}
+```
+
+Prefer a JS helper? Use the optional plugin:
+
+```js
+import { slidesPerView } from 'unswipe/plugins/slidesPerView';
+new Unswipe(root, { slidesToScroll: 3 }, [slidesPerView(3)]);
+```
+
+Full tables: [Options](https://blabassi.github.io/unswipe/api/options/) · [Slide sizes](https://blabassi.github.io/unswipe/guides/slide-sizes/).
+
 ## Plugins
 
-| Plugin       | Import                       | Purpose                               |
-| ------------ | ---------------------------- | ------------------------------------- |
-| `loop`       | `unswipe/plugins/loop`       | Infinite scroll via clones + teleport |
-| `drag`       | `unswipe/plugins/drag`       | Mouse/pen drag-to-scroll              |
-| `autoplay`   | `unswipe/plugins/autoplay`   | Interval advance                      |
-| `autoScroll` | `unswipe/plugins/autoScroll` | Continuous scroll                     |
-| `navigation` | `unswipe/plugins/navigation` | Prev/next controls                    |
-| `pagination` | `unswipe/plugins/pagination` | Dot indicators                        |
-| `classNames` | `unswipe/plugins/classNames` | Selected / in-view classes            |
-| `wheel`      | `unswipe/plugins/wheel`      | Vertical wheel → horizontal scroll    |
-| `fade`       | `unswipe/plugins/fade`       | Opacity crossfade                     |
+| Plugin          | Import                          | Purpose                               |
+| --------------- | ------------------------------- | ------------------------------------- |
+| `loop`          | `unswipe/plugins/loop`          | Infinite scroll via clones + teleport |
+| `drag`          | `unswipe/plugins/drag`          | Mouse/pen drag-to-scroll              |
+| `autoplay`      | `unswipe/plugins/autoplay`      | Interval advance                      |
+| `autoScroll`    | `unswipe/plugins/autoScroll`    | Continuous scroll                     |
+| `navigation`    | `unswipe/plugins/navigation`    | Prev/next controls                    |
+| `pagination`    | `unswipe/plugins/pagination`    | Dot indicators                        |
+| `classNames`    | `unswipe/plugins/classNames`    | Selected / in-view classes            |
+| `wheel`         | `unswipe/plugins/wheel`         | Vertical wheel → horizontal scroll    |
+| `fade`          | `unswipe/plugins/fade`          | Opacity crossfade                     |
+| `slidesPerView` | `unswipe/plugins/slidesPerView` | Equal-width slides from JS            |
 
 ## Frameworks
 

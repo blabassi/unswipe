@@ -110,6 +110,11 @@ unswipe-carousel:not([role='carousel']) {
   min-width: 56%;
 }
 
+/* Configuration demos: honor --unswipe-slide-min-width over variable-width chrome */
+.carousel[data-fixed-slide-width] .slide {
+  min-width: var(--unswipe-slide-min-width);
+}
+
 .carousel--y .slide:nth-child(4n + 2),
 .carousel--y .slide:nth-child(4n + 3),
 .carousel--y .slide:nth-child(4n) {

@@ -1,0 +1,28 @@
+---
+title: React
+description: Use Unswipe with the official React hook.
+---
+
+```tsx
+import { useUnswipe } from 'unswipe/react';
+import { drag } from 'unswipe/plugins/drag';
+import 'unswipe/style.css';
+
+export function Carousel({ slides }: { slides: string[] }) {
+  const { ref } = useUnswipe({ label: 'Products' }, [drag()]);
+
+  return (
+    <div ref={ref} className="carousel">
+      {slides.map((text) => (
+        <div key={text} className="slide">
+          {text}
+        </div>
+      ))}
+    </div>
+  );
+}
+```
+
+`useUnswipe` mounts on the ref and destroys on unmount. Call `slider.reInit()` from the returned `slider` when options need to change.
+
+See also [Module](../module/) for the core API and [Plugins](../../plugins/).

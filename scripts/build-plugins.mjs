@@ -14,6 +14,7 @@ const plugins = [
   'wheel',
   'autoScroll',
   'fade',
+  'slidesPerView',
 ];
 
 mkdirSync(join(root, 'dist/plugins'), { recursive: true });

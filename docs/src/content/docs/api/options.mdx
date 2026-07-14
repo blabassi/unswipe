@@ -1,0 +1,55 @@
+---
+title: Options
+description: Configure Unswipe with SliderOptions.
+---
+
+import { Aside } from '@astrojs/starlight/components';
+
+Passed as the second argument to `new Unswipe(root, options, plugins)`.
+
+## Layout and axis
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `slide` | `string` | direct children | CSS selector for slides relative to root |
+| `align` | `'start' \| 'center' \| 'end'` | `'start'` | Snap alignment |
+| `axis` | `'x' \| 'y'` | `'x'` | Scroll axis |
+| `direction` | `'ltr' \| 'rtl'` | `'ltr'` | Track writing direction |
+| `label` | `string` | — | `aria-label` for the carousel |
+
+## Scrolling and snap
+
+| Option | Type | Default | Description |
+| --- | --- | --- | --- |
+| `behavior` | `ScrollBehavior` | `'smooth'` | Programmatic scroll behavior |
+| `startIndex` | `number` | `0` | Initial slide index |
+| `slidesToScroll` | `number` | `1` | Step size for `next` / `prev` and pagination |
+| `snap` | `'mandatory' \| 'proximity' \| 'none'` | `'proximity'` | CSS scroll-snap strictness |
+| `dragFree` | `boolean` | `false` | Free scroll (`snap: 'none'`) |
+| `containScroll` | `'trimSnaps' \| 'keepSnaps' \| false` | `'trimSnaps'` | Edge snap containment |
+| `skipSnaps` | `boolean` | `false` | Snap only every `slidesToScroll`-th slide |
+| `breakpoints` | `Record<string, Partial<SliderOptions>>` | — | Media-query option overrides |
+| `threshold` | `number` | — | Deprecated no-op |
+
+<Aside type="note">
+`snap: 'proximity'` (default) lets trackpad/touch inertia coast, then soft-snaps. Use `'mandatory'` for a harder magnet; use `'none'` / `dragFree: true` for free scrolling.
+</Aside>
+
+## Breakpoints
+
+```ts
+new Unswipe(root, {
+  slidesToScroll: 1,
+  breakpoints: {
+    '(min-width: 768px)': { slidesToScroll: 2 },
+    '(min-width: 1024px)': { slidesToScroll: 3, align: 'center' },
+  },
+});
+```
+
+Slide **visibility** still belongs in CSS (see [Slide sizes](../../guides/slide-sizes/)) or the [`slidesPerView` plugin](../../plugins/slides-per-view/).
+
+## Notes
+
+- Visible slide count is CSS-first (`--unswipe-slide-min-width`).
+- `slidesToScroll` only affects programmatic stepping and pagination grouping.

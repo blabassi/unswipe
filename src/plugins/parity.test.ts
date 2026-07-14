@@ -5,6 +5,7 @@ import { classNames } from './classNames.js';
 import { wheel } from './wheel.js';
 import { fade } from './fade.js';
 import { autoScroll } from './autoScroll.js';
+import { slidesPerView } from './slidesPerView.js';
 import { CLONE_ATTR } from '../constants.js';
 import { createCarousel, activateSlide } from '../test/helpers.js';
 
@@ -146,6 +147,42 @@ describe('autoScroll plugin', () => {
     };
     expect(root.scrollLeft).toBeGreaterThan(0);
     api.stop();
+    slider.destroy();
+  });
+});
+
+describe('slidesPerView plugin', () => {
+  it('sizes slides and clears on destroy', () => {
+    const root = createCarousel(4);
+    const slider = new Unswipe(root, {}, [slidesPerView(3)]);
+    const size = 'calc((100% - (3 - 1) * var(--unswipe-gap, 0px)) / 3)';
+    expect(root.style.getPropertyValue('--unswipe-slide-min-width')).toBe(size);
+    expect(slider.slides[0]!.style.minWidth).toBe(size);
+    expect(slider.slides[0]!.style.maxWidth).toBe(size);
+
+    const api = slider.plugins().slidesPerView as {
+      get: () => number;
+      set: (n: number) => void;
+    };
+    expect(api.get()).toBe(3);
+    api.set(2);
+    expect(root.style.getPropertyValue('--unswipe-slide-min-width')).toContain(
+      '/ 2)',
+    );
+
+    slider.destroy();
+    expect(root.style.getPropertyValue('--unswipe-slide-min-width')).toBe('');
+    expect(slider.slides[0]!.style.minWidth).toBe('');
+  });
+
+  it('applies height sizing on the y axis', () => {
+    const root = createCarousel(3);
+    const slider = new Unswipe(root, { axis: 'y' }, [slidesPerView(2)]);
+    const size = 'calc((100% - (2 - 1) * var(--unswipe-gap, 0px)) / 2)';
+    expect(root.style.getPropertyValue('--unswipe-slide-min-height')).toBe(
+      size,
+    );
+    expect(slider.slides[0]!.style.minHeight).toBe(size);
     slider.destroy();
   });
 });

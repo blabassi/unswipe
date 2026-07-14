@@ -1,0 +1,21 @@
+---
+title: Slide gaps
+description: Space slides with the --unswipe-gap token.
+---
+
+With `unswipe/style.css`, the track uses `gap: var(--unswipe-gap)`.
+
+```css
+[role='carousel'] {
+  --unswipe-gap: 1rem;
+}
+```
+
+Default is `0.75rem`. The optional [`slidesPerView` plugin](../../plugins/slides-per-view/) includes this gap in its width calc.
+
+| Token | Default | Role |
+| --- | --- | --- |
+| `--unswipe-gap` | `0.75rem` | Gap between slides |
+| `--unswipe-padding` | `0.25rem` | Track padding + scroll-padding |
+
+See also [Slide sizes](../slide-sizes/).

@@ -1,17 +1,17 @@
 import { CLONE_ATTR, INDEX_ATTR } from './constants';
 import type {
   ContainScroll,
-  ScrollDetail,
   ScrollToOptions,
-  SelectDetail,
   Slider,
   SliderEvent,
+  SliderEventDetail,
+  SliderEventMap,
   SliderOptions,
   SliderPlugin,
   SnapMode,
 } from './types';
 
-type Listener = (detail?: SelectDetail | ScrollDetail) => void;
+type Listener = (detail: SliderEventDetail) => void;
 
 const DEFAULTS: Required<
   Pick<
@@ -62,6 +62,8 @@ export default class Unswipe implements Slider {
   private mediaQueries: { mq: MediaQueryList; handler: () => void }[] = [];
   private baseOptions: SliderOptions = {};
   private destroyed = false;
+  /** Snapshot of logical slides for `slidesChanged` detection. */
+  private slideSnapshot: HTMLElement[] = [];
 
   constructor(
     root: HTMLElement,
@@ -74,7 +76,7 @@ export default class Unswipe implements Slider {
     this.applyOptions(options);
     this.mount();
     this.initPlugins();
-    this.fire('init');
+    this.fire('init', {});
   }
 
   get slides(): readonly HTMLElement[] {
@@ -115,11 +117,16 @@ export default class Unswipe implements Slider {
 
   update(): void {
     this.refresh();
-    this.fire('update');
+    if (this.slidesDiffer()) {
+      this.fire('slidesChanged', { length: this.s.length });
+    }
+    this.rememberSlides();
+    this.fire('update', { length: this.s.length });
   }
 
   resync(): void {
     this.refresh();
+    this.rememberSlides();
   }
 
   destroy(): void {
@@ -129,7 +136,7 @@ export default class Unswipe implements Slider {
     this.teardownObservers();
     this.root.removeEventListener('scroll', this.onScroll);
     this.root.removeEventListener('scrollend', this.settled);
-    this.fire('destroy');
+    this.fire('destroy', {});
     this.listeners.clear();
     this.pluginApis = {};
   }
@@ -142,7 +149,7 @@ export default class Unswipe implements Slider {
     this.applyOptions(this.baseOptions);
     this.mount(false);
     this.initPlugins();
-    this.fire('reInit');
+    this.fire('reInit', {});
   }
 
   canScrollNext(): boolean {
@@ -191,22 +198,13 @@ export default class Unswipe implements Slider {
     this.loopMode = enabled;
   }
 
-  emit(event: SliderEvent, detail?: SelectDetail | ScrollDetail): void {
-    this.fire(event, detail);
+  emit<E extends SliderEvent>(event: E, detail?: SliderEventMap[E]): void {
+    this.fire(event, (detail ?? {}) as SliderEventMap[E]);
   }
 
-  on(event: 'select', handler: (detail: SelectDetail) => void): () => void;
-  on(event: 'scroll', handler: (detail: ScrollDetail) => void): () => void;
-  on(
-    event: Exclude<SliderEvent, 'select' | 'scroll'>,
-    handler: () => void,
-  ): () => void;
-  on(
-    event: SliderEvent,
-    handler:
-      | ((detail: SelectDetail) => void)
-      | ((detail: ScrollDetail) => void)
-      | (() => void),
+  on<E extends SliderEvent>(
+    event: E,
+    handler: (detail: SliderEventMap[E]) => void,
   ): () => void {
     let set = this.listeners.get(event);
     if (!set) {
@@ -214,7 +212,7 @@ export default class Unswipe implements Slider {
       this.listeners.set(event, set);
     }
     set.add(handler as Listener);
-    return () => set.delete(handler as Listener);
+    return () => set!.delete(handler as Listener);
   }
 
   private applyOptions(raw: SliderOptions): void {
@@ -229,6 +227,9 @@ export default class Unswipe implements Slider {
     delete merged.breakpoints;
     if (raw.breakpoints) merged.breakpoints = raw.breakpoints;
     merged.snap = resolveSnap(merged);
+    if (typeof merged.slidesToScroll === 'number') {
+      merged.slidesToScroll = Math.max(1, Math.floor(merged.slidesToScroll));
+    }
     this.o = merged;
   }
 
@@ -239,6 +240,7 @@ export default class Unswipe implements Slider {
     else this.root.removeAttribute('aria-label');
 
     this.refresh();
+    this.rememberSlides();
 
     const start = this.o.startIndex ?? 0;
     if (start > 0 && this.s[start]) {
@@ -294,7 +296,10 @@ export default class Unswipe implements Slider {
   private bindResize(): void {
     if (typeof ResizeObserver === 'undefined') return;
     this.resizeObs = new ResizeObserver(() => {
-      this.fire('resize');
+      this.fire('resize', {
+        width: this.root.clientWidth,
+        height: this.root.clientHeight,
+      });
     });
     this.resizeObs.observe(this.root);
   }
@@ -308,7 +313,8 @@ export default class Unswipe implements Slider {
         this.applyOptions(this.baseOptions);
         this.applyLayout();
         this.refresh();
-        this.fire('reInit');
+        this.rememberSlides();
+        this.fire('reInit', {});
       };
       mq.addEventListener('change', handler);
       this.mediaQueries.push({ mq, handler });
@@ -339,7 +345,10 @@ export default class Unswipe implements Slider {
   }
 
   private onScroll = () => {
-    this.fire('scroll', { progress: this.scrollProgress() });
+    this.fire('scroll', {
+      progress: this.scrollProgress(),
+      slidesInView: this.slidesInView(),
+    });
     if (!this.settling && !this.silent) this.pick();
   };
 
@@ -347,7 +356,7 @@ export default class Unswipe implements Slider {
     this.settling = false;
     this.silent = false;
     this.pick();
-    this.fire('settle');
+    this.fire('settle', { index: this.i });
   };
 
   private axisKey(): 'left' | 'top' {
@@ -406,6 +415,7 @@ export default class Unswipe implements Slider {
     const a = this.o.align ?? 'start';
     const snap = resolveSnap(this.o);
     const step = this.o.slidesToScroll ?? 1;
+
     for (const el of all) {
       el.style.flexShrink = '0';
       if (snap === 'none') {
@@ -484,14 +494,30 @@ export default class Unswipe implements Slider {
       }
     }
     if (n !== this.i) {
+      const previous = this.i;
       this.i = n;
-      this.fire('select', { index: n, slide: this.s[n]! });
+      this.fire('select', { index: n, previous, slide: this.s[n]! });
     } else {
       this.i = n;
     }
   }
 
-  private fire(event: SliderEvent, detail?: SelectDetail | ScrollDetail): void {
+  private slidesDiffer(): boolean {
+    if (this.slideSnapshot.length !== this.s.length) return true;
+    for (let j = 0; j < this.s.length; j++) {
+      if (this.slideSnapshot[j] !== this.s[j]) return true;
+    }
+    return false;
+  }
+
+  private rememberSlides(): void {
+    this.slideSnapshot = this.s.slice();
+  }
+
+  private fire<E extends SliderEvent>(
+    event: E,
+    detail: SliderEventMap[E],
+  ): void {
     this.listeners.get(event)?.forEach((fn) => fn(detail));
   }
 }
