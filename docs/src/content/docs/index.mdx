@@ -7,11 +7,15 @@ hero:
   tagline: A microscopic, zero-dependency carousel. Native scroll physics. Automatic accessibility. Plugins when you need them.
   actions:
     - text: Get started
-      link: guides/getting-started/
+      link: get-started/
       icon: right-arrow
       variant: primary
-    - text: Live playground
-      link: guides/playground/
+    - text: Guides
+      link: guides/
+      icon: open-book
+      variant: minimal
+    - text: Playground
+      link: examples/playground/
       icon: seti:config
       variant: minimal
 ---
@@ -23,7 +27,7 @@ import UnswipeRuntime from '../../components/UnswipeRuntime.astro';
 <UnswipeRuntime />
 
 <div class="badge-row">
-  <span class="badge">≈ 2.5 KB core</span>
+  <span class="badge">≈ 8 KB core</span>
   <span class="badge">Zero dependencies</span>
   <span class="badge">CSS Scroll Snap</span>
   <span class="badge">Scroll-driven a11y</span>
@@ -46,12 +50,31 @@ new Unswipe(root, { label: 'Home demo' }, [
 ]);`}
 />
 
+## Docs
+
+<CardGrid>
+  <Card title="Get Started" icon="rocket">
+    Install and mount with Module, React, Vue, or Svelte.
+  </Card>
+  <Card title="Guides" icon="open-book">
+    Slide sizes, gaps, grouping, and controls.
+  </Card>
+  <Card title="API" icon="seti:json">
+    Options, methods, and events.
+  </Card>
+  <Card title="Plugins" icon="puzzle">
+    Drag, loop, autoplay, nav, and more.
+  </Card>
+</CardGrid>
+
+- [Get Started](./get-started/) · [Guides](./guides/) · [API](./api/) · [Plugins](./plugins/) · [Examples](./examples/)
+
 ## Why Unswipe?
 
 <CardGrid>
   <Card title="Tiny core" icon="rocket">
-    Core stays around 2.5 KB minified. Plugins are separate entry points so you only
-    pay for what you use.
+    Core stays lean. Plugins are separate entry points so you only pay for what
+    you use.
   </Card>
   <Card title="Native physics" icon="seti:css">
     CSS Scroll Snap handles kinetic scrolling on the compositor — no

@@ -1,0 +1,19 @@
+---
+title: API
+description: Constructor, options, methods, events, and the plugin contract.
+---
+
+A small core shouldn't limit what you can build. Unswipe exposes a typed host API designed for plugins and custom controls.
+
+## Explore the API
+
+- [Options](./options/) — configure snap, axis, breakpoints, and more
+- [Methods](./methods/) — navigate, update, and query state
+- [Events](./events/) — react to select, scroll, settle, and plugins
+- [Plugins](./plugins/) — how the third constructor argument works
+
+```ts
+new Unswipe(root: HTMLElement, options?: SliderOptions, plugins?: SliderPlugin[])
+```
+
+Returns a `Slider` instance.

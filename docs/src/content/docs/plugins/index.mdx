@@ -1,0 +1,30 @@
+---
+title: Plugins
+description: Tree-shakeable plugins that extend Unswipe.
+---
+
+Plugins implement `SliderPlugin` and ship as separate entry points so they never bloat the core. `init` may return a public API exposed via `slider.plugins()`.
+
+```ts
+import { Unswipe } from 'unswipe';
+import { drag } from 'unswipe/plugins/drag';
+import { loop } from 'unswipe/plugins/loop';
+import { navigation } from 'unswipe/plugins/navigation';
+
+new Unswipe(root, options, [loop(), drag(), navigation()]);
+```
+
+## Official plugins
+
+- [Drag](./drag/)
+- [Loop](./loop/)
+- [Autoplay](./autoplay/)
+- [Auto scroll](./auto-scroll/)
+- [Navigation](./navigation/)
+- [Pagination](./pagination/)
+- [Class names](./class-names/)
+- [Wheel](./wheel/)
+- [Fade](./fade/)
+- [Slides per view](./slides-per-view/)
+
+How plugins attach to the constructor: [API → Plugins](../api/plugins/).

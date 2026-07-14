@@ -53,6 +53,9 @@ jobs:
       - name: Verify site artifacts
         run: |
           test -f site/index.html
+          test -d site/get-started
           test -d site/guides
-          test -d site/reference
+          test -d site/api
+          test -d site/plugins
+          test -d site/examples
           test -f site/pagefind/pagefind.js || test -d site/pagefind

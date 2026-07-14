@@ -8,14 +8,32 @@
   import { drag } from '../../../src/plugins/drag';
   import { navigation } from '../../../src/plugins/navigation';
   import { pagination } from '../../../src/plugins/pagination';
+  import { loop } from '../../../src/plugins/loop';
+  import { classNames } from '../../../src/plugins/classNames';
+  import { wheel } from '../../../src/plugins/wheel';
+  import { fade } from '../../../src/plugins/fade';
+  import { slidesPerView } from '../../../src/plugins/slidesPerView';
+  import type { SliderPlugin } from '../../../src/types';
 
-  type PluginName = 'drag' | 'autoplay' | 'navigation' | 'pagination';
+  type PluginName =
+    | 'drag'
+    | 'autoplay'
+    | 'navigation'
+    | 'pagination'
+    | 'loop'
+    | 'classNames'
+    | 'wheel'
+    | 'fade';
 
   function loadPlugins(names: PluginName[]) {
     return names.map((name) => {
       if (name === 'drag') return drag();
       if (name === 'autoplay') return autoplay({ delay: 4500 });
       if (name === 'navigation') return navigation();
+      if (name === 'loop') return loop();
+      if (name === 'classNames') return classNames();
+      if (name === 'wheel') return wheel();
+      if (name === 'fade') return fade();
       return pagination();
     });
   }
@@ -45,12 +63,21 @@
       align: root.dataset.align ?? 'start',
       axis: root.dataset.axis ?? 'x',
       label: root.dataset.label ?? 'Carousel',
-      threshold: 0.5,
       behavior: 'smooth',
     };
     if (root.dataset.slide) options.slide = root.dataset.slide;
+    if (root.dataset.dragFree === 'true') options.dragFree = true;
+    if (root.dataset.slidesToScroll) {
+      options.slidesToScroll = Number(root.dataset.slidesToScroll);
+    }
+    if (root.dataset.snap) options.snap = root.dataset.snap;
 
-    const slider = new Unswipe(root, options as never, loadPlugins(pluginNames));
+    const plugins: SliderPlugin[] = loadPlugins(pluginNames);
+    if (root.dataset.slidesPerView) {
+      plugins.push(slidesPerView(Number(root.dataset.slidesPerView)));
+    }
+
+    const slider = new Unswipe(root, options as never, plugins);
     bindStatus(root, slider);
     (root as HTMLElement & { __unswipe?: Unswipe }).__unswipe = slider;
   }

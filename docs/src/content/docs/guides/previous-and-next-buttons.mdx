@@ -1,0 +1,34 @@
+---
+title: Previous and next buttons
+description: Add prev/next controls with the navigation plugin.
+---
+
+import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
+import Playground from '../../../components/Playground.astro';
+
+<UnswipeRuntime />
+
+```ts
+import { navigation } from 'unswipe/plugins/navigation';
+
+new Unswipe(root, { label: 'Gallery' }, [navigation()]);
+```
+
+Disabled state follows `canScrollPrev` / `canScrollNext`.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `prevLabel` | `"Previous slide"` | Accessible label |
+| `nextLabel` | `"Next slide"` | Accessible label |
+| `className` | `"unswipe-nav"` | CSS class prefix |
+| `container` | sibling wrapper | Where buttons render |
+
+<Playground
+  id="guide-nav"
+  label="Navigation demo"
+  plugins="navigation"
+  code={`import { navigation } from 'unswipe/plugins/navigation';
+new Unswipe(root, {}, [navigation()]);`}
+/>
+
+Full plugin docs: [Navigation](../../plugins/navigation/).

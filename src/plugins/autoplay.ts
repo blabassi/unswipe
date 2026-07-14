@@ -40,9 +40,8 @@ export function autoplay(options: AutoplayOptions = {}): SliderPlugin {
     stop();
     timer = setInterval(() => {
       if (!slider) return;
-      const { index } = slider;
-      if (index < slider.slides.length - 1) {
-        slider.scrollToIndex(index + 1);
+      if (slider.canScrollNext()) {
+        slider.next();
       } else if (loop && slider.slides.length > 0) {
         slider.scrollToIndex(0);
       }
@@ -65,13 +64,11 @@ export function autoplay(options: AutoplayOptions = {}): SliderPlugin {
     resumeTimer = setTimeout(resume, delay);
   };
 
-  /** Pause and reschedule — root gestures only. */
   const onInteract = () => {
     pause();
     resumeLater();
   };
 
-  /** Restart the interval after any slide change (nav/dots live outside the root). */
   const onSelect = () => {
     if (!paused) {
       stop();
@@ -93,6 +90,7 @@ export function autoplay(options: AutoplayOptions = {}): SliderPlugin {
       instance.root.addEventListener('pointerdown', onInteract);
       instance.root.addEventListener('wheel', onInteract, { passive: true });
       unbindSelect = instance.on('select', onSelect);
+      return { play: resume, stop: pause };
     },
     destroy(instance) {
       stop();

@@ -1,0 +1,18 @@
+---
+title: Auto scroll
+description: Continuous scroll motion for Unswipe.
+---
+
+```ts
+import { autoScroll } from 'unswipe/plugins/autoScroll';
+
+new Unswipe(root, { dragFree: true }, [autoScroll({ speed: 1 })]);
+```
+
+Distinct from interval [autoplay](../autoplay/). Exposes `{ play, stop }` via `plugins().autoScroll`.
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `speed` | `1` | Pixels per frame |
+| `pauseOnHover` | `true` | Pause on hover |
+| `reverse` | `false` | Reverse direction |

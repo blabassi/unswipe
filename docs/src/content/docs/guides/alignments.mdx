@@ -1,0 +1,34 @@
+---
+title: Alignments
+description: Snap slides to start, center, or end.
+---
+
+import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
+import Playground from '../../../components/Playground.astro';
+import PlaygroundControls from '../../../components/PlaygroundControls.astro';
+
+<UnswipeRuntime />
+<PlaygroundControls />
+
+Use the `align` option: `'start'` (default), `'center'`, or `'end'`.
+
+<Playground
+  id="guide-align"
+  label="Alignment demo"
+  align="start"
+  code={`new Unswipe(root, { align: 'start' });`}
+>
+  <div
+    slot="controls"
+    class="playground__controls"
+    data-align-controls="guide-align"
+  >
+    <button type="button" data-align="start" aria-pressed="true">start</button>
+    <button type="button" data-align="center" aria-pressed="false">
+      center
+    </button>
+    <button type="button" data-align="end" aria-pressed="false">end</button>
+  </div>
+</Playground>
+
+See [Options](../../api/options/) for the full table.

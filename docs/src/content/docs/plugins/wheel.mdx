@@ -1,0 +1,16 @@
+---
+title: Wheel
+description: Map vertical wheel gestures to horizontal scroll.
+---
+
+```ts
+import { wheel } from 'unswipe/plugins/wheel';
+
+new Unswipe(root, {}, [wheel()]);
+```
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `speed` | `1` | Delta multiplier |
+
+Ignored when `axis: 'y'`.

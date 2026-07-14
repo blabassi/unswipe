@@ -1,0 +1,49 @@
+---
+title: Slides per view
+description: Optional equal-width slide sizing from JavaScript.
+---
+
+import UnswipeRuntime from '../../../components/UnswipeRuntime.astro';
+import Playground from '../../../components/Playground.astro';
+import { Aside } from '@astrojs/starlight/components';
+
+<UnswipeRuntime />
+
+Prefer CSS (`--unswipe-slide-min-width`) when you can — see [Slide sizes](../../guides/slide-sizes/). This plugin is the JS convenience layer for equal-width pages and peeks.
+
+```ts
+import { slidesPerView } from 'unswipe/plugins/slidesPerView';
+
+new Unswipe(root, { slidesToScroll: 3 }, [slidesPerView(3)]);
+// or
+slidesPerView({
+  count: 1,
+  breakpoints: { '(min-width: 768px)': { count: 2 } },
+});
+```
+
+| Option | Description |
+| --- | --- |
+| `count` | Slides visible (fractions ok) |
+| `breakpoints` | Media-query `{ count }` overrides |
+
+Exposes `{ get, set }` via `plugins().slidesPerView`.
+
+<Playground
+  id="plugin-spv"
+  label="Three per view"
+  slidesPerView={3}
+  slidesToScroll={3}
+  plugins="navigation,pagination"
+  slides={['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I']}
+  code={`import { slidesPerView } from 'unswipe/plugins/slidesPerView';
+new Unswipe(root, { slidesToScroll: 3 }, [
+  slidesPerView(3),
+  navigation(),
+  pagination(),
+]);`}
+/>
+
+<Aside type="tip">
+`slidesToScroll` is independent — set it to match your page size when you want full-page advances.
+</Aside>

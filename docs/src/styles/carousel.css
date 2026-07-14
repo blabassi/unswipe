@@ -60,11 +60,18 @@
 /* Theme library tokens to Starlight + colorful demo slides */
 .carousel,
 unswipe-carousel {
+  display: block;
   width: 100%;
+  min-height: 5.5rem;
   --unswipe-control-bg: var(--sl-color-gray-6);
   --unswipe-control-color: var(--sl-color-white);
   --unswipe-dot-bg: var(--sl-color-gray-4);
   --unswipe-accent: var(--sl-color-accent);
+}
+
+/* Custom elements are inline until JS runs — keep the track block-level. */
+unswipe-carousel:not([role='carousel']) {
+  display: block;
 }
 
 .carousel--y {
@@ -78,6 +85,10 @@ unswipe-carousel {
   font-weight: 600;
   text-align: center;
   color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 5rem;
 }
 
 .slide:nth-child(4n + 1) {
@@ -97,6 +108,11 @@ unswipe-carousel {
 .slide:nth-child(4n) {
   background: linear-gradient(135deg, #f59e0b, #ef4444);
   min-width: 56%;
+}
+
+/* Configuration demos: honor --unswipe-slide-min-width over variable-width chrome */
+.carousel[data-fixed-slide-width] .slide {
+  min-width: var(--unswipe-slide-min-width);
 }
 
 .carousel--y .slide:nth-child(4n + 2),

@@ -25,6 +25,28 @@ describe('drag plugin', () => {
     expect(root.style.cursor).toBe('grab');
   });
 
+  it('emits pointerMove while dragging', () => {
+    const root = createCarousel(3, { width: 200 });
+    Object.defineProperty(root, 'scrollLeft', {
+      writable: true,
+      value: 0,
+    });
+    const slider = new Unswipe(root, { behavior: 'auto' }, [
+      drag({ threshold: 3 }),
+    ]);
+    const move = vi.fn();
+    slider.on('pointerMove', move);
+
+    root.dispatchEvent(
+      pointerEvent('pointerdown', { clientX: 200, clientY: 10 }),
+    );
+    root.dispatchEvent(
+      pointerEvent('pointermove', { clientX: 140, clientY: 10 }),
+    );
+
+    expect(move).toHaveBeenCalledWith({ x: 140, y: 10 });
+  });
+
   it('scrolls horizontally while dragging with the mouse', () => {
     const root = createCarousel(3, { width: 200 });
     Object.defineProperty(root, 'scrollLeft', {
@@ -47,7 +69,7 @@ describe('drag plugin', () => {
     root.dispatchEvent(
       pointerEvent('pointerup', { clientX: 140, clientY: 10 }),
     );
-    expect(root.style.scrollSnapType).toBe('x mandatory');
+    expect(root.style.scrollSnapType).toBe('x proximity');
     expect(root.style.cursor).toBe('grab');
   });
 
@@ -73,7 +95,7 @@ describe('drag plugin', () => {
     root.dispatchEvent(
       pointerEvent('pointerup', { clientX: 10, clientY: 120 }),
     );
-    expect(root.style.scrollSnapType).toBe('y mandatory');
+    expect(root.style.scrollSnapType).toBe('y proximity');
   });
 
   it('ignores touch pointers when mouseOnly is enabled', () => {
@@ -98,7 +120,7 @@ describe('drag plugin', () => {
     );
 
     expect(root.scrollLeft).toBe(0);
-    expect(root.style.scrollSnapType).toBe('x mandatory');
+    expect(root.style.scrollSnapType).toBe('x proximity');
   });
 
   it('does not start dragging until the threshold is crossed', () => {
@@ -113,7 +135,7 @@ describe('drag plugin', () => {
     root.dispatchEvent(pointerEvent('pointermove', { clientX: 195 }));
 
     expect(root.scrollLeft).toBe(0);
-    expect(root.style.scrollSnapType).toBe('x mandatory');
+    expect(root.style.scrollSnapType).toBe('x proximity');
   });
 
   it('suppresses the following click after a drag', () => {

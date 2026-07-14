@@ -1,0 +1,28 @@
+---
+title: Compared to Embla
+description: How Unswipe maps to Embla Carousel features while staying on CSS Scroll Snap.
+---
+
+Unswipe aims for **Embla-level feature coverage** through a lean core host plus tree-shakeable plugins — without replacing native scroll physics.
+
+| Embla | Unswipe |
+| --- | --- |
+| JS scroll engine | CSS Scroll Snap + scroll APIs |
+| `loop` | `unswipe/plugins/loop` |
+| `dragFree` / drag | `dragFree` option + `unswipe/plugins/drag` |
+| `slidesToScroll` | core option |
+| Visible slides | CSS (`--unswipe-slide-min-width`) or `slidesPerView` plugin |
+| `containScroll` | core option |
+| `breakpoints` / `reInit` | core |
+| Events (`scroll`, `settle`, …) | core event bus |
+| `canScrollNext` / `scrollProgress` / `slidesInView` | core methods |
+| Autoplay / ClassNames / Fade / Wheel | matching plugins |
+| React / Vue / Svelte packages | `unswipe/react`, `unswipe/vue`, `unswipe/svelte` |
+
+## What stays different
+
+- Momentum and rubber-banding follow the **browser**, not a custom spring model.
+- Seamless loop uses **clone + teleport**, not transform recycling.
+- Fade is opacity-based CSS, not Embla’s transform crossfade.
+
+Use Unswipe when you want native scroll feel and a small host. Reach for Embla when you need its exact gesture engine or deeper internals (`internalEngine`, SSR snap cloning).

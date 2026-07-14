@@ -1,0 +1,28 @@
+---
+title: Events
+description: Listen to Unswipe lifecycle and interaction events.
+---
+
+All handlers return an unsubscribe function.
+
+| Event | Payload | When |
+| --- | --- | --- |
+| `init` | `{}` | After construction |
+| `select` | `{ index, previous, slide }` | Active slide changed |
+| `scroll` | `{ progress, slidesInView }` | During scroll |
+| `settle` | `{ index }` | After `scrollend` |
+| `resize` | `{ width, height }` | Root resized |
+| `pointerDown` / `pointerMove` / `pointerUp` | `{ x, y }` | Emitted by drag plugin |
+| `slidesChanged` | `{ length }` | Logical slide list changed (`update`) |
+| `reInit` | `{}` | After `reInit` or breakpoint change |
+| `update` | `{ length }` | After `update()` |
+| `destroy` | `{}` | On destroy |
+
+```ts
+slider.on('select', ({ index, previous, slide }) => { /* ... */ });
+slider.on('scroll', ({ progress, slidesInView }) => { /* ... */ });
+slider.on('settle', ({ index }) => { /* ... */ });
+slider.on('slidesChanged', ({ length }) => { /* ... */ });
+```
+
+Events are typed via `SliderEventMap` exported from `unswipe`.

@@ -1,0 +1,22 @@
+---
+title: Vue
+description: Use Unswipe with the official Vue 3 composable.
+---
+
+```vue
+<script setup>
+import { useUnswipe } from 'unswipe/vue';
+import { drag } from 'unswipe/plugins/drag';
+import 'unswipe/style.css';
+
+const { el } = useUnswipe({ label: 'Products' }, [drag()]);
+</script>
+
+<template>
+  <div ref="el" class="carousel">
+    <div v-for="n in 3" :key="n" class="slide">Slide {{ n }}</div>
+  </div>
+</template>
+```
+
+See also [Module](../module/) for the core API and [Plugins](../../plugins/).

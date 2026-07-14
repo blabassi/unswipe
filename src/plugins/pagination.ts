@@ -9,7 +9,7 @@ export interface PaginationOptions {
   label?: string;
 }
 
-/** Pagination dots plugin — one button per slide, synced via `select` events. */
+/** Pagination dots plugin — one button per snap group, synced via `select`. */
 export function pagination(options: PaginationOptions = {}): SliderPlugin {
   const className = options.className ?? 'unswipe-pagination';
   const label = options.label ?? 'Carousel pagination';
@@ -19,10 +19,15 @@ export function pagination(options: PaginationOptions = {}): SliderPlugin {
   let buttons: HTMLButtonElement[] = [];
   let unbindSelect: (() => void) | null = null;
   let unbindUpdate: (() => void) | null = null;
+  let unbindReInit: (() => void) | null = null;
+  let groupSize = 1;
+
+  const groupIndex = (index: number) => Math.floor(index / groupSize);
 
   const sync = (index: number) => {
+    const active = groupIndex(index);
     for (let i = 0; i < buttons.length; i++) {
-      const selected = i === index;
+      const selected = i === active;
       buttons[i]!.setAttribute('aria-selected', String(selected));
       buttons[i]!.setAttribute('tabindex', selected ? '0' : '-1');
     }
@@ -31,6 +36,8 @@ export function pagination(options: PaginationOptions = {}): SliderPlugin {
   const build = (slider: Slider) => {
     list?.remove();
     buttons = [];
+    groupSize = Math.max(1, slider.getOptions().slidesToScroll ?? 1);
+    const groups = Math.ceil(slider.slides.length / groupSize);
 
     const container =
       options.container ??
@@ -48,16 +55,17 @@ export function pagination(options: PaginationOptions = {}): SliderPlugin {
     list.setAttribute('role', 'tablist');
     list.setAttribute('aria-label', label);
 
-    slider.slides.forEach((_, i) => {
+    for (let g = 0; g < groups; g++) {
       const btn = document.createElement('button');
       btn.type = 'button';
       btn.className = `${className}__dot`;
       btn.setAttribute('role', 'tab');
-      btn.setAttribute('aria-label', `Go to slide ${i + 1}`);
-      btn.addEventListener('click', () => slider.scrollToIndex(i));
+      const slideIndex = g * groupSize;
+      btn.setAttribute('aria-label', `Go to slide ${slideIndex + 1}`);
+      btn.addEventListener('click', () => slider.scrollToIndex(slideIndex));
       buttons.push(btn);
-      list!.append(btn);
-    });
+      list.append(btn);
+    }
 
     container.append(list);
     sync(slider.index);
@@ -71,12 +79,15 @@ export function pagination(options: PaginationOptions = {}): SliderPlugin {
         sync(index),
       );
       unbindUpdate = slider.on('update', () => build(slider));
+      unbindReInit = slider.on('reInit', () => build(slider));
     },
     destroy() {
       unbindSelect?.();
       unbindUpdate?.();
+      unbindReInit?.();
       unbindSelect = null;
       unbindUpdate = null;
+      unbindReInit = null;
       list?.remove();
       ownedContainer?.remove();
       list = null;
