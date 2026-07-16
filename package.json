@@ -18,6 +18,9 @@
     "packages/svelte/dist"
   ],
   "type": "module",
+  "sideEffects": [
+    "*.css"
+  ],
   "main": "./dist/unswipe.cjs",
   "module": "./dist/unswipe.js",
   "types": "./dist/index.d.ts",
