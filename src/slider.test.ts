@@ -15,6 +15,7 @@ describe('Unswipe', () => {
 
   afterEach(() => {
     document.body.innerHTML = '';
+    vi.unstubAllGlobals();
   });
 
   describe('constructor', () => {
@@ -297,6 +298,19 @@ describe('Unswipe', () => {
       expect(slider.index).toBe(2);
     });
 
+    it('wraps correctly when slidesToScroll exceeds the slide count', () => {
+      const root = createCarousel(3, { width: 200 });
+      const slider = new Unswipe(root, {
+        behavior: 'auto',
+        slidesToScroll: 50,
+      });
+      mockScrollTo(root, slider.slides);
+      slider.setLoopMode(true);
+      activateSlide(0, slider.slides);
+      slider.prev();
+      expect(slider.index).toBe(1);
+    });
+
     it('canScrollNext/Prev reflect bounds and loop mode', () => {
       const root = createCarousel(3);
       const slider = new Unswipe(root);
@@ -412,6 +426,42 @@ describe('Unswipe', () => {
         root.children[0] &&
           (root.children[0] as HTMLElement).style.scrollSnapAlign,
       ).toBe('center');
+    });
+
+    it('clears scroll-padding when containScroll leaves false', () => {
+      const root = createCarousel(3);
+      const slider = new Unswipe(root, { containScroll: false });
+      expect(root.style.scrollPadding).toBe('0');
+      slider.reInit({ containScroll: 'trimSnaps' });
+      expect(root.style.scrollPadding).toBe('');
+    });
+
+    it('resyncs the active index when the container resizes', () => {
+      let trigger: (() => void) | undefined;
+      class FakeResizeObserver {
+        constructor(callback: () => void) {
+          trigger = callback;
+        }
+        observe() {}
+        disconnect() {}
+      }
+      vi.stubGlobal('ResizeObserver', FakeResizeObserver);
+
+      const root = createCarousel(4, { width: 200 });
+      Object.defineProperty(root, 'clientWidth', { get: () => 400 });
+      Object.defineProperty(root, 'scrollWidth', { get: () => 800 });
+      const slider = new Unswipe(root);
+      activateSlide(1, slider.slides);
+      expect(slider.index).toBe(1);
+
+      // Layout shifted without a 'scroll' event — resize must resync `pick()`.
+      root.scrollLeft = 0;
+      const onResize = vi.fn();
+      slider.on('resize', onResize);
+      trigger?.();
+
+      expect(slider.index).toBe(0);
+      expect(onResize).toHaveBeenCalledOnce();
     });
   });
 

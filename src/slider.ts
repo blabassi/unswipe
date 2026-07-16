@@ -101,7 +101,7 @@ export default class Unswipe implements Slider {
     const step = this.o.slidesToScroll ?? 1;
     if (this.loopMode) {
       const n = this.s.length;
-      this.go((this.i - step + n * 10) % n);
+      this.go((((this.i - step) % n) + n) % n);
       return;
     }
     if (this.i > 0) this.go(Math.max(this.i - step, 0));
@@ -246,7 +246,6 @@ export default class Unswipe implements Slider {
     const start = this.o.startIndex ?? 0;
     if (start > 0 && this.s[start]) {
       this.go(start, 'auto', true);
-      this.commit(start);
     }
 
     if (bindScroll) {
@@ -288,15 +287,19 @@ export default class Unswipe implements Slider {
     } else {
       st.removeProperty('--unswipe-contain');
     }
-    // keepSnaps / false: spacer handled via CSS when --unswipe-contain is unset
+    // keepSnaps: spacer handled via CSS when --unswipe-contain is unset.
+    // false: no edge spacer at all — collapse scroll-padding to match.
     if (mode === false) {
       st.scrollPadding = '0';
+    } else {
+      st.removeProperty('scroll-padding');
     }
   }
 
   private bindResize(): void {
     if (typeof ResizeObserver === 'undefined') return;
     this.resizeObs = new ResizeObserver(() => {
+      this.pick();
       this.fire('resize', {
         width: this.root.clientWidth,
         height: this.root.clientHeight,
@@ -346,10 +349,12 @@ export default class Unswipe implements Slider {
   }
 
   private onScroll = () => {
-    this.fire('scroll', {
-      progress: this.scrollProgress(),
-      slidesInView: this.slidesInView(),
-    });
+    if (this.listeners.get('scroll')?.size) {
+      this.fire('scroll', {
+        progress: this.scrollProgress(),
+        slidesInView: this.slidesInView(),
+      });
+    }
     if (!this.settling && !this.silent) this.pick();
   };
 
