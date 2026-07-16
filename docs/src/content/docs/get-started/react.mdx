@@ -23,6 +23,6 @@ export function Carousel({ slides }: { slides: string[] }) {
 }
 ```
 
-`useUnswipe` mounts on the ref and destroys on unmount. Call `slider.reInit()` from the returned `slider` when options need to change.
+`useUnswipe` mounts on the ref, destroys on unmount, and calls `slider.reInit()` automatically whenever `options` or `plugins` change identity — memoize both to avoid re-initializing every render.
 
 See also [Module](../module/) for the core API and [Plugins](../../plugins/).
