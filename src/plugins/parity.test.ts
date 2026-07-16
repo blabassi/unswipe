@@ -149,6 +149,74 @@ describe('autoScroll plugin', () => {
     api.stop();
     slider.destroy();
   });
+
+  it('pauses for pointer drag and focus even without hover, and resumes after', () => {
+    const scheduled: { id: number; cb: FrameRequestCallback }[] = [];
+    let nextId = 0;
+    vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => {
+      const id = ++nextId;
+      scheduled.push({ id, cb });
+      return id;
+    });
+    vi.stubGlobal('cancelAnimationFrame', (id: number) => {
+      const idx = scheduled.findIndex((s) => s.id === id);
+      if (idx >= 0) scheduled.splice(idx, 1);
+    });
+    const flush = () => scheduled.shift()?.cb(0);
+
+    const root = createCarousel(3);
+    Object.defineProperty(root, 'clientWidth', { get: () => 400 });
+    Object.defineProperty(root, 'scrollWidth', { get: () => 800 });
+    root.scrollLeft = 0;
+
+    new Unswipe(root, { dragFree: true }, [autoScroll({ speed: 5 })]);
+    expect(scheduled).toHaveLength(1);
+    flush();
+    expect(root.scrollLeft).toBe(5);
+
+    root.dispatchEvent(new Event('pointerdown'));
+    expect(scheduled).toHaveLength(0);
+    root.dispatchEvent(new Event('pointerup'));
+    expect(scheduled).toHaveLength(1);
+    flush();
+    expect(root.scrollLeft).toBe(10);
+
+    root.dispatchEvent(new Event('focusin'));
+    expect(scheduled).toHaveLength(0);
+    root.dispatchEvent(new Event('focusout'));
+    expect(scheduled).toHaveLength(1);
+  });
+
+  it('does not resume on pointerup while still hovering', () => {
+    const scheduled: { id: number; cb: FrameRequestCallback }[] = [];
+    let nextId = 0;
+    vi.stubGlobal('requestAnimationFrame', (cb: FrameRequestCallback) => {
+      const id = ++nextId;
+      scheduled.push({ id, cb });
+      return id;
+    });
+    vi.stubGlobal('cancelAnimationFrame', (id: number) => {
+      const idx = scheduled.findIndex((s) => s.id === id);
+      if (idx >= 0) scheduled.splice(idx, 1);
+    });
+
+    const root = createCarousel(3);
+    Object.defineProperty(root, 'clientWidth', { get: () => 400 });
+    Object.defineProperty(root, 'scrollWidth', { get: () => 800 });
+    root.scrollLeft = 0;
+
+    new Unswipe(root, { dragFree: true }, [autoScroll({ speed: 5 })]);
+    expect(scheduled).toHaveLength(1);
+
+    root.dispatchEvent(new Event('pointerenter'));
+    expect(scheduled).toHaveLength(0);
+    root.dispatchEvent(new Event('pointerdown'));
+    root.dispatchEvent(new Event('pointerup'));
+    expect(scheduled).toHaveLength(0);
+
+    root.dispatchEvent(new Event('pointerleave'));
+    expect(scheduled).toHaveLength(1);
+  });
 });
 
 describe('slidesPerView plugin', () => {
