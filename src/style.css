@@ -5,7 +5,7 @@
  * import 'unswipe/style.css';
  *
  * Override tokens on `:root` or a carousel ancestor:
- * [role="carousel"] { --unswipe-accent: #0ea5e9; }
+ * [aria-roledescription="carousel"] { --unswipe-accent: #0ea5e9; }
  */
 
 :root {
@@ -29,8 +29,8 @@
   --unswipe-disabled-opacity: 0.4;
 }
 
-/* Library always sets role="carousel" on the root */
-[role='carousel'] {
+/* Library always sets aria-roledescription="carousel" on the root */
+[aria-roledescription='carousel'] {
   position: relative;
   gap: var(--unswipe-gap);
   padding: var(--unswipe-padding);
@@ -42,26 +42,26 @@
   max-width: 100%;
 }
 
-[role='carousel']::-webkit-scrollbar {
+[aria-roledescription='carousel']::-webkit-scrollbar {
   display: none;
 }
 
 /* Let the last slide snap to the start edge with align:start (trimSnaps). */
-[role='carousel']::after {
+[aria-roledescription='carousel']::after {
   content: '';
   flex: 0 0 calc(100% - var(--unswipe-slide-min-width, 70%));
   pointer-events: none;
 }
 
-[role='carousel']:not([style*='--unswipe-contain'])::after {
+[aria-roledescription='carousel']:not([style*='--unswipe-contain'])::after {
   display: none;
 }
 
-[role='carousel'].unswipe-fade [aria-roledescription='slide'] {
+[aria-roledescription='carousel'].unswipe-fade [aria-roledescription='slide'] {
   scroll-snap-align: center;
 }
 
-[role='carousel'][style*='column'] {
+[aria-roledescription='carousel'][style*='column'] {
   touch-action: pan-y pinch-zoom;
 }
 

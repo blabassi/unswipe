@@ -70,7 +70,7 @@ unswipe-carousel {
 }
 
 /* Custom elements are inline until JS runs — keep the track block-level. */
-unswipe-carousel:not([role='carousel']) {
+unswipe-carousel:not([aria-roledescription='carousel']) {
   display: block;
 }
 

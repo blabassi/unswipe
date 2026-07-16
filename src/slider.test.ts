@@ -22,7 +22,8 @@ describe('Unswipe', () => {
       const root = createCarousel();
       void new Unswipe(root, { label: 'Products' });
 
-      expect(root.getAttribute('role')).toBe('carousel');
+      expect(root.getAttribute('role')).toBe('region');
+      expect(root.getAttribute('aria-roledescription')).toBe('carousel');
       expect(root.getAttribute('aria-label')).toBe('Products');
       expect(root.style.display).toBe('flex');
       expect(root.style.flexDirection).toBe('row');
@@ -92,6 +93,7 @@ describe('Unswipe', () => {
       void new Unswipe(root, { align: 'center' });
 
       for (const slide of root.children) {
+        expect(slide.getAttribute('role')).toBe('group');
         expect(slide.getAttribute('aria-roledescription')).toBe('slide');
         expect((slide as HTMLElement).style.scrollSnapAlign).toBe('center');
         expect((slide as HTMLElement).style.flexShrink).toBe('0');

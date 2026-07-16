@@ -5,9 +5,9 @@ description: Roles, labels, and focus behavior applied by Unswipe.
 
 Unswipe applies accessibility attributes automatically:
 
-- `role="carousel"` on the root
+- `role="region"` and `aria-roledescription="carousel"` on the root
 - `aria-label` when the `label` option is set
-- `aria-roledescription="slide"` on each slide
+- `role="group"` and `aria-roledescription="slide"` on each slide
 - Dynamic `aria-hidden` and `tabindex="-1"` on inactive slides (derived from
   scroll position / snap alignment)
 

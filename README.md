@@ -68,7 +68,7 @@ import 'unswipe/style.css';
 Visible slide count is **CSS** (Embla-style). With the stylesheet:
 
 ```css
-[role='carousel'] {
+[aria-roledescription='carousel'] {
   --unswipe-slide-min-width: calc((100% - 2 * var(--unswipe-gap)) / 3);
 }
 ```

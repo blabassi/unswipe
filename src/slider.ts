@@ -235,7 +235,8 @@ export default class Unswipe implements Slider {
 
   private mount(bindScroll = true): void {
     this.applyLayout();
-    this.root.setAttribute('role', 'carousel');
+    this.root.setAttribute('role', 'region');
+    this.root.setAttribute('aria-roledescription', 'carousel');
     if (this.o.label) this.root.setAttribute('aria-label', this.o.label);
     else this.root.removeAttribute('aria-label');
 
@@ -409,6 +410,7 @@ export default class Unswipe implements Slider {
     for (let j = 0; j < this.s.length; j++) {
       const el = this.s[j]!;
       el.setAttribute(INDEX_ATTR, String(j));
+      el.setAttribute('role', 'group');
       el.setAttribute('aria-roledescription', 'slide');
     }
 

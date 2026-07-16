@@ -23,7 +23,7 @@ Set `--unswipe-slide-min-width`:
 | Peek of next (default) | `70%` |
 
 ```css
-[role='carousel'] {
+[aria-roledescription='carousel'] {
   --unswipe-slide-min-width: calc((100% - 2 * var(--unswipe-gap)) / 3);
 }
 ```
@@ -45,7 +45,7 @@ new Unswipe(root, { label: 'One slide' }, [navigation()]);`}
   slidesToScroll={2}
   plugins="navigation,pagination"
   slides={['Two A', 'Two B', 'Two C', 'Two D', 'Two E', 'Two F']}
-  code={`[role="carousel"] {
+  code={`[aria-roledescription="carousel"] {
   --unswipe-slide-min-width: calc((100% - var(--unswipe-gap)) / 2);
 }`}
 />
