@@ -47,6 +47,12 @@ new Unswipe(root, {
 });
 ```
 
+<Aside type="caution">
+When multiple breakpoint queries match at once, they're merged in declaration
+order and the last match wins per option — not the most specific query. Order
+entries from narrowest to widest, e.g. `768px` before `1024px`.
+</Aside>
+
 Slide **visibility** still belongs in CSS (see [Slide sizes](../../guides/slide-sizes/)) or the [`slidesPerView` plugin](../../plugins/slides-per-view/).
 
 ## Notes
