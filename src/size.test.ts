@@ -6,6 +6,6 @@ describe('bundle size budget', () => {
   it('keeps the minified core at or below 8000 bytes', () => {
     const raw = readFileSync('dist/unswipe.js');
     expect(raw.length).toBeLessThanOrEqual(8000);
-    expect(gzipSync(raw).length).toBeGreaterThan(0);
+    expect(gzipSync(raw).length).toBeLessThanOrEqual(3072);
   });
 });
